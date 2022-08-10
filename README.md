@@ -1,1 +1,1 @@
-# IS484-T6
+# IS484 SMU CUPID Team 6
