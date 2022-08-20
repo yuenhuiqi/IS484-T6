@@ -1,2 +1,0 @@
-// Check link below to get bootstrap icons
-https://icons.getbootstrap.com/

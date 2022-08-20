@@ -1,0 +1,23 @@
+mat-toolbar {
+    position: sticky;
+    top: 0px;
+    background-color: #B0C2D3;
+    max-height: 86px;
+}
+
+img {
+    width: 100px;
+    margin-left: 5px;
+    /* margin-top: 86px; */
+}
+
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+a {
+    /* margin-left: 0px; */
+    padding: 0 25px;
+    font-size: 22px;
+    text-decoration: none;
+}
