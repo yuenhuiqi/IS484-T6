@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ReaderHomeComponent } from './reader-home/reader-home.component';
-import { NavbarComponent } from './navbar/navbar.component';
+import { UploaderHomeComponent } from './uploader-home/uploader-home.component';
+
 
 
 const routes: Routes = [
-  {path: '', component: ReaderHomeComponent },
-  { path: 'test', component: NavbarComponent }
+  { path: '', component: ReaderHomeComponent },
+  { path: 'uploader', component: UploaderHomeComponent },
 ]
 
 @NgModule({
