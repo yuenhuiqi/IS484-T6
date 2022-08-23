@@ -1,14 +1,15 @@
 mat-toolbar {
     position: sticky;
     top: 0px;
-    background-color: #B0C2D3;
+    background: linear-gradient(to bottom, #00ccff 0%, #0066cc 100%);
     max-height: 86px;
 }
 
 img {
-    width: 85px;
+    width: 45px;
     margin-left: 5px;
     margin-top: 0px;
+    margin-bottom: 4px;
 }
 
 .example-spacer {
@@ -17,7 +18,9 @@ img {
 
 a {
     padding: 0 25px;
-    font-size: 22px;
-    font-weight: 400;
+    font-size: 15px;
+    font-weight: 600;
     text-decoration: none;
+    color: white;
 }
+
