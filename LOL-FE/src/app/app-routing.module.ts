@@ -4,7 +4,6 @@ import { ReaderHomeComponent } from './reader-home/reader-home.component';
 import { UploaderHomeComponent } from './uploader-home/uploader-home.component';
 
 
-
 const routes: Routes = [
   { path: '', component: ReaderHomeComponent },
   { path: 'uploader', component: UploaderHomeComponent },
