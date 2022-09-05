@@ -20,13 +20,19 @@ import { AppComponent } from './app.component';
 import { ReaderHomeComponent } from './reader-home/reader-home.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { UploaderHomeComponent } from './uploader-home/uploader-home.component';
+import { UploadDocumentComponent } from './upload-document/upload-document.component';
+
+import { NgxFileDropModule } from 'ngx-file-drop';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     ReaderHomeComponent,
     NavbarComponent,
-    UploaderHomeComponent
+    UploaderHomeComponent,
+    UploadDocumentComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +47,10 @@ import { UploaderHomeComponent } from './uploader-home/uploader-home.component';
     MatTableModule,
     MatMenuModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    NgxFileDropModule,
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
