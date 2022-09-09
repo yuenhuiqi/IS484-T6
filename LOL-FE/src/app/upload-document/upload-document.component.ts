@@ -7,7 +7,7 @@ import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 
   styleUrls: ['./upload-document.component.css']
 })
 
-export class UploadDocumentComponent implements OnInit {
+export class UploadDocumentComponent {
 
   constructor() { }
 
@@ -17,7 +17,15 @@ export class UploadDocumentComponent implements OnInit {
   public files: NgxFileDropEntry[] = [];
 
   public dropped(files: NgxFileDropEntry[]) {
-    this.files = files;
+    if (this.files.length == 0) {
+      this.files = files;
+    }
+    else {
+      this.files.push.apply(files)
+    }
+    // console.log(this.files);
+    // console.log(files);
+      
     for (const droppedFile of files) {
 
       // Is it a file?
