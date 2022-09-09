@@ -30,4 +30,5 @@ export class UploaderHomeComponent implements OnInit {
   displayedColumns: string[] = ['title', 'fileName', 'fileType', 'journey', 'uploadDate', 'actions'];
   dataSource = ELEMENT_DATA;
 
+
 }
