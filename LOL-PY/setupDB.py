@@ -1,6 +1,7 @@
 from database import db
 from document import Document
 
+from multi_uploader import Upload
 from searchCount import SearchCount
 from user import User
 from keywordss import Keywordss
