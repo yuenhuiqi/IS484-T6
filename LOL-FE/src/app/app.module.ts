@@ -25,10 +25,12 @@ import { UploadDocumentComponent } from './upload-document/upload-document.compo
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    LoginComponent,
     ReaderHomeComponent,
     NavbarComponent,
     UploaderHomeComponent,
