@@ -9,7 +9,7 @@
     <div class="container-fluid">
     <ngx-file-drop class="ngx-fileDropBody"
         dropZoneClassName="dropZoneBody" 
-        dropZoneLabel="Drop files here" 
+        dropZoneLabel="Drop files here"
         (onFileDrop)="dropped($event)" 
         [multiple]="true">
         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
@@ -33,8 +33,10 @@
                 </tr>
             </thead>
             <tbody class="upload-name-style">
-                <tr *ngFor="let item of files; let i=index">
-                    <td><strong>{{ item.relativePath }}</strong></td>
+                <tr *ngFor="let item of fileList; let i=index">
+                    <td><strong>{{ item['value'].name }}</strong></td>
+                    <td><button mat-stroked-button (click)="editFile(item['key'])"><mat-icon>edit</mat-icon></button></td>
+                    <td><button mat-stroked-button (click)="deleteFile(item['key'])"><mat-icon>delete</mat-icon></button></td>
                 </tr>
             </tbody>
         </table>
@@ -46,7 +48,7 @@
     <mat-toolbar>
         <span class="example-spacer"></span>
         <button mat-flat-button>Cancel</button>
-        <button mat-flat-button style="border: 1px solid grey;">Upload</button>
+        <button mat-flat-button style="border: 1px solid grey;" (click)="submitForm()">Upload</button>
     </mat-toolbar>
 </div>
 
