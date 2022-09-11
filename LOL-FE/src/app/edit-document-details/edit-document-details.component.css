@@ -1,0 +1,26 @@
+h1 {
+    padding: 1rem;
+}
+
+p {
+    padding: 1rem;
+}
+
+.container-fluid {
+    padding: 2rem; 
+    border: 1px solid;
+    border-radius: 4px;
+    border-color: gainsboro;
+    box-shadow: 2px 2px 5px 5px #f3f3f3;
+}
+
+.mat-raised-button {
+    background-color: #6200ea;
+    color: white;
+    font-size: 14px;
+    padding: 0.05rem 1rem; 
+    border: none;
+    border-radius: 4px;
+    height: auto;
+    width: auto;
+}

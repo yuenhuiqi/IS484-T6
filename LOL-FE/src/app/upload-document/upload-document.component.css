@@ -4,6 +4,11 @@ h2 {
     color: black;
 }
 
+h4 {
+    padding-top: 1rem;
+    color: black;
+}
+
 h6 {
     text-align: center;  
     color: black;
@@ -17,6 +22,13 @@ h6 {
     margin-top: 20px;
 }
 
+.uploadList {
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center
+}
+
 .container-fluid {
     padding-top: 3rem;
     padding-left: 10rem;
@@ -24,16 +36,13 @@ h6 {
     justify-content: center;
 }
 
-.mat-stroked-button {
-    /* margin: -20px -50px;  */
+.selectFile {
     position:relative;
     top:50%;
-    border: 1px solid #0F91D2;
-    color: #0F91D2;
 }
 
 footer {
-    position: fixed;
+    position: sticky;
     bottom: 0;
     width: 100%;
     background: whitesmoke;
@@ -61,7 +70,7 @@ footer {
 }
 
 .mat-flat-button {
-    color: grey;
+    color: black;
     margin: 10px;
 }
 
@@ -69,3 +78,31 @@ footer {
     flex: 1 1 auto;
 }
 
+th {
+    text-align: left;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-family: 'poppins';
+}
+
+td {
+    font-family: 'poppins';
+    font-size: small;
+    padding-bottom: 1rem;
+}
+
+.mat-raised-button {
+    background-color: #6200ea;
+    color: white;
+    font-size: 14px;
+    padding: 0.05rem 1rem; 
+    border: none;
+    border-radius: 4px;
+    height: auto;
+    width: auto;
+}
+
+.mat-stroked-button {
+    border: 1px solid #0F91D2;
+    color: #0F91D2;
+}

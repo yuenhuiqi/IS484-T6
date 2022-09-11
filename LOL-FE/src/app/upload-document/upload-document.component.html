@@ -9,7 +9,7 @@
     <div class="container-fluid">
     <ngx-file-drop class="ngx-fileDropBody"
         dropZoneClassName="dropZoneBody" 
-        dropZoneLabel="Drop files here" 
+        dropZoneLabel="Drop files here"
         (onFileDrop)="dropped($event)" 
         [multiple]="true">
         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
@@ -20,35 +20,50 @@
                 <p style="color: #0F91D2">---------------------------------------------</p>
                 <p>PDF, Word, Powerpoint, file size no more than 10MB</p>
                 <br>
-                <button mat-stroked-button (click)="openFileSelector()">SELECT FILE</button>
+                <button mat-stroked-button (click)="openFileSelector()" class="selectFile">SELECT FILE</button>
             </div>
         </ng-template>
     </ngx-file-drop>
 
-    <div class="upload-table">
-        <table class="table">
+        <div class="upload-table">
+            <!-- <table class="table">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th> Files added: </th>
                 </tr>
             </thead>
             <tbody class="upload-name-style">
-                <tr *ngFor="let item of files; let i=index">
-                    <td><strong>{{ item.relativePath }}</strong></td>
+                <tr *ngFor="let item of fileList; let i=index">
+                    <td style="padding-right: 10px;">{{ item['value'].name }}</td>
+                    <td><button mat-raised-button (click)="editFile(item['key'])" [routerLink] = "['./editDetails']">Edit Document Details<mat-icon style="font-size: 20px; padding-left: 5px;">edit</mat-icon></button></td>
+                    <td><button mat-raised-button (click)="deleteFile(item['key'])"><mat-icon>delete</mat-icon></button></td>
                 </tr>
+
+
             </tbody>
-        </table>
-    </div>
+        </table> -->
+            <h4>Name</h4>
+            <div *ngFor="let item of fileList; let i=index">
+                <div class="uploadList">
+                    <strong>{{ item['value'].name }}</strong>
+                    <div>
+                        <button mat-stroked-button (click)="editFile(item['key'])">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-stroked-button (click)="deleteFile(item['key'])">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div>
     <mat-toolbar>
         <span class="example-spacer"></span>
-        <button mat-flat-button>Cancel</button>
-        <button mat-flat-button style="border: 1px solid grey;">Upload</button>
+        <button [routerLink] = "['/uploader']" mat-flat-button>Cancel</button>
+        <button mat-stroked-button style="margin: 10px;" (click)="submitForm()">Upload</button>
     </mat-toolbar>
 </div>
-
-
-

@@ -1,0 +1,30 @@
+<h1>Title of the document: </h1>
+
+<div style="padding-left: 2rem; padding-right: 2rem;">
+    <div class="container-fluid">
+
+        <p>
+            Document Title: 
+            <mat-form-field appearance="outline">
+            <mat-label>Name your document</mat-label>
+            <input matInput placeholder="Placeholder">
+            </mat-form-field>
+        </p>
+
+        <p>
+            Journey:
+            <mat-form-field appearance="outline">
+                <mat-label>Select</mat-label>
+                <mat-select>
+                    <mat-option value="one">Lending</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </p>
+
+        <p>
+            <button mat-raised-button style="float: right;" [routerLink] = "['/uploader/upload']"> Save </button>
+        </p>
+
+    </div>
+
+</div>

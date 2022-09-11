@@ -26,6 +26,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
+import { EditDocumentDetailsComponent } from './edit-document-details/edit-document-details.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { LoginComponent } from './login/login.component';
     ReaderHomeComponent,
     NavbarComponent,
     UploaderHomeComponent,
-    UploadDocumentComponent
+    UploadDocumentComponent,
+    EditDocumentDetailsComponent
   ],
   imports: [
     BrowserModule,
