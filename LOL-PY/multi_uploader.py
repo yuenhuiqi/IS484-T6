@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime
 from io import BytesIO
+from base64 import b64decode
 
 from database import *
 from flask import Flask, render_template, request, send_file, flash
@@ -27,20 +28,27 @@ def upload_doc(file):
 
     dt = str(datetime.now())
 
+    fn = file.filename
     data = file.read()
+    # fn=file['filename']
+    # data = b64decode(file['data'].split(",").pop())
 
-    upload = Upload(uploadID=id, filename=file.filename, data=data, uploadDateTime=dt)
+    upload = Upload(uploadID=id, filename=fn, data=data, uploadDateTime=dt)
     db.session.add(upload)
     db.session.commit()
 
-    print(f'Uploaded: {file.filename, id, dt}')
+    print(f'Uploaded: {fn, id, dt}')
+    return f'Uploaded: {fn, id, dt}'
 
 def upload_multiDocs(files):
     print("--------")
     for file in files:
-        if file and allowed_file(file.filename):
-            upload_doc(file)
+
+        # print(file[0])
+        if file and allowed_file(file[0].filename):
+            upload_doc(file[0])
         else:
+            # print('unknown file')
             return "File extension unknown, unable to download"
     
     return f'All files saved to db!'
