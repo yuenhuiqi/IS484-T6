@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators  } from '@angular/forms';
+import { AuthService } from '../auth.service';
 
 interface User {
   value: string;
@@ -15,7 +16,7 @@ interface User {
 
 
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
+  loginUserData = { userName: '', password: '' };
   hide = true;
   users: User[] = [
     {value: 'lolup1', viewValue: 'Uploader 1'},
@@ -23,23 +24,28 @@ export class LoginComponent implements OnInit {
     {value: 'lolre', viewValue: 'Reader'},
   ];
 
-
   constructor(
-    private formBuilder: FormBuilder
+    private auth: AuthService,
   ) { 
   }
 
   ngOnInit(): void {
-
-        this.loginForm = this.formBuilder.group({
-            username: ['', Validators.required],
-            password: ['', Validators.required]
-        });
-
   }
 
-  onSubmit() {
-    
+
+  loginUser() {
+    this.auth.loginUser(this.loginUserData)
+      .subscribe(
+        res => {
+          localStorage.setItem('token', (<any>res).token)
+          if (this.loginUserData.userName == 'lolre') {
+            location.assign('/reader')
+          } else {
+            location.assign('/uploader')
+          }
+        }, 
+        err => console.log(err)
+      )
   }
 
 
