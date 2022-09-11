@@ -8,7 +8,7 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getUserName(token : any) {
+  getUser(token : any) {
     return this.http.get(`http://localhost:2222/login/${token}`, token)
   }
 }
