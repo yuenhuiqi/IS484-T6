@@ -3,11 +3,14 @@ from flask_cors import CORS, cross_origin
 
 from database import app
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS
+from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text
 from multi_uploader import upload_multiDocs, dl
 from user import User
+import jwt, datetime, bcrypt
 
 bcrypt = Bcrypt(app)
 cors = CORS(app)
@@ -58,14 +61,22 @@ def download(upload_id):
 @app.route('/login', methods=['POST'])
 def login():
     json_data = request.json
-    user = User.query.filter_by(userName=json_data['userName']).first()
-    if user and bcrypt.check_password_hash(
-            user.password, json_data['password']):
+    auth = request.authorization
+    
+    user = User.query.filter_by(userID=json_data['userName']).first()
+    if user and bcrypt.check_password_hash(user.password, json_data['password']):
         session['logged_in'] = True
-        status = True
+        token = jwt.encode({'userName': user.userID, 'password': json_data['password']}, app.config['SECRET_KEY'], "HS256")
+        return jsonify({'token': token})
     else:
-        status = False
-    return jsonify({'result': status})
+        return "Incorrect username and password!", status.HTTP_400_BAD_REQUEST  
+
+
+@app.route('/login/<string:token>', methods=['GET'])
+def getUserName(token):
+    user = User.query.filter_by(token=token).first()
+    return jsonify({'userName': user.userName})
+         
 
 if __name__ == '__main__':
     app.secret_key = 'is484t6'

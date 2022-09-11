@@ -13,7 +13,7 @@
                 <div class="username">
                     <mat-form-field appearance="standard">
                         <mat-label>Pick a user</mat-label>
-                        <mat-select>
+                        <mat-select [(ngModel)]="loginUserData.userName" name="userName">
                           <mat-option *ngFor="let user of users" [value]="user.value">
                             {{user.viewValue}}
                           </mat-option>
@@ -25,13 +25,13 @@
                 <div class="password">
                     <mat-form-field appearance="standard">
                         <mat-label>Enter your password</mat-label>
-                        <input matInput [type]="hide ? 'password' : 'text'">
+                        <input [(ngModel)]="loginUserData.password" name="password" matInput [type]="hide ? 'password' : 'text'">
                         <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                           <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                         </button>
                     </mat-form-field>
                 </div>
-                <button mat-raised-button>Submit</button>
+                <button mat-raised-button (click)="loginUser()">Submit</button>
             </form>
         </div>
     </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UserService } from '../user.service'
 
 interface User {
   type: string;
@@ -13,15 +13,36 @@ interface User {
 })
 export class NavbarComponent implements OnInit {
   
-  userControl = new FormControl<User | null>(null);
-  users: User[] = [
-    {type: 'Reader', path: ''},
-    {type: 'Uploader', path: '/uploader'},
-  ];
+  token = localStorage.getItem('token')
+  userName: String = "";
+  time: Date = new Date();
+  greetings: String = "";
 
-  constructor() { }
+  constructor(
+    private user: UserService,
+    ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.getUserName()
+
+    var currentTime = parseInt(this.time.toLocaleString('en-US', { hour: 'numeric', hour12: false }))
+    this.greetings = currentTime >= 0 && currentTime <= 12 ? "Good Morning" :
+                      currentTime >= 12 && currentTime < 18 ? "Good Afternoon" :
+                      "Good Evening"
   }
 
+  getUserName() {
+    this.user.getUserName(this.token)
+      .subscribe(
+        res => { 
+          this.userName = (<any>res).userName
+        }, 
+        err => console.log(err)
+      )
+  }
+
+  logout() {
+    localStorage.setItem('token', "")
+    location.assign('/')
+  }
 }
