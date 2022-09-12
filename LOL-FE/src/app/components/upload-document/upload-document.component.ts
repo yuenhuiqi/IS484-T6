@@ -167,6 +167,7 @@ export class UploadDocumentComponent {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
       this.title = result;
+      this.journey = result;
     });
   }
 
