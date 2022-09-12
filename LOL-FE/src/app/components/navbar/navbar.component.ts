@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../user.service'
+import { UserService } from '../../service/user.service'
 
 interface User {
   type: string;
@@ -13,10 +13,12 @@ interface User {
 })
 export class NavbarComponent implements OnInit {
   
-  token = localStorage.getItem('token')
+  token = localStorage.getItem('token');
   userName: String = "";
   time: Date = new Date();
   greetings: String = "";
+  userRole: String = "";
+
 
   constructor(
     private user: UserService,
@@ -32,10 +34,11 @@ export class NavbarComponent implements OnInit {
   }
 
   getUserName() {
-    this.user.getUserName(this.token)
+    this.user.getUser(this.token)
       .subscribe(
         res => { 
           this.userName = (<any>res).userName
+          this.userRole = (<any>res).role
         }, 
         err => console.log(err)
       )

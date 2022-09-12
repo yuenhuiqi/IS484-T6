@@ -73,9 +73,9 @@ def login():
 
 
 @app.route('/login/<string:token>', methods=['GET'])
-def getUserName(token):
+def getUser(token):
     user = User.query.filter_by(token=token).first()
-    return jsonify({'userName': user.userName})
+    return jsonify({"userID": user.userID, "userName": user.userName, "role": user.role})
          
 
 if __name__ == '__main__':
