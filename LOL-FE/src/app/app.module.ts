@@ -28,6 +28,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { EditDocumentDetailsComponent } from './components/edit-document-details/edit-document-details.component';
 import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
+import { ViewDocumentComponent } from './docviewer/doc-viewer.component';
 
 import { MatDialogModule } from '@angular/material/dialog';
 
@@ -40,7 +41,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     UploaderHomeComponent,
     UploadDocumentComponent,
     EditDocumentDetailsComponent,
-    UploadSuccessComponent
+    UploadSuccessComponent, 
+    ViewDocumentComponent
   ],
   imports: [
     BrowserModule,
@@ -65,4 +67,3 @@ import { MatDialogModule } from '@angular/material/dialog';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
