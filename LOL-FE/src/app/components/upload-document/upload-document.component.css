@@ -1,0 +1,116 @@
+h2 {
+    padding-top: 3rem;
+    text-align: center;
+    color: black;
+}
+
+h4 {
+    padding-top: 1rem;
+    color: black;
+    padding-bottom: 10px;
+    font-family: 'poppins';
+}
+
+h6 {
+    text-align: center;  
+    color: black;
+    opacity: 0.6;
+}
+
+.upload-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.uploadList {
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'poppins';
+    font-size: small;
+    padding-bottom: 1rem;
+}
+
+.dragDropFiles {
+    padding-top: 3rem;
+    padding-left: 10rem;
+    padding-right: 10rem;
+    justify-content: center;
+}
+
+.selectFile {
+    position:relative;
+    top:50%;
+}
+
+::ng-deep .dropZoneBody {
+    position: relative;
+    width: auto;
+    height: 8rem;
+    min-height: inherit;
+    font-size: 13px;
+    border-radius: 8px;
+    border: 2px dashed #1A2B88;
+    padding: 5rem;
+    box-sizing: content-box;
+    transition: all 0.25s;
+    font-family: 'poppins';
+}
+
+.mat-toolbar {
+    position: sticky;
+    bottom: 0px;
+    height: 60px;
+    color: white;
+    background-color: rgb(254, 254, 254);
+}
+
+.mat-flat-button {
+    color: white;
+    margin: 10px;
+    background-color: #6200ea;
+}
+
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+.mat-stroked-button {
+    border: 1px solid #6200ea; 
+    color:#6200ea;
+}
+
+table{
+    width: 100%;
+    padding: 10px;
+}
+
+th {
+    font-weight: bold;
+    font-size: 15px;
+    color: black;
+    text-align: left;
+    padding-bottom: 10px;
+    font-family: 'poppins';
+}
+
+tr {
+    border-bottom: 3px solid transparent;
+    border-top: 1px solid transparent;
+    cursor: pointer;
+}
+
+td {
+    font-family: 'poppins';
+}
+
+.container-fluid {
+    padding: 1rem; 
+    border: 1px solid;
+    border-radius: 4px;
+    border-color: gainsboro;
+    box-shadow: 2px 2px 5px 5px #f3f3f3;
+}

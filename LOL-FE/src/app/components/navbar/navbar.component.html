@@ -1,0 +1,6 @@
+<mat-toolbar style="background-color: #003B70;">
+    <a class="" [routerLink]="['/', userRole]"><img src="assets/pics/citi.png" /></a>
+    <p *ngIf="token != '' " >{{greetings}}, {{ userName }}</p>
+    <span class="example-spacer"></span>
+    <button *ngIf="token != '' " mat-raised-button (click)="logout()">Logout</button>
+</mat-toolbar>

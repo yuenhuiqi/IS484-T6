@@ -1,0 +1,38 @@
+<div class="login-wrapper">
+    <div class="overlay">
+
+        <div class="login-container">
+
+            <div class="header">
+                <h1> Hello, Welcome Back! 👋  </h1>
+                <p>Login as Reader (LOLRE) or Uploader (LOLUP1, LOLUP2)</p>
+            </div>
+            <form class="login-form">
+                
+                <p> Username </p>
+                <div class="username">
+                    <mat-form-field appearance="standard">
+                        <mat-label>Pick a user</mat-label>
+                        <mat-select [(ngModel)]="loginUserData.userName" name="userName">
+                          <mat-option *ngFor="let user of users" [value]="user.value">
+                            {{user.viewValue}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                </div>
+
+                <p> Password </p>
+                <div class="password">
+                    <mat-form-field appearance="standard">
+                        <mat-label>Enter your password</mat-label>
+                        <input [(ngModel)]="loginUserData.password" name="password" matInput [type]="hide ? 'password' : 'text'">
+                        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+                <button mat-raised-button (click)="loginUser()">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>

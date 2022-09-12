@@ -17,16 +17,30 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { ReaderHomeComponent } from './reader-home/reader-home.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { UploaderHomeComponent } from './uploader-home/uploader-home.component';
+import { ReaderHomeComponent } from './components/reader-home/reader-home.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { UploaderHomeComponent } from './components/uploader-home/uploader-home.component';
+import { UploadDocumentComponent } from './components/upload-document/upload-document.component';
+
+import { NgxFileDropModule } from 'ngx-file-drop';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { LoginComponent } from './components/login/login.component';
+import { EditDocumentDetailsComponent } from './components/edit-document-details/edit-document-details.component';
+import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
+
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
     AppComponent,
+    LoginComponent,
     ReaderHomeComponent,
     NavbarComponent,
-    UploaderHomeComponent
+    UploaderHomeComponent,
+    UploadDocumentComponent,
+    EditDocumentDetailsComponent,
+    UploadSuccessComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +55,11 @@ import { UploaderHomeComponent } from './uploader-home/uploader-home.component';
     MatTableModule,
     MatMenuModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    NgxFileDropModule,
+    FormsModule,
+    HttpClientModule,
+    MatDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

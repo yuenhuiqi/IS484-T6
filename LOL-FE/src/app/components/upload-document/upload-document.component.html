@@ -1,0 +1,74 @@
+<div class="header">
+    <div class="wrapper">
+        <h2 class="intro">Upload training materials here!</h2>
+        <h6>Accepted format: PDF, Word Doc, Powerpoint</h6>
+    </div>
+</div>
+
+<div class="center">
+    <div class="dragDropFiles">
+    <ngx-file-drop class="ngx-fileDropBody"
+        dropZoneClassName="dropZoneBody" 
+        dropZoneLabel="Drop files here"
+        (onFileDrop)="dropped($event)" 
+        [multiple]="true">
+        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+            <div class="upload-box">
+                <mat-icon style="color: #6200ea;">cloud_upload</mat-icon>
+                <br>
+                <h6>Select a file or drag and drop here</h6>
+                <p style="color: #6200ea">---------------------------------------------</p>
+                <p>PDF, Word, Powerpoint, file size no more than 10MB</p>
+                <br>
+                <button mat-stroked-button (click)="openFileSelector()" class="selectFile">SELECT FILE</button>
+            </div>
+        </ng-template>
+    </ngx-file-drop>
+
+    <div style="padding-top: 3rem; padding-bottom: 3rem;">
+        <div class="container-fluid">
+            <table>
+                <thead>
+                    <tr>
+                        <th> Files added: </th>
+                    </tr>
+                </thead>
+                <tbody class="upload-name-style">
+                    <tr *ngFor="let item of fileList; let i=index">
+                        <td style="padding-right: 10px;">{{ item['value'].name }}</td>
+                        <td><button mat-button (click)="editFile(item['key'])" (click)="openDialog()" style="color: #6200ea;">Edit Document Details</button></td>
+                        <td><button mat-button (click)="deleteFile(item['key'])" style="color: red;">Delete</button></td>
+                    </tr>    
+                </tbody>
+            </table>
+    
+        </div>
+    
+    </div>
+
+            <!-- <h4>Files added: </h4>
+            <div *ngFor="let item of fileList; let i=index">
+                <div class="uploadList">
+                    <strong>{{ item['value'].name }}</strong>
+                    <div>
+                        <button mat-flat-button (click)="editFile(item['key'])">
+                            <mat-icon style="font-size: 20px;">edit</mat-icon>
+                        </button>
+                        <button mat-flat-button (click)="deleteFile(item['key'])">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>
+
+
+<div>
+    <mat-toolbar>
+        <span class="example-spacer"></span>
+        <button [routerLink] = "['/uploader']" mat-stroked-button>Cancel</button>
+        <button mat-flat-button style="margin: 10px;" (click)="submitForm()" [routerLink] = "['./success']">Upload</button>
+    </mat-toolbar>
+</div>
