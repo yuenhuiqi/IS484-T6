@@ -27,6 +27,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { EditDocumentDetailsComponent } from './components/edit-document-details/edit-document-details.component';
+import { UploadSuccessComponent } from './upload-success/upload-success.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { EditDocumentDetailsComponent } from './components/edit-document-details
     NavbarComponent,
     UploaderHomeComponent,
     UploadDocumentComponent,
-    EditDocumentDetailsComponent
+    EditDocumentDetailsComponent,
+    UploadSuccessComponent
   ],
   imports: [
     BrowserModule,
