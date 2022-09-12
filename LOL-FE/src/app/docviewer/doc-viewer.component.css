@@ -1,0 +1,48 @@
+iframe {
+  width: 100%;
+  height: 100%;
+}
+
+/* feedback popup - hidden by default */
+.uc-modal {
+  position: fixed;
+  background: #cce6ff;
+  bottom: 20px;
+  right: 30px;
+}
+
+.uc-m-header {
+  padding: 15px; 
+  background:  #cce6ff;
+
+}
+
+.uc-m-header .material-icons {
+  cursor:pointer; 
+  position: absolute; 
+  right: 10px;
+  top: 10px; 
+}
+
+.uc-m-body {
+  padding:15px; 
+}
+
+.uc-m-footer {
+  padding: 20px;
+  text-align: center; 
+}
+
+/* Set a style for the submit/login button */
+.btn {
+  background-color: #002C54;
+  color: white;
+  padding: 15px 25px;
+  font-size: 14px;
+  border:0; 
+  border-radius: 6px;
+  margin-right: 10px; 
+  cursor: pointer;
+  font-family: 'Poppins';
+}
+
