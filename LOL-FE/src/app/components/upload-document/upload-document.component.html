@@ -36,7 +36,7 @@
                 <tbody class="upload-name-style">
                     <tr *ngFor="let item of fileList; let i=index">
                         <td style="padding-right: 10px;">{{ item['value'].name }}</td>
-                        <td><button mat-button (click)="editFile(item['key'])" [routerLink] = "['./editDetails']" style="color: #6200ea;">Edit Document Details</button></td>
+                        <td><button mat-button (click)="editFile(item['key'])" (click)="openDialog()" style="color: #6200ea;">Edit Document Details</button></td>
                         <td><button mat-button (click)="deleteFile(item['key'])" style="color: red;">Delete</button></td>
                     </tr>    
                 </tbody>
@@ -63,6 +63,7 @@
         </div> -->
     </div>
 </div>
+
 
 <div>
     <mat-toolbar>

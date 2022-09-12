@@ -1,4 +1,4 @@
-<h1>Title of the document: </h1>
+<!-- <h1>Title of the document: </h1>
 
 <div style="padding-left: 2rem; padding-right: 2rem;">
     <div class="container-fluid">
@@ -25,6 +25,31 @@
             <button mat-raised-button style="float: right;" [routerLink] = "['/uploader/upload']"> Save </button>
         </p>
 
-    </div>
+    </div> -->
 
+
+<h1 mat-dialog-title>Title of the document: </h1>
+<div mat-dialog-content>
+    <p>
+        Document Title<span style="color:red;">*</span> : 
+        <mat-form-field appearance="outline">
+        <mat-label>Name your document</mat-label>
+        <input matInput [(ngModel)]="data.title">
+        </mat-form-field>
+    </p>
+    <p>
+        Journey<span style="color:red;">*</span> :
+        <mat-form-field appearance="outline">
+            <mat-label>Select</mat-label>
+            <mat-select>
+                <mat-option value="one">Lending</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </p>
 </div>
+<div mat-dialog-actions>
+    <span class="example-spacer"></span>
+    <button mat-stroked-button (click)="onNoClick()" >Cancel</button>
+    <button mat-raised-button [mat-dialog-close]="data.title" cdkFocusInitial>Save</button>
+</div>
+

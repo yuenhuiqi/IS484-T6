@@ -24,3 +24,12 @@ p {
     height: auto;
     width: auto;
 }
+
+.mat-stroked-button {
+    border: 1px solid #6200ea; 
+    color:#6200ea;
+}
+
+.example-spacer {
+    flex: 1 1 auto;
+}
