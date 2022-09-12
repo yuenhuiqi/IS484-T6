@@ -113,16 +113,16 @@ export class UploadDocumentComponent {
 
   uploadfile(file: any) {
     this.http
-      .post('http://192.168.0.199:2222/upload', file)
+      .post('http://localhost:2222/upload', file)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
           console.log(err.error.text)
 
           // Upload Success
-          if (err.error.text == 'All files saved to db!') {
+          if (err.error.text == 'All files uploaded!') {
             this.reset()
-            console.log('All files are uploaded!')
+            // console.log('All files are uploaded!')
           }
         },
       });
