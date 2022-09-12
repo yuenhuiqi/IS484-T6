@@ -20,12 +20,8 @@
     "@angular/platform-browser": "^14.1.0",
     "@angular/platform-browser-dynamic": "^14.1.0",
     "@angular/router": "^14.1.0",
-<<<<<<< Updated upstream
     "cors": "^2.8.5",
     "ngx-file-drop": "^14.0.1",
-=======
-    "bootstrap": "^5.2.0",
->>>>>>> Stashed changes
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

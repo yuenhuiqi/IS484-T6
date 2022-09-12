@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';  
-import { NgxDocViewerModule } from 'ngx-doc-viewer';  
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from "@angular/material/icon";
@@ -19,7 +17,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-<<<<<<< Updated upstream
 import { ReaderHomeComponent } from './components/reader-home/reader-home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { UploaderHomeComponent } from './components/uploader-home/uploader-home.component';
@@ -33,14 +30,6 @@ import { EditDocumentDetailsComponent } from './components/edit-document-details
 import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
 
 import { MatDialogModule } from '@angular/material/dialog';
-=======
-import { ReaderHomeComponent } from './reader-home/reader-home.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { UploaderHomeComponent } from './uploader-home/uploader-home.component';
-import { ViewDocumentComponent } from './docviewer/doc-viewer.component'; 
-
-
->>>>>>> Stashed changes
 
 @NgModule({
   declarations: [
@@ -49,13 +38,9 @@ import { ViewDocumentComponent } from './docviewer/doc-viewer.component';
     ReaderHomeComponent,
     NavbarComponent,
     UploaderHomeComponent,
-<<<<<<< Updated upstream
     UploadDocumentComponent,
     EditDocumentDetailsComponent,
     UploadSuccessComponent
-=======
-    ViewDocumentComponent
->>>>>>> Stashed changes
   ],
   imports: [
     BrowserModule,
@@ -71,15 +56,10 @@ import { ViewDocumentComponent } from './docviewer/doc-viewer.component';
     MatMenuModule,
     MatFormFieldModule,
     MatSelectModule,
-<<<<<<< Updated upstream
     NgxFileDropModule,
     FormsModule,
     HttpClientModule,
     MatDialogModule,
-=======
-    FormsModule,
-    NgxDocViewerModule,  
->>>>>>> Stashed changes
   ],
   providers: [],
   bootstrap: [AppComponent]
