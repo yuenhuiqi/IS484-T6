@@ -1,8 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
-import { Data } from '@angular/router';
-import * as e from 'express';
+// import { Data } from '@angular/router';
+// import * as e from 'express';
+import { MatDialog } from '@angular/material/dialog';
+import { EditDocumentDetailsComponent } from '../edit-document-details/edit-document-details.component';
+
+export interface DialogData {
+  title: string;
+  journey: string;
+}
 
 @Component({
   selector: 'app-upload-document',
@@ -12,7 +19,8 @@ import * as e from 'express';
 
 export class UploadDocumentComponent {
 
-  constructor(public http: HttpClient) { }
+  constructor(public http: HttpClient, public dialog: MatDialog) { }
+  
 
   ngOnInit(): void {
   }
@@ -146,5 +154,24 @@ export class UploadDocumentComponent {
     })
     this.fileList = []
   }
+
+  title: string;
+  journey: string;
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(EditDocumentDetailsComponent, {
+      width: '1000px',
+      data: {title: this.title, journey: this.journey},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.title = result;
+    });
+  }
+
+
 }
+
+
 

@@ -5,7 +5,7 @@ import { UploaderHomeComponent } from './components/uploader-home/uploader-home.
 import { UploadDocumentComponent } from './components/upload-document/upload-document.component';
 import { LoginComponent } from './components/login/login.component';
 import { EditDocumentDetailsComponent } from './components/edit-document-details/edit-document-details.component';
-import { UploadSuccessComponent } from './upload-success/upload-success.component';
+import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
 
 
 const routes: Routes = [
