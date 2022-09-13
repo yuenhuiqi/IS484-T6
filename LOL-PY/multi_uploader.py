@@ -50,7 +50,7 @@ s3 = boto3.client(
 )
 
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'ppt','pptx', 'doc', 'docx'}
 
 
 def allowed_file(filename):
