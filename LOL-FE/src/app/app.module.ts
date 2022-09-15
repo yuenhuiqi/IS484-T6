@@ -27,6 +27,10 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { EditDocumentDetailsComponent } from './components/edit-document-details/edit-document-details.component';
+import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
+import { ViewDocumentComponent } from './components/docviewer/doc-viewer.component';
+
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -36,7 +40,9 @@ import { EditDocumentDetailsComponent } from './components/edit-document-details
     NavbarComponent,
     UploaderHomeComponent,
     UploadDocumentComponent,
-    EditDocumentDetailsComponent
+    EditDocumentDetailsComponent,
+    UploadSuccessComponent, 
+    ViewDocumentComponent
   ],
   imports: [
     BrowserModule,
@@ -54,10 +60,10 @@ import { EditDocumentDetailsComponent } from './components/edit-document-details
     MatSelectModule,
     NgxFileDropModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
