@@ -1,33 +1,3 @@
-<!-- <h1>Title of the document: </h1>
-
-<div style="padding-left: 2rem; padding-right: 2rem;">
-    <div class="container-fluid">
-
-        <p>
-            Document Title: 
-            <mat-form-field appearance="outline">
-            <mat-label>Name your document</mat-label>
-            <input matInput placeholder="Placeholder">
-            </mat-form-field>
-        </p>
-
-        <p>
-            Journey:
-            <mat-form-field appearance="outline">
-                <mat-label>Select</mat-label>
-                <mat-select>
-                    <mat-option value="one">Lending</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </p>
-
-        <p>
-            <button mat-raised-button style="float: right;" [routerLink] = "['/uploader/upload']"> Save </button>
-        </p>
-
-    </div> -->
-
-
 <h1 mat-dialog-title>Title of the document: </h1>
 <div mat-dialog-content>
     <p>
@@ -42,14 +12,17 @@
         <mat-form-field appearance="outline">
             <mat-label>Select</mat-label>
             <mat-select>
-                <mat-option value="one">Lending</mat-option>
+                <mat-option value="lending" [(ngModel)]="data.journey">Lending</mat-option>
             </mat-select>
         </mat-form-field>
+    </p>
+    <p>
+        <button mat-button><a target="_blank" [routerLink] = "['/viewdocument']"><u>Preview Document</u></a></button> 
     </p>
 </div>
 <div mat-dialog-actions>
     <span class="example-spacer"></span>
     <button mat-stroked-button (click)="onNoClick()" >Cancel</button>
-    <button mat-raised-button [mat-dialog-close]="data.title" cdkFocusInitial>Save</button>
+    <button mat-raised-button [mat-dialog-close]="data.title" [mat-dialog-close]="data.journey" cdkFocusInitial>Save</button>
 </div>
 
