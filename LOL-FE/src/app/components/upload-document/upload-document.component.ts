@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http'
 // import * as e from 'express';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDocumentDetailsComponent } from '../edit-document-details/edit-document-details.component';
+import { elementAt } from 'rxjs';
 
 export interface DialogData {
   title: string;
@@ -25,9 +26,9 @@ export class UploadDocumentComponent {
   ngOnInit(): void {
   }
 
-  public fileList: any = [];
+  public fileList: any = {};
   // convertFile: any;
-  formData = new FormData();
+  // formData = new FormData();
 
 
   public dropped(files: NgxFileDropEntry[]) {
@@ -47,8 +48,20 @@ export class UploadDocumentComponent {
           // console.log(filename, file);
           // this.convertfile(file, filename)
 
+          var file_dict = {
+            'file': file,
+            'title': '',
+            'journey': ''
+          }
 
-          this.formData.append(filename, file)
+          if (!(filename in this.fileList)) {
+            this.fileList[filename] = file_dict
+          }
+          else {
+            console.log(filename + "is already added")
+          }
+
+          // this.formData.append(filename, file)
 
         });
       } else {
@@ -57,12 +70,76 @@ export class UploadDocumentComponent {
         console.log(droppedFile.relativePath, fileEntry);
       }
     }
+  }
 
-    this.getFormData()
+  editFile(key:any) {
+    console.log(key)
+    this.openDialog(key)
+  }
+
+  deleteFile(key:any) {
+    console.log(key)
+    delete this.fileList[key]
+  }
+
+  uploadfile(file: any) {
+    this.http
+      .post('http://localhost:2222/upload', file)
+      .subscribe({
+        next: (res) => console.log(res),
+        error: (err) => {
+          console.log(err.error.text)
+
+          // Upload Success
+          if (err.error.text == 'All files uploaded!') {
+            
+            console.log('All files are uploaded!')
+            // Reset fileList
+            this.reset()
+            // ADD REDIRECT LINK TO SUCCESS
+
+          }
+          else {
+            // ADD ERROR MESSAGE/DIALOG
+            console.log(err.error.text)
+          }
+        },
+      });
+  }
+
+  submitForm() {
+    // Check fileList records
+    console.log(this.fileList)
+
+    // POST FormData to Backend
+    this.uploadfile(this.fileList)
+  }
+
+  reset() {
+    // Clear FormData Obj
+    this.fileList = {}
+  }
+
+  // title: string;
+  // journey: string;
+
+  openDialog(key:any): void {
+    const dialogRef = this.dialog.open(EditDocumentDetailsComponent, {
+      width: '1000px',
+      data: {title: this.fileList[key].title, journey: this.fileList[key].journey},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+      console.log('The dialog was closed');
+
+      this.fileList[key]['title'] = result.title
+      this.fileList[key].journey = result.journey
+    });
   }
 
 
-
+  
   // getBase64(file: any) {
   //   return new Promise((resolve, reject) => {
   //     const reader = new FileReader();
@@ -93,84 +170,6 @@ export class UploadDocumentComponent {
   //     console.log(error)
   //   }
   // }
-  getFormData() {
-    this.fileList = []
-    this.formData.forEach((value, key) => {
-      console.log(key)
-      console.log(value)
-      // var n = value
-      var file_dict = {
-        'key': key,
-        'value': value
-      }
-      this.fileList.push(file_dict)
-    })
-    console.log(this.fileList)
-  }
-
-  editFile(key:any) {
-    console.log(key)
-  }
-
-  deleteFile(key:any) {
-    console.log(key)
-
-    this.formData.delete(key)
-    this.getFormData()
-  }
-
-  uploadfile(file: any) {
-    this.http
-      .post('http://localhost:2222/upload', file)
-      .subscribe({
-        next: (res) => console.log(res),
-        error: (err) => {
-          console.log(err.error.text)
-
-          // Upload Success
-          if (err.error.text == 'All files uploaded!') {
-            this.reset()
-            // console.log('All files are uploaded!')
-          }
-        },
-      });
-  }
-
-  submitForm() {
-    // Check FormData records
-    this.formData.forEach((value, key) => {
-      console.log(key)
-      console.log(value)
-    })
-
-    // POST FormData to Backend
-    this.uploadfile(this.formData)
-  }
-
-  reset() {
-    // Clear FormData Obj
-    this.formData.forEach((value, key) => {
-      this.formData.delete(key)
-    })
-    this.fileList = []
-  }
-
-  title: string;
-  journey: string;
-
-  openDialog(): void {
-    const dialogRef = this.dialog.open(EditDocumentDetailsComponent, {
-      width: '1000px',
-      data: {title: this.title, journey: this.journey},
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      this.title = result;
-      this.journey = result;
-    });
-  }
-
 
 }
 
