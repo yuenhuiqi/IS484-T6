@@ -28,8 +28,46 @@ export class UploaderHomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  displayedColumns: string[] = ['title', 'fileName', 'fileType', 'journey', 'uploadDate', 'uploaderName', 'uploadStatus', 'actions'];
+  displayedColumns: string[] = ['title', 'fileName', 'fileType', 'journey', 'uploadDate', 'uploaderName', 'uploadStatus', 'edit', 'delete'];
   dataSource = ELEMENT_DATA;
+
+  // public fileList: any = [];
+
+  // formData = new FormData();
+
+  // getFormData() {
+  //   this.fileList = []
+  //   this.formData.forEach((value, key) => {
+  //     console.log(key)
+  //     console.log(value)
+  //     // var n = value
+  //     var file_dict = {
+  //       'key': key,
+  //       'value': value
+  //     }
+  //     this.fileList.push(file_dict)
+  //   })
+  //   console.log(this.fileList)
+  // }
+
+  // editFile(key:any) {
+  //   console.log(key)
+  // }
+
+  // deleteFile(key:any) {
+  //   console.log(key)
+
+  //   this.formData.delete(key)
+  //   this.getFormData()
+  // }
+
+  // reset() {
+  //   // Clear FormData Obj
+  //   this.formData.forEach((value, key) => {
+  //     this.formData.delete(key)
+  //   })
+  //   this.fileList = []
+  // }
 
 
 }
