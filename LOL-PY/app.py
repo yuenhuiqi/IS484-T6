@@ -8,7 +8,7 @@ from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text
-from multi_uploader import upload_multiDocs, dl
+from document import upload_multiDocs, dl, Document
 from user import User
 import jwt, datetime, bcrypt
 
@@ -53,6 +53,15 @@ def upload_files():
         print(f"Number of files uploaded: {len(files)}")
         # return upload_doc(file)
         return upload_multiDocs(files)
+
+@app.route('/getDocDetails', methods=['GET'])
+def getAllDocs():
+    return Document.query.all()
+
+@app.route('/getDoc/<file_name>', methods=['GET'])
+def getDoc(file_name):
+    
+    return Document.query.filter_by(uploadID=file_name).first()
 
 @app.route('/download/<upload_id>')
 def download(upload_id):

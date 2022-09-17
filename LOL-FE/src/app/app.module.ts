@@ -31,6 +31,7 @@ import { UploadSuccessComponent } from './components/upload-success/upload-succe
 import { ViewDocumentComponent } from './components/docviewer/doc-viewer.component';
 
 import { MatDialogModule } from '@angular/material/dialog';
+import { EditUploadedDocumentComponent } from './components/edit-uploaded-document/edit-uploaded-document.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     UploadDocumentComponent,
     EditDocumentDetailsComponent,
     UploadSuccessComponent, 
-    ViewDocumentComponent
+    ViewDocumentComponent, EditUploadedDocumentComponent
   ],
   imports: [
     BrowserModule,
