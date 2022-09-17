@@ -41,8 +41,8 @@
         Journey<span style="color:red;">*</span> :
         <mat-form-field appearance="outline">
             <mat-label>Select</mat-label>
-            <mat-select>
-                <mat-option value="one">Lending</mat-option>
+            <mat-select [(ngModel)]="data.journey">
+                <mat-option value="Lending">Lending</mat-option>
             </mat-select>
         </mat-form-field>
     </p>
@@ -50,6 +50,6 @@
 <div mat-dialog-actions>
     <span class="example-spacer"></span>
     <button mat-stroked-button (click)="onNoClick()" >Cancel</button>
-    <button mat-raised-button [mat-dialog-close]="data.title" cdkFocusInitial>Save</button>
+    <button mat-raised-button [mat-dialog-close]="data" cdkFocusInitial>Save</button>
 </div>
 
