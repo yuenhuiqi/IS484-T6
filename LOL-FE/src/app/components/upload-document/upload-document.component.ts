@@ -114,6 +114,7 @@ export class UploadDocumentComponent {
             this.reset()
             // ADD REDIRECT LINK TO SUCCESS
             console.log(err.error.text)
+            location.assign('/uploader/upload/success')
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
