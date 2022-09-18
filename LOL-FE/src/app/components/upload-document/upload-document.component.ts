@@ -5,7 +5,10 @@ import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http'
 // import * as e from 'express';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDocumentDetailsComponent } from '../edit-document-details/edit-document-details.component';
+import { UserService } from '../../service/user.service';
+
 import { elementAt } from 'rxjs';
+
 
 export interface DialogData {
   title: string;
@@ -20,15 +23,16 @@ export interface DialogData {
 
 export class UploadDocumentComponent {
 
-  constructor(public http: HttpClient, public dialog: MatDialog) { }
+  constructor(private user: UserService, public http: HttpClient, public dialog: MatDialog) { }
   
 
   ngOnInit(): void {
+    this.getUserID()
   }
 
   public fileList: any = {};
-  // convertFile: any;
-  // formData = new FormData();
+  token = localStorage.getItem('token');
+  userID: String = "";
 
 
   public dropped(files: NgxFileDropEntry[]) {
@@ -46,22 +50,22 @@ export class UploadDocumentComponent {
           // Here you can access the real file
           var filename = droppedFile.relativePath
           // console.log(filename, file);
-          // this.convertfile(file, filename)
+          // console.log(this.userID)
 
           var file_dict = {
-            'file': file,
+            'file': '',
             'title': '',
-            'journey': ''
+            'journey': '',
+            'userID': this.userID
           }
 
           if (!(filename in this.fileList)) {
             this.fileList[filename] = file_dict
+            this.convertfile(file, filename)
           }
           else {
             console.log(filename + "is already added")
           }
-
-          // this.formData.append(filename, file)
 
         });
       } else {
@@ -82,22 +86,34 @@ export class UploadDocumentComponent {
     delete this.fileList[key]
   }
 
+  getUserID() {
+    this.user.getUser(this.token)
+      .subscribe(
+        (res:any) => {
+          // console.log(res)
+          this.userID = res.userID
+          // console.log(this.userID)
+        }, 
+        err => console.log(err)
+      )
+  }
+
   uploadfile(file: any) {
     this.http
       .post('http://localhost:2222/upload', file)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
-          console.log(err.error.text)
+          // console.log(err.error.text)
 
           // Upload Success
-          if (err.error.text == 'All files uploaded!') {
+          if (err.error.text == 'All documents uploaded!') {
             
-            console.log('All files are uploaded!')
+            console.log('All documents are uploaded!')
             // Reset fileList
             this.reset()
             // ADD REDIRECT LINK TO SUCCESS
-
+            console.log(err.error.text)
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
@@ -120,9 +136,6 @@ export class UploadDocumentComponent {
     this.fileList = {}
   }
 
-  // title: string;
-  // journey: string;
-
   openDialog(key:any): void {
     const dialogRef = this.dialog.open(EditDocumentDetailsComponent, {
       width: '1000px',
@@ -133,43 +146,38 @@ export class UploadDocumentComponent {
       console.log(result)
       console.log('The dialog was closed');
 
-      this.fileList[key]['title'] = result.title
+      this.fileList[key].title = result.title
       this.fileList[key].journey = result.journey
     });
   }
-
-
   
-  // getBase64(file: any) {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.onload = (e) => {
-  //       resolve(reader.result)
-  //     };
-  //     reader.onerror = () => {
-  //       reject(new Error('Unable to read..'));
-  //     };
-  //     reader.readAsDataURL(file);
-  //   });
+  getBase64(file: any) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        resolve(reader.result)
+      };
+      reader.onerror = () => {
+        reject(new Error('Unable to read..'));
+      };
+      reader.readAsDataURL(file);
 
-  // }
+    });
 
-  // async convertfile(file: any, filename: string) {
-  //   try {
-  //     const data = await this.getBase64(file);
+  }
 
-  //     console.log(file)
-  //     this.convertFile = {
-  //       filename: filename,
-  //       data: data
-  //     }
-  //     this.uploadfile(this.convertFile)
+  async convertfile(file: any, filename: string) {
+    try {
+      const data = await this.getBase64(file);
 
-  //     console.log(this.convertFile)
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
+      // console.log(file)
+      this.fileList[filename].file = data
+
+      // console.log(this.fileList)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 }
 
