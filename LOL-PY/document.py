@@ -176,10 +176,8 @@ def dl(upload_id):
 def getAllDocs(docs):
     docList = []
     for doc in docs:
-        # print(doc.lastUpdated)
         uploaderName = getUserByID(doc.userID)
         status = doc.upload_status
-        print(status)
         docList.append({'uploaderName': uploaderName, 'docID': doc.docID, 'docName': doc.docName, 'docTitle': doc.docTitle,
                      'docType': doc.docType, 'journey': doc.journey, 'docLink': doc.docLink, 'lastUpdated': doc.lastUpdated, 'upload_status': status})
 
