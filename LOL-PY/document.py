@@ -1,5 +1,6 @@
 from database import *
 from keywordss import Keywordss
+from user import getUserByID
 
 from asyncio.windows_events import NULL
 import uuid
@@ -11,49 +12,53 @@ import boto3
 
 import enum
 from sqlalchemy import Enum
-from flask import Flask, render_template, request, send_file, flash
+from flask import Flask, render_template, request, send_file, flash, jsonify
 
 
+# class UploadStatus(enum.Enum):
+#     """
+#     Serves as enum values for upload_status column of files table
+#     (either PENDING, PROCESSING, COMPLETE OR ERROR)
+#     """
+#     PENDING = 1
+#     PROCESSING = 2
+#     COMPLETE = 3
+#     ERROR = 4
 
-class UploadStatus(enum.Enum):
-    """
-    Serves as enum values for upload_status column of files table
-    (either PENDING, PROCESSING, COMPLETE OR ERROR)
-    """
-    PENDING = 1
-    PROCESSING = 2
-    COMPLETE = 3
-    ERROR = 4
 
-
-doc_kw = db.Table('doc_kw',
-                    db.Column('dk_docID', db.Integer, db.ForeignKey('document.docID')),
-                    db.Column('dk_keywordID', db.Integer, db.ForeignKey('keywordss.keywordID'))
-                    )
+# doc_kw = db.Table('doc_kw',
+#                     db.Column('dk_docID', db.Integer, db.ForeignKey('document.docID')),
+#                     db.Column('dk_keywordID', db.Integer, db.ForeignKey('keywordss.keywordID'))
+#                     )
 
 
 class Document(db.Model):
     __tablename__ = 'document'
 
-    userID = db.Column(db.Integer, nullable=False)
+    userID = db.Column(db.String(200), nullable=False)
     docID = db.Column(db.String(200), nullable=False, primary_key=True)
     docName = db.Column(db.String(200), nullable=False)
-    docLink = db.Column(db.String(200), nullable=False)
-    category = db.Column(db.String(200), nullable=False)
+    docTitle = db.Column(db.String(200), nullable=False)
+    docLink = db.Column(db.String(200))
+    docType = db.Column(db.String(200), nullable=False)
+    journey = db.Column(db.String(200), nullable=False)
     lastUpdated = db.Column(db.DATETIME, nullable=False)
-    upload_status = db.Column(
-        Enum(UploadStatus), nullable=False, default=UploadStatus.PENDING
-    )
-    keywords = db.relationship('Keywordss', secondary=doc_kw, backref = 'documents')
-    
-    def __init__(self, userID, docName, docLink, category):
-        self.userID = userID
-        self.docName = docName
-        self.docLink = docLink
-        self.category = category
-        now = datetime.now()
-        self.lastUpdated = now.strftime("%d/%m/%Y %H:%M:%S")
+    # upload_status = db.Column(
+    #     Enum(UploadStatus), nullable=False, default=UploadStatus.PENDING
+    # )
+    upload_status = db.Column(db.String(200), nullable=False, default="PENDING")
 
+    # keywords = db.relationship('Keywordss', secondary=doc_kw, backref = 'documents')
+
+    # def __init__(self, userID, docName, docTitle, docLink, docType, journey, upload_status):
+    #     self.userID = userID
+    #     self.docName = docName
+    #     self.docTitle = docTitle
+    #     self.docLink = docLink
+    #     self.docType = docType
+    #     self.journey = journey
+    #     now = datetime.now()
+    #     self.lastUpdated = now.strftime("%d/%m/%Y %H:%M:%S")
 
 
 app.config['AWS_ACCESS_KEY'] = "AKIATQNEAAZWJVRPYX56"
@@ -69,7 +74,7 @@ s3 = boto3.client(
 )
 
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'ppt','pptx', 'doc', 'docx'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'ppt', 'pptx', 'doc', 'docx'}
 
 
 def allowed_file(filename):
@@ -77,14 +82,15 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def upload_doc_to_s3(file, fn):
+def upload_doc_to_s3(file, fn, ct):
     try:
         s3.upload_fileobj(
             file,
             app.config["AWS_BUCKET_NAME"],
             fn,
             ExtraArgs={
-                "ContentType": file.content_type  # Set appropriate content type as per the file
+                "ContentType": ct  # Set appropriate content type as per the file
+                # "ContentType": ct.content_type
             }
         )
     except Exception as e:
@@ -94,60 +100,87 @@ def upload_doc_to_s3(file, fn):
     return "{}{}".format(app.config["AWS_DOMAIN"], fn)
 
 
-def upload_doc(file):
+def upload_doc(name, doc, doctype):
     id = uuid.uuid1()
     id = id.hex
 
     dt = str(datetime.now())
-    user = '2'
+    user = doc['userID']
 
-    fn = file.filename
+    fn = name
+    t = doc['title']
+    j = doc['journey']
+
     # data = file.read()
     # fn=file['filename']
-    # data = b64decode(file['data'].split(",").pop())
+    file = doc['file'].split(",")
+    data = BytesIO(b64decode(file[1]))
+    ct = file[0].split(";")[0]
+    ct = ct.split(":").pop()
+    # print(ct)
 
     try:
-        upload = Document(docID=id, docName=fn, lastUpdated=dt,
-                        userID=user, upload_status=UploadStatus.PROCESSING)
+        upload = Document(userID=user, docID=id, docName=fn, docTitle=t, docType=doctype, journey=j,
+                          lastUpdated=dt, upload_status="PROCESSING")
         db.session.add(upload)
         db.session.commit()
 
-        docLink = upload_doc_to_s3(file, fn)
+        print('````````````````````````````````')
+
+        docLink = upload_doc_to_s3(data, fn, ct)
         if docLink[0] == "Err":
             Document.query.filter_by(docID=id).delete()
             db.session.commit()
             return 'Err', docLink[1]
         else:
             upload.docLink = docLink
-            upload.upload_status = UploadStatus.COMPLETE
+            upload.upload_status = "COMPLETE"
+            # upload.upload_status = UploadStatus.COMPLETE
             db.session.commit()
 
             print(f'Uploaded: {fn, id, dt}')
             return f'Uploaded: {fn, id, dt}', HTTPStatus.OK
 
     except Exception as e:
-        upload.upload_status = UploadStatus.ERROR
+        # upload.upload_status = UploadStatus.ERROR
+        upload.upload_status = "ERROR"
         db.session.commit()
         return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-def upload_multiDocs(files):
+def upload_multiDocs(docs):
     print("--------")
-    for file in files:
+    for name in docs:
 
-        # print(file[0])
-        if file and allowed_file(file[0].filename):
-            upload = upload_doc(file[0])
+        doc = docs[name]
+        # print(doc)
+        if doc and allowed_file(name):
+            doctype = name.rsplit('.', 1)[1].lower()
+
+            upload = upload_doc(name, doc, doctype)
             if upload[0] == 'Err':
-                return f'File upload error! {upload[1]}'
+                return f'Document upload error! {upload[1]}'
         else:
             # print('unknown file')
             return "File extension unknown, unable to download"
 
-    return 'All files uploaded!'
+    return 'All documents uploaded!'
 
 
 def dl(upload_id):
     upload = Document.query.filter_by(docID=upload_id).first()
     print(f'{upload.filename} downloaded!')
     return send_file(BytesIO(upload.data), attachment_filename=upload.filename, as_attachment=True)
+
+
+def getAllDocs(docs):
+    docList = []
+    for doc in docs:
+        # print(doc.lastUpdated)
+        uploaderName = getUserByID(doc.userID)
+        status = doc.upload_status
+        print(status)
+        docList.append({'uploaderName': uploaderName, 'docID': doc.docID, 'docName': doc.docName, 'docTitle': doc.docTitle,
+                     'docType': doc.docType, 'journey': doc.journey, 'docLink': doc.docLink, 'lastUpdated': doc.lastUpdated, 'upload_status': status})
+
+    return jsonify(docList)

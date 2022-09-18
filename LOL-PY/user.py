@@ -26,5 +26,9 @@ def generateHash(pw):
 
 def encodeToken(userName):
     return jwt.encode({'userName': userName, 'password': 'is484t6'}, 'is484t6', "HS256")
+
+def getUserByID(userID):
+    user = User.query.filter_by(userID=userID).first()
+    return user.userName
     
     

@@ -8,9 +8,11 @@ from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text
-from document import upload_multiDocs, dl, Document
+from document import upload_multiDocs, dl, getAllDocs, Document
 from user import User
 import jwt, datetime, bcrypt
+
+import requests
 
 bcrypt = Bcrypt(app)
 cors = CORS(app)
@@ -40,27 +42,28 @@ def index():
 @cross_origin()
 def upload_files():
     if request.method == 'POST':
-        print(request.files)
+        # print(request.get_json())
 
-    files = request.files.listvalues()
-    if len(files) == 0:
-        return 'No files found, try again.'
+    # files = request.files.listvalues()
+        docs = request.json
+    if len(docs) == 0:
+        return 'No documents found, try again.'
     else:
         # file = request.json
-        print(files)
+        # print(files)
 
         # files = request.files.getlist('file')
-        print(f"Number of files uploaded: {len(files)}")
+        print(f"Number of documents uploaded: {len(docs)}")
         # return upload_doc(file)
-        return upload_multiDocs(files)
+        return upload_multiDocs(docs)
 
 @app.route('/getDocDetails', methods=['GET'])
-def getAllDocs():
-    return Document.query.all()
+def getDocDetails():
+    docs = Document.query.order_by(Document.lastUpdated.desc())
+    return getAllDocs(docs)
 
 @app.route('/getDoc/<file_name>', methods=['GET'])
 def getDoc(file_name):
-    
     return Document.query.filter_by(uploadID=file_name).first()
 
 @app.route('/download/<upload_id>')

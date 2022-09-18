@@ -1,20 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import {MatTable} from '@angular/material/table';
+import { GetDocsService } from '../../service/get-docs.service';
 
 export interface PeriodicElement {
-  title: string;
-  fileName: string;
-  fileType: string;
+  docTitle: string;
+  docName: string;
+  docType: string;
   journey: string;
-  uploadDate: Date;
+  lastUpdated: Date;
   uploaderName: string;
-  uploadStatus: string;
+  upload_status: string;
 }
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {title: 'Lending Journey User Guide', fileName: "lending_journey.pdf", fileType: 'Pdf', journey: "lending", uploadDate: new Date("08/08/2022"), uploaderName: "CY", uploadStatus: 'uploaded'},
-  {title: 'Lending Journey User Guide', fileName: "lending_journey.pdf", fileType: 'Pdf', journey: "lending", uploadDate: new Date("08/08/2022"), uploaderName: "CY", uploadStatus: 'uploaded'},
-  {title: 'Lending Journey User Guide', fileName: "lending_journey.pdf", fileType: 'Pdf', journey: "lending", uploadDate: new Date("08/08/2022"), uploaderName: "CY", uploadStatus: 'uploaded'},
-];
 
 @Component({
   selector: 'app-uploader-home',
@@ -23,32 +19,50 @@ const ELEMENT_DATA: PeriodicElement[] = [
 })
 export class UploaderHomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private GetDocs: GetDocsService) { }
 
   ngOnInit(): void {
+    this.getDocDetails()
   }
 
-  displayedColumns: string[] = ['title', 'fileName', 'fileType', 'journey', 'uploadDate', 'uploaderName', 'uploadStatus', 'edit', 'delete'];
-  dataSource = ELEMENT_DATA;
+  docDetails: any = {}
+  token = localStorage.getItem('token');
+  userName: String = "";
+  detailsList:any = []
 
-  // public fileList: any = [];
+  displayedColumns: string[] = ['docTitle', 'docName', 'docType', 'journey', 'lastUpdated', 'uploaderName', 'upload_status', 'edit', 'delete']
+  dataSource = [];
 
-  // formData = new FormData();
+  getDocDetails() {
+    this.GetDocs.getDocDetails()
+      .subscribe(
+        (res: any) => {
+          console.log(res)
+          this.docDetails = res
+          console.log(this.docDetails)
+          this.displayDetails()
+        },
+        err => console.log(err)
+      )
+  }
 
-  // getFormData() {
-  //   this.fileList = []
-  //   this.formData.forEach((value, key) => {
-  //     console.log(key)
-  //     console.log(value)
-  //     // var n = value
-  //     var file_dict = {
-  //       'key': key,
-  //       'value': value
-  //     }
-  //     this.fileList.push(file_dict)
-  //   })
-  //   console.log(this.fileList)
-  // }
+  displayDetails() {
+    this.docDetails.forEach((docDetail: any) => {
+      // console.log(docDetail)
+      var doc_dict:any = {}
+      for (let col of this.displayedColumns.slice(0, -2)) {
+        console.log(col)
+        doc_dict[col] = docDetail[col]
+        console.log(doc_dict)
+      }
+      console.log(doc_dict)
+      this.detailsList.push(doc_dict)
+    })
+
+    const ELEMENT_DATA = this.detailsList
+    this.dataSource = ELEMENT_DATA
+  }
+
 
   // editFile(key:any) {
   //   console.log(key)
@@ -60,14 +74,5 @@ export class UploaderHomeComponent implements OnInit {
   //   this.formData.delete(key)
   //   this.getFormData()
   // }
-
-  // reset() {
-  //   // Clear FormData Obj
-  //   this.formData.forEach((value, key) => {
-  //     this.formData.delete(key)
-  //   })
-  //   this.fileList = []
-  // }
-
 
 }
