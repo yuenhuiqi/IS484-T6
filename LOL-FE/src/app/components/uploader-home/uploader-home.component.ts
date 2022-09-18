@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GetDocsService } from '../../service/get-docs.service';
+import { ManageDocsService } from '../../service/manage-docs.service';
 
 @Component({
   selector: 'app-uploader-home',
@@ -8,7 +8,7 @@ import { GetDocsService } from '../../service/get-docs.service';
 })
 export class UploaderHomeComponent implements OnInit {
 
-  constructor(private GetDocs: GetDocsService) { }
+  constructor(private manageDocs: ManageDocsService) { }
 
   ngOnInit(): void {
     this.getDocDetails()
@@ -20,7 +20,7 @@ export class UploaderHomeComponent implements OnInit {
   dataSource = [];
 
   getDocDetails() {
-    this.GetDocs.getDocDetails()
+    this.manageDocs.getDocDetails()
       .subscribe(
         (res: any) => {
           console.log(res)
@@ -36,9 +36,27 @@ export class UploaderHomeComponent implements OnInit {
   //   console.log(key)
   // }
 
-  deleteDoc(key:any) {
-    console.log(key)
+  deleteDoc(docID: any) {
+    console.log(docID)
+    this.manageDocs.deleteDoc(docID)
+      .subscribe({
+        next: (res) => console.log(res),
+        error: (err) => {
+          // console.log(err.error.text)
 
+          // Upload Success
+          if (err.error.text == 'Document deleted!') {
+            console.log('Document deleted!')
+
+            // ADD REDIRECT LINK TO SUCCESS
+            console.log(err.error.text)
+          }
+          else {
+            // ADD ERROR MESSAGE/DIALOG
+            console.log(err.error.text)
+          }
+        },
+      });
   }
 
 }

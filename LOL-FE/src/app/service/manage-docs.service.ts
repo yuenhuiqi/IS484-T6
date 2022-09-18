@@ -4,11 +4,15 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class GetDocsService {
+export class ManageDocsService {
 
   constructor(private http: HttpClient) { }
 
   getDocDetails() {
     return this.http.get(`http://localhost:2222/getDocDetails`)
+  }
+
+  deleteDoc(docID:any) {
+    return this.http.post(`http://localhost:2222/deleteDoc`, docID)
   }
 }
