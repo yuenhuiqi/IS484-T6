@@ -2,7 +2,6 @@ from database import *
 from keywordss import Keywordss
 from user import getUserByID
 
-from asyncio.windows_events import NULL
 import uuid
 from datetime import datetime
 from io import BytesIO
