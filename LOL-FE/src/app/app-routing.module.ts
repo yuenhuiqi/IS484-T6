@@ -7,6 +7,7 @@ import { LoginComponent } from './components/login/login.component';
 import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
 import { ViewDocumentComponent } from './components/docviewer/doc-viewer.component';
 import { EditUploadedDocumentComponent } from './components/edit-uploaded-document/edit-uploaded-document.component';
+import { ViewResultsComponent } from './components/view-results/view-results.component';
 
 
 const routes: Routes = [
@@ -16,7 +17,8 @@ const routes: Routes = [
   { path: 'uploader/upload', component: UploadDocumentComponent},
   { path: 'uploader/upload/success', component: UploadSuccessComponent },
   { path: 'viewdocument', component: ViewDocumentComponent},
-  { path: 'uploader/editdocument', component: EditUploadedDocumentComponent }
+  { path: 'uploader/editdocument', component: EditUploadedDocumentComponent },
+  { path: 'viewresults', component: ViewResultsComponent }
 ]
 
 @NgModule({
