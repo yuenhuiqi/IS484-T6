@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ManageDocsService } from '../../service/manage-docs.service';
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-uploader-home',
@@ -8,7 +9,10 @@ import { ManageDocsService } from '../../service/manage-docs.service';
 })
 export class UploaderHomeComponent implements OnInit {
 
-  constructor(private manageDocs: ManageDocsService) { }
+  constructor(
+    private manageDocs: ManageDocsService,
+    private router: Router
+    ) { }
 
   ngOnInit(): void {
     this.getDocDetails()
@@ -25,16 +29,15 @@ export class UploaderHomeComponent implements OnInit {
         (res: any) => {
           console.log(res)
           this.docDetails = res
-          // console.log(this.docDetails)
           this.dataSource = this.docDetails
         },
         err => console.log(err)
       )
   }
 
-  // editFile(key:any) {
-  //   console.log(key)
-  // }
+  editUploadedDoc(docID: any) {
+    this.router.navigate(['/uploader/editdocument/' + docID]);
+  }
 
   deleteDoc(docID: any) {
     console.log(docID)

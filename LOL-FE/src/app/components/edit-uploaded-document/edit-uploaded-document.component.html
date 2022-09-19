@@ -1,20 +1,23 @@
-<h1 style="padding: 2rem;">Title of the document: </h1>
+<h1 style="padding: 2rem;">Title of the document: <span style="color: blue">{{ documentDetails.docTitle }}</span></h1>
 <div style="padding: 0px 2rem 1rem 2rem;">
     <div class="container-fluid">
         <h3> Edit Document Details ✏ </h3>
         <div>
+
+            <!-- Previously Uploaded Document -->
             <p>
                 Document Uploaded<span style="color:red;">*</span>
                 <button mat-button>
                     <a target="_blank" [routerLink] = "['/viewdocument']">
-                        <u>Preview Document</u> 
-                        <!-- insert the existing file name -->
+                        <u>{{ documentDetails.docName }}</u> 
                         <!-- not sure if can make it disappear after a new file is uploaded -->
                     </a>
                 </button> 
                 <input type="file" style="display: none" #fileInput (change)="onChangeFileInput()">
                 <button mat-stroked-button class="file-select-button" (click)="onClickFileInputButton()">Browse</button>
             </p>
+
+            <!-- Newly Uploaded Document -->
             <div> 
                 <p class="file-name" *ngIf="!file; else fileName"> New Document Uploaded: No file uploaded</p>
                 <ng-template #fileName>
@@ -25,27 +28,32 @@
                     </p>
                 </ng-template>
             </div>
+
+            <!-- Document Title -->
             <p>
                 Document Title<span style="color:red;">*</span> : 
                 <mat-form-field appearance="outline">
                 <mat-label>Name your document</mat-label>
-                <input matInput>
+                <input matInput value="{{ documentDetails.docTitle }}" [(ngModel)]="editDocData.docTitle" name="docTitle">
                 </mat-form-field>
             </p>
+            
+            <!-- Document Journey -->
             <p>
                 Journey<span style="color:red;">*</span> :
                 <mat-form-field appearance="outline">
                     <mat-label>Select</mat-label>
-                    <mat-select>
+                    <mat-select [(ngModel)]="editDocData.journey" name="journey">
                         <mat-option value="lending">Lending</mat-option>
                     </mat-select>
                 </mat-form-field>
             </p>
+
         </div>
         <div>
             <button style="margin-left: 950px;" mat-stroked-button [routerLink] = "['/uploader']">Cancel</button>
             <span style="padding-right: 1rem;"></span>
-            <button mat-raised-button>Save</button>
+            <button mat-raised-button (click)="editUploadedDoc()">Save</button>
         </div>
     </div>
 </div>

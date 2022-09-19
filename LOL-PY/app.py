@@ -1,3 +1,5 @@
+from distutils.command.upload import upload
+from distutils.version import Version
 from flask import Flask, redirect, url_for, render_template, request, session, jsonify, flash, current_app, make_response
 from flask_cors import CORS, cross_origin
 
@@ -9,14 +11,16 @@ from flask_api import status
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text
 from document import upload_multiDocs, dl, getAllDocs, Document
+from versioning import Versioning
 from user import User
-import jwt, datetime, bcrypt
+import jwt, datetime, bcrypt, json
 
 import requests
 
 bcrypt = Bcrypt(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+db = SQLAlchemy(app)
 
 @app.route('/search/<string:question>', methods=["GET"])
 def search_results(question):
@@ -56,11 +60,43 @@ def upload_files():
         print(f"Number of documents uploaded: {len(docs)}")
         # return upload_doc(file)
         return upload_multiDocs(docs)
-
+    
+@app.route('/updateDoc/<doc_id>/<doc_title>/<doc_journey>', methods=['POST'])
+def updateDocDetails(doc_id, doc_title, doc_journey):
+    doc = Document.query.filter_by(docID=doc_id).first()
+    new_doc = Versioning(userID = doc.userID, docID = doc.docID, docName = doc.docName, docTitle = doc.docTitle,
+                     docType = doc.docType, journey = doc.journey, docLink = doc.docLink, lastUpdated= doc.lastUpdated, upload_status= doc.upload_status)
+    
+    doc.docTitle = doc_title
+    doc.journey = doc_journey
+    try: 
+        db.session.merge(new_doc)
+        db.session.merge(doc)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "message": "Document details has been successfully updated!" 
+            }
+        )
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "Failed to update document details :(" 
+            }
+        )
+        
+        
 @app.route('/getDocDetails', methods=['GET'])
 def getDocDetails():
     docs = Document.query.order_by(Document.lastUpdated.desc())
     return getAllDocs(docs)
+
+@app.route('/getDocDetails/<doc_id>', methods=['GET'])
+def getDocInfo(doc_id):
+    doc = Document.query.filter_by(docID=doc_id).first()
+    return jsonify({"docID": doc.docID, "docName": doc.docName, "docTitle": doc.docTitle, "docLink": doc.docLink, "journey": doc.journey })
 
 @app.route('/getDoc/<file_name>', methods=['GET'])
 def getDoc(file_name):

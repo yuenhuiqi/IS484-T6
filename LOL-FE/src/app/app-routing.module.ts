@@ -17,8 +17,8 @@ const routes: Routes = [
   { path: 'uploader/upload', component: UploadDocumentComponent},
   { path: 'uploader/upload/success', component: UploadSuccessComponent },
   { path: 'viewdocument', component: ViewDocumentComponent},
-  { path: 'uploader/editdocument', component: EditUploadedDocumentComponent },
-  { path: 'viewresults', component: ViewResultsComponent }
+  { path: 'viewresults', component: ViewResultsComponent },
+  { path: 'uploader/editdocument/:id', component: EditUploadedDocumentComponent }
 ]
 
 @NgModule({
