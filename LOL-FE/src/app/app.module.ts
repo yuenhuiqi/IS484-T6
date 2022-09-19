@@ -36,6 +36,7 @@ import { EditUploadedDocumentComponent } from './components/edit-uploaded-docume
 import { ViewResultsComponent } from './components/view-results/view-results.component';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { ViewResultsProductComponent } from './components/view-results-product/view-results-product.component';
 
 
 
@@ -49,7 +50,10 @@ import {MatExpansionModule} from '@angular/material/expansion';
     UploadDocumentComponent,
     EditDocumentDetailsComponent,
     UploadSuccessComponent, 
-    ViewDocumentComponent, EditUploadedDocumentComponent, ViewResultsComponent
+    ViewDocumentComponent, 
+    EditUploadedDocumentComponent, 
+    ViewResultsComponent, 
+    ViewResultsProductComponent
   ],
   imports: [
     BrowserModule,
