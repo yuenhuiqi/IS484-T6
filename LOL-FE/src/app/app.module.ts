@@ -33,6 +33,11 @@ import { ViewDocumentComponent } from './components/docviewer/doc-viewer.compone
 
 import { MatDialogModule } from '@angular/material/dialog';
 import { EditUploadedDocumentComponent } from './components/edit-uploaded-document/edit-uploaded-document.component';
+import { ViewResultsComponent } from './components/view-results/view-results.component';
+import {CdkAccordionModule} from '@angular/cdk/accordion';
+import {MatExpansionModule} from '@angular/material/expansion';
+
+
 
 @NgModule({
   declarations: [
@@ -44,7 +49,7 @@ import { EditUploadedDocumentComponent } from './components/edit-uploaded-docume
     UploadDocumentComponent,
     EditDocumentDetailsComponent,
     UploadSuccessComponent, 
-    ViewDocumentComponent, EditUploadedDocumentComponent
+    ViewDocumentComponent, EditUploadedDocumentComponent, ViewResultsComponent
   ],
   imports: [
     BrowserModule,
@@ -64,6 +69,8 @@ import { EditUploadedDocumentComponent } from './components/edit-uploaded-docume
     FormsModule,
     HttpClientModule,
     MatDialogModule,
+    CdkAccordionModule, 
+    MatExpansionModule,
     MatSnackBarModule
   ],
   providers: [],

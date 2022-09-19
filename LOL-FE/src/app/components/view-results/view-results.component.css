@@ -1,0 +1,70 @@
+.search-bar { 
+    padding-left: 30px; 
+    padding-top: 20px;
+}
+
+.example-full-width {
+    width: 1031px;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-wrapper {
+    border: 1px solid #B0C2D3 !important;
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    background-color: white;
+    color: #003B70;
+}
+
+
+.mat-form-field-wrapper, .mat-form-field-wrapper::after {
+    padding: 0px;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-start, .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-width: 0px !important;
+}
+
+.mat-input-element::placeholder {
+    /* background-color: red; */
+    color: #B0C2D3;
+}
+
+
+.example-form .mat-form-field-infix {
+    border-width: 6px;
+}
+
+.mat-form-field-flex {
+    align-items: center !important;
+}
+
+.mat-form-field-autofill-control.search-input {
+    /* background-color: green;
+    border: 1px solid black; */
+    padding-bottom: 2px;
+    margin: 0px;
+    padding-left: 20px;
+    font-size: 26px;
+}
+
+
+.mat-form-field-suffix {
+    width: 33px;
+    height: 33px;
+    font-size: 33px;
+    margin-right: 10px;
+    padding: 1px 1px 3px 3px;
+}
+
+.container-fluid {
+    padding: 2rem; 
+    border: 1px solid;
+    border-radius: 4px;
+    border-color: gainsboro;
+    box-shadow: 2px 2px 5px 5px #f3f3f3;
+}
+
+.enter_icon {
+    width: 30px;
+    height: 50px; 
+}
