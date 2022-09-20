@@ -3,7 +3,7 @@ from haystack import Document
 from cupid_ai.model import Doc
 import regex as re
 from wordsegment import load, segment
-load()
+
 
 class InProgressDoc(Doc):
   '''
@@ -54,6 +54,7 @@ class InProgressDoc(Doc):
   # or splits terms that are not meant to be split ("CAGIDs" -> "cagi ds")
   # need some experimentation with a custom corpus 
   def segment_words(self):
+    load()
     if len(self.lines) > 0:
       # print("---BEFORE--- \n", self.lines)
       newlines = []
