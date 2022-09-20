@@ -10,8 +10,7 @@ from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text
-from document import Document, upload_multiDocs, dl, getAllDocs, deleteDocFromS3
-from versioning import Versioning
+from document import Document, upload_multiDocs, dl, getAllDocs, deleteAllDocVersions
 from user import User
 import jwt, datetime, bcrypt, json
 
@@ -64,14 +63,9 @@ def upload_files():
 @app.route('/updateDoc/<doc_id>/<doc_title>/<doc_journey>', methods=['POST'])
 def updateDocDetails(doc_id, doc_title, doc_journey):
     doc = Document.query.filter_by(docID=doc_id).first()
-    new_doc = Versioning(userID = doc.userID, docID = doc.docID, docName = doc.docName, docTitle = doc.docTitle,
-                     docType = doc.docType, journey = doc.journey, docLink = doc.docLink, lastUpdated= doc.lastUpdated, upload_status= doc.upload_status)
-    
     doc.docTitle = doc_title
     doc.journey = doc_journey
     try: 
-        db.session.merge(new_doc)
-        db.session.merge(doc)
         db.session.commit()
         return jsonify(
             {
@@ -96,11 +90,7 @@ def getDocDetails():
 @app.route('/deleteDoc', methods=['POST'])
 def deleteDoc():
     docName = request.json["docName"]
-    print(docName)
-    deleteDocFromS3(docName)
-    # Document.query.filter_by(docID=id).delete()
-    # db.session.commit()
-    # doc = Document.query.filter_by(docID=docID).first()
+    deleteAllDocVersions(docName)
     return "Document deleted!"
 
 @app.route('/download/<upload_id>')

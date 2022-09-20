@@ -1,6 +1,7 @@
 from database import *
 from keywordss import Keywordss
 from user import getUserByID
+from versioning import moveDocToVersioning, deleteDocVersions
 
 import uuid
 from datetime import datetime
@@ -94,11 +95,19 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def upload_doc_to_s3(file, fn, ct):
+def upload_doc_to_s3(doc, fn):
+    # Document pre-processing
+    file = doc['file'].split(",")
+    data = BytesIO(b64decode(file[1]))
+
+    ct = file[0].split(";")[0]
+    ct = ct.split(":").pop()
+    # print(ct)
+
     # Upload Document to S3
     try:
         s3.upload_fileobj(
-            file,
+            data,
             app.config["AWS_BUCKET_NAME"],
             fn,
             ExtraArgs={
@@ -120,13 +129,6 @@ def upload_doc_to_s3(file, fn, ct):
         # print(s3_object_versions, 'All versionID')
         # print(s3_object_versions[0], 'versionID')
 
-        # Get SPECIFIC version of doc
-        # obj_version = s3.ObjectVersion(
-        #     app.config["AWS_BUCKET_NAME"],
-        #     fn,
-        #     versions[0]
-        # ).get()
-
     except Exception as e:
         print("Something Happened (S3 Versioning): ", e)
         return "Err", e
@@ -137,31 +139,17 @@ def upload_doc_to_s3(file, fn, ct):
 def upload_doc(name, doc, doctype):
     id = uuid.uuid1()
     id = id.hex
-
     dt = str(datetime.now())
-    user = doc['userID']
-
-    fn = name
-    t = doc['title']
-    j = doc['journey']
-
-    # data = file.read()
-    # fn=file['filename']
-    file = doc['file'].split(",")
-    data = BytesIO(b64decode(file[1]))
-    ct = file[0].split(";")[0]
-    ct = ct.split(":").pop()
-    # print(ct)
 
     try:
-        upload = Document(userID=user, docID=id, docName=fn, docTitle=t, docType=doctype, journey=j,
+        upload = Document(userID=doc['userID'], docID=id, docName=name, docTitle=doc['title'], docType=doctype, journey=doc['journey'],
                           lastUpdated=dt, upload_status="PROCESSING")
         db.session.add(upload)
         db.session.commit()
 
         print('````````````````````````````````')
 
-        docS3 = upload_doc_to_s3(data, fn, ct)
+        docS3 = upload_doc_to_s3(doc, name)
         if docS3[0] == "Err":
             Document.query.filter_by(docID=id).delete()
             db.session.commit()
@@ -173,8 +161,8 @@ def upload_doc(name, doc, doctype):
             # upload.upload_status = UploadStatus.COMPLETE
             db.session.commit()
 
-            print(f'Uploaded: {fn, id, dt}')
-            return f'Uploaded: {fn, id, dt}', HTTPStatus.OK
+            print(f'Uploaded: {name, id, dt}')
+            return f'Uploaded: {name, id, dt}', HTTPStatus.OK
 
     except Exception as e:
         # upload.upload_status = UploadStatus.ERROR
@@ -194,6 +182,9 @@ def upload_multiDocs(docs):
 
             if db.session.query(exists().where(Document.docName == name)).scalar():
                 print(name, "doc exist")
+                currentDoc = Document.query.filter_by(docName=name).first()
+                moveDocToVersioning(currentDoc)
+                update_doc(currentDoc, doc, name)
 
             else:
                 print(name, "new doc")
@@ -205,6 +196,32 @@ def upload_multiDocs(docs):
             return "File extension unknown, unable to download"
 
     return 'All documents uploaded!'
+
+
+def update_doc(currentDoc, doc, name):
+    dt = str(datetime.now())
+
+    try:
+        docS3 = upload_doc_to_s3(doc, name)
+        if docS3[0] == "Err":
+            return 'Update Failed!', docS3[1]
+        else:
+            update = currentDoc
+            update.userID = doc['userID']
+            update.docTitle = doc['title']
+            update.journey = doc['journey']
+            update.lastUpdated = dt
+            update.docLink = docS3[0]
+            update.VersionID = docS3[1]
+            db.session.commit()
+
+            print(f'Updated: {name, dt}')
+            return f'Updated: {name, dt}', HTTPStatus.OK
+
+    except Exception as e:
+        update.upload_status = "UPDATE ERROR"
+        db.session.commit()
+        return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 def dl(upload_id):
@@ -224,7 +241,7 @@ def getAllDocs(docs):
     return jsonify(docList)
 
 
-def deleteDocFromS3(docName):
+def deleteAllDocVersions(docName):
     # Delete ALL Document Versions from AWS S3 bucket
     s3_bucket.object_versions.filter(Prefix=docName).delete()
     print(f'All versions of {docName} has been deleted from S3!')
@@ -233,8 +250,8 @@ def deleteDocFromS3(docName):
     Document.query.filter_by(docName=docName).delete()
 
     # Delete all past versions from Version DB
-
+    deleteDocVersions(docName)
     db.session.commit()
-    print(f'{docName} deleted from Document & Version DB!')
 
+    print(f'{docName} deleted from Document & Version DB!')
     return f'{docName} deleted!'

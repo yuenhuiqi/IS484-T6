@@ -50,11 +50,9 @@ export class UploaderHomeComponent implements OnInit {
 
           // Upload Success
           if (err.error.text == 'Document deleted!') {
-            console.log('Document deleted!')
-            location.reload()
-
-            // ADD REDIRECT LINK TO SUCCESS
+            // RELOAD upon successful deletion
             console.log(err.error.text)
+            location.reload()
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
