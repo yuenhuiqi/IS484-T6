@@ -1,1 +1,2 @@
 from cupid_ai.pipelines.uploaderPipeline import uploaderPipeline
+from cupid_ai.pipelines.uploaderManualPipeline import uploaderManualPipeline

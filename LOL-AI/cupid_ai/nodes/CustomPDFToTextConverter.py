@@ -2,7 +2,7 @@ from re import L
 from PyPDF2 import PdfFileReader
 from haystack.nodes import BaseConverter
 from haystack import Document
-from haystack_ai.model import InProgressDoc
+from cupid_ai.model import InProgressDoc
 from typing import Any, Dict, List, Optional
 
 
@@ -28,7 +28,7 @@ class CustomPDFToTextConverter(BaseConverter):
 
         # FOR TESTING PURPOSES - use Lending Journey User Guide in ./testdata -----------
         pages: List[str] = []
-        with open("./haystack_ai/testdata/Lending Journey User Guide.pdf", "rb") as f:
+        with open("./cupid_ai/testdata/Lending Journey User Guide.pdf", "rb") as f:
             reader = PdfFileReader(f)
             num_pages = reader.getNumPages() 
 

@@ -1,8 +1,8 @@
 from haystack.pipelines import Pipeline
 
-from haystack_ai.nodes import CustomPDFToTextConverter
-from haystack.document_stores.faiss import FAISSDocumentStore
+from cupid_ai.nodes import CustomPDFToTextConverter
 from haystack.nodes import PreProcessor
+from cupid_ai.nodes.document_store import documentstore
 
 text_converter = CustomPDFToTextConverter()
 
@@ -14,14 +14,6 @@ preprocessor = PreProcessor(
     split_length=100,
     split_respect_sentence_boundary=False,
 )
-
-documentstore = FAISSDocumentStore(
-    sql_url="sqlite:///haystack_ai/db/faiss_meta.db", 
-    progress_bar=False
-)
-# initialize FAISS Document Store with default settings 
-# Default SQL database for metdata uses an SQLite instance, which we accept for development and testing purposes.
-# For deployment/handover, we should have an external SQL database (Haystack recommends Postgres) so that metadata is permanent even in the event of server shutdown. 
 
 uploaderPipeline = Pipeline()
 

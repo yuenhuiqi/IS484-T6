@@ -1,1 +1,2 @@
 from cupid_ai.nodes.CustomPDFToTextConverter import CustomPDFToTextConverter
+from cupid_ai.nodes.document_store import documentstore
