@@ -10,7 +10,7 @@ from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text
-from document import upload_multiDocs, dl, getAllDocs, Document
+from document import Document, upload_multiDocs, dl, getAllDocs, deleteDocFromS3
 from versioning import Versioning
 from user import User
 import jwt, datetime, bcrypt, json
@@ -45,11 +45,11 @@ def index():
 @app.route('/upload', methods=['POST'])
 @cross_origin()
 def upload_files():
-    if request.method == 'POST':
+    # if request.method == 'POST':
         # print(request.get_json())
 
-    # files = request.files.listvalues()
-        docs = request.json
+        # files = request.files.listvalues()
+    docs = request.json
     if len(docs) == 0:
         return 'No documents found, try again.'
     else:
@@ -93,14 +93,15 @@ def getDocDetails():
     docs = Document.query.order_by(Document.lastUpdated.desc())
     return getAllDocs(docs)
 
-@app.route('/getDocDetails/<doc_id>', methods=['GET'])
-def getDocInfo(doc_id):
-    doc = Document.query.filter_by(docID=doc_id).first()
-    return jsonify({"docID": doc.docID, "docName": doc.docName, "docTitle": doc.docTitle, "docLink": doc.docLink, "journey": doc.journey })
-
-@app.route('/getDoc/<file_name>', methods=['GET'])
-def getDoc(file_name):
-    return Document.query.filter_by(uploadID=file_name).first()
+@app.route('/deleteDoc', methods=['POST'])
+def deleteDoc():
+    docName = request.json["docName"]
+    print(docName)
+    deleteDocFromS3(docName)
+    # Document.query.filter_by(docID=id).delete()
+    # db.session.commit()
+    # doc = Document.query.filter_by(docID=docID).first()
+    return "Document deleted!"
 
 @app.route('/download/<upload_id>')
 def download(upload_id):

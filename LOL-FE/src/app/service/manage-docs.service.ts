@@ -12,7 +12,7 @@ export class ManageDocsService {
     return this.http.get(`http://localhost:2222/getDocDetails`)
   }
 
-  deleteDoc(docID:any) {
-    return this.http.post(`http://localhost:2222/deleteDoc`, docID)
+  deleteDoc(docName:string) {
+    return this.http.post(`http://localhost:2222/deleteDoc`, docName)
   }
 }

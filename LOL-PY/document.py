@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 from io import BytesIO
 from base64 import b64decode
+from collections import deque
 from http import HTTPStatus
 import boto3
 
@@ -39,13 +40,15 @@ class Document(db.Model):
     docName = db.Column(db.String(200), nullable=False)
     docTitle = db.Column(db.String(200), nullable=False)
     docLink = db.Column(db.String(200))
+    VersionID = db.Column(db.String(200))
     docType = db.Column(db.String(200), nullable=False)
     journey = db.Column(db.String(200), nullable=False)
     lastUpdated = db.Column(db.DATETIME, nullable=False)
     # upload_status = db.Column(
     #     Enum(UploadStatus), nullable=False, default=UploadStatus.PENDING
     # )
-    upload_status = db.Column(db.String(200), nullable=False, default="PENDING")
+    upload_status = db.Column(
+        db.String(200), nullable=False, default="PENDING")
 
     # keywords = db.relationship('Keywordss', secondary=doc_kw, backref = 'documents')
 
@@ -66,12 +69,22 @@ app.config['AWS_BUCKET_NAME'] = 'is484t6'
 app.config['AWS_DOMAIN'] = 'http://is484t6.us-east-1.s3.amazonaws.com/'
 
 
-s3 = boto3.client(
-    "s3",
+session = boto3.Session(
     aws_access_key_id=app.config["AWS_ACCESS_KEY"],
-    aws_secret_access_key=app.config["AWS_SECRET_ACCESS_KEY"],
+    aws_secret_access_key=app.config["AWS_SECRET_ACCESS_KEY"]
 )
 
+s3 = session.client('s3')
+s3_resource = session.resource('s3')
+
+# s3 = boto3.client(
+#     "s3",
+#     aws_access_key_id=app.config["AWS_ACCESS_KEY"],
+#     aws_secret_access_key=app.config["AWS_SECRET_ACCESS_KEY"],
+# )
+
+# s3_resource = boto3.resource('s3')
+s3_bucket = s3_resource.Bucket(app.config["AWS_BUCKET_NAME"])
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'ppt', 'pptx', 'doc', 'docx'}
 
@@ -82,6 +95,7 @@ def allowed_file(filename):
 
 
 def upload_doc_to_s3(file, fn, ct):
+    # Upload Document to S3
     try:
         s3.upload_fileobj(
             file,
@@ -93,10 +107,31 @@ def upload_doc_to_s3(file, fn, ct):
             }
         )
     except Exception as e:
-        print("Something Happened: ", e)
+        print("Something Happened (S3 Upload): ", e)
         return "Err", e
 
-    return "{}{}".format(app.config["AWS_DOMAIN"], fn)
+    # Retrieve VersionID of uploaded document
+    try:
+        versions = s3_bucket.object_versions.filter(Prefix=fn)
+        s3_object_versions = deque()
+        for version in versions:
+            obj = version.get()
+            s3_object_versions.append(obj.get('VersionId'))
+        # print(s3_object_versions, 'All versionID')
+        # print(s3_object_versions[0], 'versionID')
+
+        # Get SPECIFIC version of doc
+        # obj_version = s3.ObjectVersion(
+        #     app.config["AWS_BUCKET_NAME"],
+        #     fn,
+        #     versions[0]
+        # ).get()
+
+    except Exception as e:
+        print("Something Happened (S3 Versioning): ", e)
+        return "Err", e
+
+    return ["{}{}".format(app.config["AWS_DOMAIN"], fn), s3_object_versions[0]]
 
 
 def upload_doc(name, doc, doctype):
@@ -126,13 +161,14 @@ def upload_doc(name, doc, doctype):
 
         print('````````````````````````````````')
 
-        docLink = upload_doc_to_s3(data, fn, ct)
-        if docLink[0] == "Err":
+        docS3 = upload_doc_to_s3(data, fn, ct)
+        if docS3[0] == "Err":
             Document.query.filter_by(docID=id).delete()
             db.session.commit()
-            return 'Err', docLink[1]
+            return 'Err', docS3[1]
         else:
-            upload.docLink = docLink
+            upload.docLink = docS3[0]
+            upload.VersionID = docS3[1]
             upload.upload_status = "COMPLETE"
             # upload.upload_status = UploadStatus.COMPLETE
             db.session.commit()
@@ -156,9 +192,14 @@ def upload_multiDocs(docs):
         if doc and allowed_file(name):
             doctype = name.rsplit('.', 1)[1].lower()
 
-            upload = upload_doc(name, doc, doctype)
-            if upload[0] == 'Err':
-                return f'Document upload error! {upload[1]}'
+            if db.session.query(exists().where(Document.docName == name)).scalar():
+                print(name, "doc exist")
+
+            else:
+                print(name, "new doc")
+                upload = upload_doc(name, doc, doctype)
+                if upload[0] == 'Err':
+                    return f'Document upload error! {upload[1]}'
         else:
             # print('unknown file')
             return "File extension unknown, unable to download"
@@ -178,6 +219,22 @@ def getAllDocs(docs):
         uploaderName = getUserByID(doc.userID)
         status = doc.upload_status
         docList.append({'uploaderName': uploaderName, 'docID': doc.docID, 'docName': doc.docName, 'docTitle': doc.docTitle,
-                     'docType': doc.docType, 'journey': doc.journey, 'docLink': doc.docLink, 'lastUpdated': doc.lastUpdated, 'upload_status': status})
+                        'docType': doc.docType, 'journey': doc.journey, 'docLink': doc.docLink, 'VersionID': doc.VersionID, 'lastUpdated': doc.lastUpdated, 'upload_status': status})
 
     return jsonify(docList)
+
+
+def deleteDocFromS3(docName):
+    # Delete ALL Document Versions from AWS S3 bucket
+    s3_bucket.object_versions.filter(Prefix=docName).delete()
+    print(f'All versions of {docName} has been deleted from S3!')
+
+    # Delete from Document DB
+    Document.query.filter_by(docName=docName).delete()
+
+    # Delete all past versions from Version DB
+
+    db.session.commit()
+    print(f'{docName} deleted from Document & Version DB!')
+
+    return f'{docName} deleted!'

@@ -39,9 +39,10 @@ export class UploaderHomeComponent implements OnInit {
     this.router.navigate(['/uploader/editdocument/' + docID]);
   }
 
-  deleteDoc(docID: any) {
-    console.log(docID)
-    this.manageDocs.deleteDoc(docID)
+  deleteDoc(docName: any) {
+    console.log(docName)
+    docName = {"docName":docName}
+    this.manageDocs.deleteDoc(docName)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
@@ -50,6 +51,7 @@ export class UploaderHomeComponent implements OnInit {
           // Upload Success
           if (err.error.text == 'Document deleted!') {
             console.log('Document deleted!')
+            location.reload()
 
             // ADD REDIRECT LINK TO SUCCESS
             console.log(err.error.text)
