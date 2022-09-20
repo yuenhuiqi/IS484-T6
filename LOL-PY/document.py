@@ -223,6 +223,26 @@ def update_doc(currentDoc, doc, name):
         db.session.commit()
         return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
+def update_docDetails(doc, doc_title, doc_journey):
+    try:        
+        doc.docTitle = doc_title
+        doc.journey = doc_journey
+        db.session.commit()
+
+        print(doc.docTitle, "after commit")
+        return jsonify(
+            {
+                "code": 200,
+                "message": "Document details has been successfully updated!"
+            }
+        )
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "Failed to update document details :("
+            }
+        )
 
 def dl(upload_id):
     upload = Document.query.filter_by(docID=upload_id).first()
