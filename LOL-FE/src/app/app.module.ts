@@ -11,6 +11,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -32,6 +33,12 @@ import { ViewDocumentComponent } from './components/docviewer/doc-viewer.compone
 
 import { MatDialogModule } from '@angular/material/dialog';
 import { EditUploadedDocumentComponent } from './components/edit-uploaded-document/edit-uploaded-document.component';
+import { ViewResultsComponent } from './components/view-results/view-results.component';
+import {CdkAccordionModule} from '@angular/cdk/accordion';
+import {MatExpansionModule} from '@angular/material/expansion';
+import { ViewResultsProductComponent } from './components/view-results-product/view-results-product.component';
+
+
 
 @NgModule({
   declarations: [
@@ -43,7 +50,10 @@ import { EditUploadedDocumentComponent } from './components/edit-uploaded-docume
     UploadDocumentComponent,
     EditDocumentDetailsComponent,
     UploadSuccessComponent, 
-    ViewDocumentComponent, EditUploadedDocumentComponent
+    ViewDocumentComponent, 
+    EditUploadedDocumentComponent, 
+    ViewResultsComponent, 
+    ViewResultsProductComponent
   ],
   imports: [
     BrowserModule,
@@ -63,6 +73,9 @@ import { EditUploadedDocumentComponent } from './components/edit-uploaded-docume
     FormsModule,
     HttpClientModule,
     MatDialogModule,
+    CdkAccordionModule, 
+    MatExpansionModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

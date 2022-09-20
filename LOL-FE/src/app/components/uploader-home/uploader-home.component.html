@@ -48,7 +48,7 @@
 
             <ng-container matColumnDef="edit">
                 <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef><button mat-button [routerLink] = "['/uploader/editdocument']">Edit</button></td>
+                <td mat-cell *matCellDef="let element"><button mat-button (click)="editUploadedDoc(element.docID)" >Edit</button></td>
             </ng-container>
 
             <ng-container matColumnDef="delete">
