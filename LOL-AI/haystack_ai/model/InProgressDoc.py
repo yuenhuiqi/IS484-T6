@@ -1,3 +1,5 @@
+from haystack import Document
+
 from haystack_ai.model.Doc import Doc
 import regex as re
 from wordsegment import load, segment
@@ -13,14 +15,16 @@ class InProgressDoc(Doc):
   
   def build(self):
     processed_text = " ".join(self.lines)
-    return {
-      "meta": {
+    meta = {
         "name": self.doc_title,
         "page": self.page_no,
         "raw": self.raw_text
-      },
-      "content": processed_text
-    }
+      }
+
+    return Document(
+      content=processed_text,
+      meta=meta
+      )
 
   def remove_page_numbers(self):
     for (j, line) in enumerate(self.lines):

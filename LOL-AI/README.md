@@ -10,7 +10,7 @@ Install packages
 
 Running the application in development mode: 
 
-    uvicorn main:app --reload
+    uvicorn app:app --reload
 
 # About 
 This app uses FastAPI as a web server. [Documentation](https://fastapi.tiangolo.com)
