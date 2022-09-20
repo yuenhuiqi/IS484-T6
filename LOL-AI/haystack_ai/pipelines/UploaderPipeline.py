@@ -1,6 +1,6 @@
 from haystack.pipelines import Pipeline
 
-from haystack_ai.nodes.CustomPDFToTextConverter import CustomPDFToTextConverter
+from haystack_ai.nodes import CustomPDFToTextConverter
 from haystack.document_stores.faiss import FAISSDocumentStore
 from haystack.nodes import PreProcessor
 
@@ -16,7 +16,7 @@ preprocessor = PreProcessor(
 )
 
 documentstore = FAISSDocumentStore(
-    sql_url="sqlite:///", 
+    sql_url="sqlite:///haystack_ai/db/faiss_meta.db", 
     progress_bar=False
 )
 # initialize FAISS Document Store with default settings 

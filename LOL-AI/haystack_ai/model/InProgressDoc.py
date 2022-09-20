@@ -1,6 +1,6 @@
 from haystack import Document
 
-from haystack_ai.model.Doc import Doc
+from haystack_ai.model import Doc
 import regex as re
 from wordsegment import load, segment
 load()

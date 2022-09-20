@@ -2,7 +2,7 @@ from re import L
 from PyPDF2 import PdfFileReader
 from haystack.nodes import BaseConverter
 from haystack import Document
-from haystack_ai.model.InProgressDoc import InProgressDoc
+from haystack_ai.model import InProgressDoc
 from typing import Any, Dict, List, Optional
 
 
