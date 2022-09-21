@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     env: str = "DEV"
     faiss_index_path = "./cupid_ai/db/index.faiss"
     faiss_config_path = "./cupid_ai/db/index.json"
+    use_gpu = False
 
     # For future expansion - when there are secrets that we don't want to commit, we can load them from env 
     # class Config:

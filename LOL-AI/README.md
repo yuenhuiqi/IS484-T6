@@ -19,6 +19,8 @@ If it's your first time running this server in a new environment, or you've mess
     python reset_db.py
 
 
+The **API documentation** can be seen at http://localhost:8000/docs - this is a set of built-in Swagger documentation which also allows you to easily send requests to the server. 
+
 # About 
 This app uses FastAPI as a web server. [Documentation](https://fastapi.tiangolo.com)
 

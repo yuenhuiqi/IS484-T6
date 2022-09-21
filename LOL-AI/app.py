@@ -1,8 +1,10 @@
 from fastapi import FastAPI
+from cupid_ai.handler.SearchRequestHandler import SearchRequestHandler
 from cupid_ai.nodes import documentstore
 from cupid_ai.pipelines import uploaderPipeline
 from cupid_ai.nodes import retriever
-from cupid_ai.pipelines import uploaderManualPipeline
+# from cupid_ai.pipelines import uploaderManualPipeline
+from cupid_ai.model import SearchRequest
 from config import settings
 
 app = FastAPI()
@@ -27,3 +29,8 @@ async def test():
 
     # uploaderManualPipeline(url="fakeUrl", meta = meta)
     return {"Message": "ok"}
+
+@app.post("/search")
+def search(searchrequest: SearchRequest):
+    handler = SearchRequestHandler(searchrequest.query)
+    return handler.run()
