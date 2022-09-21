@@ -15,7 +15,7 @@ export class UploaderHomeComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.getDocDetails()
+    this.getAllDocDetails()
   }
 
   docDetails: any = {}
@@ -23,8 +23,8 @@ export class UploaderHomeComponent implements OnInit {
   displayedColumns: string[] = ['docTitle', 'docName', 'docType', 'journey', 'lastUpdated', 'uploaderName', 'upload_status', 'edit', 'delete']
   dataSource = [];
 
-  getDocDetails() {
-    this.manageDocs.getDocDetails()
+  getAllDocDetails() {
+    this.manageDocs.getAllDocDetails()
       .subscribe(
         (res: any) => {
           console.log(res)
@@ -43,9 +43,10 @@ export class UploaderHomeComponent implements OnInit {
     this.router.navigate(['/uploader/editdocument/' + docID]);
   }
 
-  deleteDoc(docID: any) {
-    console.log(docID)
-    this.manageDocs.deleteDoc(docID)
+  deleteDoc(docName: any) {
+    console.log(docName)
+    docName = {"docName":docName}
+    this.manageDocs.deleteDoc(docName)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
@@ -53,10 +54,9 @@ export class UploaderHomeComponent implements OnInit {
 
           // Upload Success
           if (err.error.text == 'Document deleted!') {
-            console.log('Document deleted!')
-
-            // ADD REDIRECT LINK TO SUCCESS
+            // RELOAD upon successful deletion
             console.log(err.error.text)
+            location.reload()
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
