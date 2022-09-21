@@ -8,8 +8,16 @@ export class ManageDocsService {
 
   constructor(private http: HttpClient) { }
 
-  getDocDetails() {
-    return this.http.get(`http://localhost:2222/getDocDetails`)
+  getAllDocDetails() {
+    return this.http.get(`http://localhost:2222/getAllDocDetails`)
+  }
+
+  getDocDetails(docID:string) {
+    return this.http.get(`http://localhost:2222/getDocDetails/` + docID)
+  }
+
+  updateDoc(docID:string, docTitle:string, journey:string) {
+    return this.http.post(`http://localhost:2222/updateDoc/${docID}/${docTitle}/${journey}`, {})
   }
 
   deleteDoc(docName:string) {

@@ -10,10 +10,12 @@ from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text
-from document import Document, upload_multiDocs, dl, getAllDocs, deleteDocFromS3
-from versioning import Versioning
+from document import Document, upload_multiDocs, dl, getAllDocs, deleteAllDocVersions, update_docDetails
 from user import User
-import jwt, datetime, bcrypt, json
+import jwt
+import datetime
+import bcrypt
+import json
 
 import requests
 
@@ -21,6 +23,7 @@ bcrypt = Bcrypt(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = SQLAlchemy(app)
+
 
 @app.route('/search/<string:question>', methods=["GET"])
 def search_results(question):
@@ -36,19 +39,21 @@ def search_results(question):
         }
     )
 
+
 @app.route('/')
 def index():
     return render_template('test.html')
 
 # app.config['MAX_CONTENT_LENGTH'] = file_mb_max * 1024 * 1024
 
+
 @app.route('/upload', methods=['POST'])
 @cross_origin()
 def upload_files():
     # if request.method == 'POST':
-        # print(request.get_json())
+    # print(request.get_json())
 
-        # files = request.files.listvalues()
+    # files = request.files.listvalues()
     docs = request.json
     if len(docs) == 0:
         return 'No documents found, try again.'
@@ -60,72 +65,58 @@ def upload_files():
         print(f"Number of documents uploaded: {len(docs)}")
         # return upload_doc(file)
         return upload_multiDocs(docs)
-    
-@app.route('/updateDoc/<doc_id>/<doc_title>/<doc_journey>', methods=['POST'])
-def updateDocDetails(doc_id, doc_title, doc_journey):
-    doc = Document.query.filter_by(docID=doc_id).first()
-    new_doc = Versioning(userID = doc.userID, docID = doc.docID, docName = doc.docName, docTitle = doc.docTitle,
-                     docType = doc.docType, journey = doc.journey, docLink = doc.docLink, lastUpdated= doc.lastUpdated, upload_status= doc.upload_status)
-    
-    doc.docTitle = doc_title
-    doc.journey = doc_journey
-    try: 
-        db.session.merge(new_doc)
-        db.session.merge(doc)
-        db.session.commit()
-        return jsonify(
-            {
-                "code": 200,
-                "message": "Document details has been successfully updated!" 
-            }
-        )
-    except:
-        return jsonify(
-            {
-                "code": 500,
-                "message": "Failed to update document details :(" 
-            }
-        )
-        
-        
-@app.route('/getDocDetails', methods=['GET'])
-def getDocDetails():
+
+
+@app.route('/getAllDocDetails', methods=['GET'])
+def getAllDocDetails():
     docs = Document.query.order_by(Document.lastUpdated.desc())
     return getAllDocs(docs)
+
+
+@app.route('/getDocDetails/<doc_id>', methods=['GET'])
+def getDocDetails(doc_id):
+    doc = Document.query.filter_by(docID=doc_id).first()
+    return jsonify({'journey': doc.journey, 'docTitle': doc.docTitle})
+
+
+@app.route('/updateDoc/<doc_id>/<doc_title>/<doc_journey>', methods=['POST'])
+def updateDoc(doc_id, doc_title, doc_journey):
+    doc = Document.query.filter_by(docID=doc_id).first()
+    return update_docDetails(doc, doc_title, doc_journey)
+
 
 @app.route('/deleteDoc', methods=['POST'])
 def deleteDoc():
     docName = request.json["docName"]
-    print(docName)
-    deleteDocFromS3(docName)
-    # Document.query.filter_by(docID=id).delete()
-    # db.session.commit()
-    # doc = Document.query.filter_by(docID=docID).first()
+    deleteAllDocVersions(docName)
     return "Document deleted!"
+
 
 @app.route('/download/<upload_id>')
 def download(upload_id):
     return dl(upload_id)
 
+
 @app.route('/login', methods=['POST'])
 def login():
     json_data = request.json
     auth = request.authorization
-    
+
     user = User.query.filter_by(userID=json_data['userName']).first()
     if user and bcrypt.check_password_hash(user.password, json_data['password']):
         session['logged_in'] = True
-        token = jwt.encode({'userName': user.userID, 'password': json_data['password']}, app.config['SECRET_KEY'], "HS256")
+        token = jwt.encode(
+            {'userName': user.userID, 'password': json_data['password']}, app.config['SECRET_KEY'], "HS256")
         return jsonify({'token': token})
     else:
-        return "Incorrect username and password!", status.HTTP_400_BAD_REQUEST  
+        return "Incorrect username and password!", status.HTTP_400_BAD_REQUEST
 
 
 @app.route('/login/<string:token>', methods=['GET'])
 def getUser(token):
     user = User.query.filter_by(token=token).first()
     return jsonify({"userID": user.userID, "userName": user.userName, "role": user.role})
-         
+
 
 if __name__ == '__main__':
     app.secret_key = 'is484t6'
