@@ -1,4 +1,4 @@
-<h1 style="padding: 2rem;">Title of the document: <span style="color: blue">{{ docTitle }}</span></h1>
+<h1 style="padding: 2rem;">Title of the document: <span style="color: blue">{{ documentDetails.docTitle }}</span></h1>
 <div style="padding: 0px 2rem 1rem 2rem;">
     <div class="container-fluid">
         <h3> Edit Document Details ✏ </h3>
@@ -10,6 +10,7 @@
                 <button mat-button>
                     <a target="_blank" (click)="viewDocument()">
                         <u>{{ documentDetails.docName }}</u> 
+                        <!-- not sure if can make it disappear after a new file is uploaded -->
                     </a>
                 </button> 
                 <input type="file" style="display: none" #fileInput (change)="onChangeFileInput()">
@@ -32,7 +33,7 @@
                 Document Title<span style="color:red;">*</span> : 
                 <mat-form-field appearance="outline">
                 <mat-label>Name your document</mat-label>
-                <input matInput value="{{ editDocData.docTitle }}" [(ngModel)]="editDocData.docTitle" name="docTitle">
+                <input matInput value="{{ documentDetails.docTitle }}" [(ngModel)]="editDocData.docTitle" name="docTitle">
                 </mat-form-field>
             </p>
             

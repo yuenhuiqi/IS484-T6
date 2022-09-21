@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router'
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ManageDocsService } from '../../service/manage-docs.service';
 
 
 
@@ -13,39 +12,50 @@ import { ManageDocsService } from '../../service/manage-docs.service';
 })
 export class EditUploadedDocumentComponent implements OnInit {
 
-  constructor(private manageDocs: ManageDocsService, private route: ActivatedRoute, private http: HttpClient, private snackbar: MatSnackBar) { }
+  constructor(private route: ActivatedRoute, private http: HttpClient, private snackbar: MatSnackBar) { }
 
+  
+  @ViewChild('fileInput')
+  fileInput :any;
   sub: any;
   docID: any;
-  docTitle: any;
+  file: File | null = null;
+  documentDetails: any;
   editDocData: any;
+  res: any;
+
+  onClickFileInputButton(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  onChangeFileInput(): void {
+    const files: { [key: string]: File } = this.fileInput.nativeElement.files;
+    this.file = files[0];
+  }
 
   viewDocument(): void {
     location.assign(`/viewdocument/${this.documentDetails.docID}`)
   }
 
   editUploadedDoc(): void {
-    console.log(this.editDocData.docTitle)
-    this.manageDocs.updateDoc(this.docID, this.editDocData.docTitle, this.editDocData.journey)
-      .subscribe((data:any) => {
-        if (data.code == 200) {
-          this.snackbar.open(data.message, 'Close')
-            .afterDismissed().subscribe(() => location.assign('/uploader'))
-        }
-      })
+    this.http.post<any>(`http://localhost:2222/updateDoc/${this.docID}/${this.editDocData.docTitle}/${this.editDocData.journey}`, {} )
+    .subscribe(data => {
+      if (data.code == 200) {
+        this.snackbar.open(data.message, 'Close')
+          .afterDismissed().subscribe(()=>location.assign('/uploader')) 
+      }
+    })
   }
 
   ngOnInit(): void {
+
     this.sub = this.route.params.subscribe(params => {
       this.docID = params['id'];
     });
-
-    this.manageDocs.getDocDetails(this.docID)
+    
+    this.http.get<any>(`http://localhost:2222/getDocDetails/` + this.docID)
       .subscribe(
-        (data:any) => { 
-          this.docTitle = data.docTitle
-          this.editDocData = { 'journey': data.journey.toLowerCase(), 'docTitle': this.docTitle}
-        }
+        data => { this.editDocData = {'journey': data.journey.toLowerCase(), 'docTitle': data.docTitle}, this.documentDetails = data}
       )
   }
 }
