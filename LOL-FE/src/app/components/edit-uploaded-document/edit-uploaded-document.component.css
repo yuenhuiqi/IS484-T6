@@ -25,3 +25,8 @@
 .example-spacer {
     flex: 1 1 auto;
 }
+
+.newFile {
+    color: blue;
+    font-weight: 600;
+}

@@ -10,7 +10,7 @@ from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text
-from document import upload_multiDocs, dl, getAllDocs, Document
+from document import upload_multiDocs, dl, getAllDocs, Document, getPresignedUrl
 from versioning import Versioning
 from user import User
 import jwt, datetime, bcrypt, json
@@ -100,11 +100,18 @@ def getDocInfo(doc_id):
 
 @app.route('/getDoc/<file_name>', methods=['GET'])
 def getDoc(file_name):
-    return Document.query.filter_by(uploadID=file_name).first()
+    return Document.query.filter_by(docName=file_name).first()
 
 @app.route('/download/<upload_id>')
 def download(upload_id):
     return dl(upload_id)
+
+@app.route('/presignedUrl/<doc_id>', methods=['GET'])
+def getUrl(doc_id):
+    doc = Document.query.filter_by(docID=doc_id).first()
+    presignedUrl = getPresignedUrl(doc.docName)
+    return jsonify({'presignedUrl': presignedUrl })
+
 
 @app.route('/login', methods=['POST'])
 def login():

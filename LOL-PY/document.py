@@ -8,7 +8,7 @@ from io import BytesIO
 from base64 import b64decode
 from http import HTTPStatus
 import boto3
-
+from botocore.exceptions import ClientError
 import enum
 from sqlalchemy import Enum
 from flask import Flask, render_template, request, send_file, flash, jsonify
@@ -181,3 +181,14 @@ def getAllDocs(docs):
                      'docType': doc.docType, 'journey': doc.journey, 'docLink': doc.docLink, 'lastUpdated': doc.lastUpdated, 'upload_status': status})
 
     return jsonify(docList)
+
+
+def getPresignedUrl(file_name):
+    try:
+        response = s3.generate_presigned_url('get_object',
+                                                  Params={'Bucket': app.config["AWS_BUCKET_NAME"],'Key': file_name},
+                                                  ExpiresIn=3600)
+        return response
+    
+    except ClientError as e:
+        return e

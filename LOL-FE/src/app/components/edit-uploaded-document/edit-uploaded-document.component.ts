@@ -33,6 +33,10 @@ export class EditUploadedDocumentComponent implements OnInit {
     this.file = files[0];
   }
 
+  viewDocument(): void {
+    location.assign(`/viewdocument/${this.documentDetails.docID}`)
+  }
+
   editUploadedDoc(): void {
     this.http.post<any>(`http://localhost:2222/updateDoc/${this.docID}/${this.editDocData.docTitle}/${this.editDocData.journey}`, {} )
     .subscribe(data => {

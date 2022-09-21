@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'uploader', component: UploaderHomeComponent },
   { path: 'uploader/upload', component: UploadDocumentComponent},
   { path: 'uploader/upload/success', component: UploadSuccessComponent },
-  { path: 'viewdocument', component: ViewDocumentComponent},
+  { path: 'viewdocument/:id', component: ViewDocumentComponent},
   { path: 'viewresults', component: ViewResultsComponent },
   { path: 'uploader/editdocument/:id', component: EditUploadedDocumentComponent },
   { path: 'viewresultsproduct', component: ViewResultsProductComponent }
