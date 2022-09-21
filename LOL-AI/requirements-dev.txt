@@ -19,7 +19,6 @@ elasticsearch==7.10.1
 entrypoints==0.4
 faiss-cpu==1.7.2
 farm-haystack @ file://localhost/C:\Users\chuen\Documents\IS\haystack
-farm-haystack-rest-api==1.7.2rc0
 fastapi==0.85.0
 filelock==3.8.0
 Flask==2.2.2
