@@ -6,6 +6,7 @@
 
 from typing import Optional
 from haystack.nodes.preprocessor import PreProcessor
+from haystack.nodes import EmbeddingRetriever
 from config import settings
 from cupid_ai.nodes import CustomPDFToTextConverter
 from cupid_ai.nodes.document_store import documentstore
@@ -24,10 +25,15 @@ def uploaderManualPipeline(url: str, meta: Optional[dict]):
     split_respect_sentence_boundary=False,
 )
 
+    retriever = EmbeddingRetriever(
+        document_store=documentstore,
+        embedding_model="sentence-transformers/multi-qa-mpnet-base-dot-v1",
+        model_format="sentence_transformers",
+    )
+
     preprocessed_docs = preprocessor.process(docs)
 
     documentstore.write_documents(preprocessed_docs)
+    documentstore.update_embeddings(retriever)
     documentstore.save(settings.faiss_index_path)
-
-    # write documents to db
-    # save documentstore 
+    

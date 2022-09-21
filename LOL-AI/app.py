@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from cupid_ai.nodes import documentstore
 from cupid_ai.pipelines import uploaderPipeline
-from config import settings
+from cupid_ai.nodes import retriever
 from cupid_ai.pipelines import uploaderManualPipeline
+from config import settings
 
 app = FastAPI()
-
 
 @app.get("/")
 async def root():
@@ -21,8 +21,9 @@ async def test():
         "title": "test",
         "page": 1
     }
-    # uploaderPipeline.run(file_paths=["test"], meta=meta)
-    # documentstore.save(settings.faiss_index_path)
+    uploaderPipeline.run(file_paths=["test"], meta=meta)
+    documentstore.update_embeddings(retriever)
+    documentstore.save(settings.faiss_index_path)
 
-    uploaderManualPipeline(url="fakeUrl", meta = meta)
+    # uploaderManualPipeline(url="fakeUrl", meta = meta)
     return {"Message": "ok"}
