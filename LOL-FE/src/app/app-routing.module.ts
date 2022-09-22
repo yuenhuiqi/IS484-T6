@@ -7,8 +7,8 @@ import { LoginComponent } from './components/login/login.component';
 import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
 import { ViewDocumentComponent } from './components/docviewer/doc-viewer.component';
 import { EditUploadedDocumentComponent } from './components/edit-uploaded-document/edit-uploaded-document.component';
+import { ViewResultsComponent } from './components/view-results/view-results.component';
 import { ViewResultsProductComponent } from './components/view-results-product/view-results-product.component';
-import { ViewResultsProcessComponent } from './view-results-process/view-results-process.component';
 
 
 const routes: Routes = [
@@ -17,11 +17,10 @@ const routes: Routes = [
   { path: 'uploader', component: UploaderHomeComponent },
   { path: 'uploader/upload', component: UploadDocumentComponent},
   { path: 'uploader/upload/success', component: UploadSuccessComponent },
-  { path: 'viewdocument', component: ViewDocumentComponent},
+  { path: 'viewdocument/:id', component: ViewDocumentComponent},
+  { path: 'viewresults', component: ViewResultsComponent },
   { path: 'uploader/editdocument/:id', component: EditUploadedDocumentComponent },
-  { path: 'viewresultsproduct', component: ViewResultsProductComponent },
-  { path: 'viewresultsprocess', component: ViewResultsProcessComponent }
-
+  { path: 'viewresultsproduct', component: ViewResultsProductComponent }
 
 ]
 

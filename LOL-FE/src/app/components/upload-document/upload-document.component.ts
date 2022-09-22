@@ -110,9 +110,9 @@ export class UploadDocumentComponent {
           if (err.error.text == 'All documents uploaded!') {
             
             console.log('All documents are uploaded!')
-            // RESET fileList
+            // Reset fileList
             this.reset()
-            // REDIRECT to success page
+            // ADD REDIRECT LINK TO SUCCESS
             console.log(err.error.text)
             location.assign('/uploader/upload/success')
           }
