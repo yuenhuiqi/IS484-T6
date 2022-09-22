@@ -25,6 +25,15 @@ The **API documentation** can be seen at http://localhost:8000/docs - this is a 
 This app uses FastAPI as a web server. [Documentation](https://fastapi.tiangolo.com)
 
 # Deployment and running in prod 
-Set ENV to PROD
+Set ENV to PROD (not necessary as of now)
 
-TBD
+Run server:
+
+    uvicorn app:app --host 0.0.0.0 --port 80
+
+## Improvements 
+Deployment concepts here - explore if there is time https://fastapi.tiangolo.com/deployment/manually/#deployment-concepts
+https://fastapi.tiangolo.com/deployment/concepts/ 
+
+
+In particular, see the improvements relating to [server workers](https://fastapi.tiangolo.com/deployment/server-workers/) - this might allow the app to continue serving search requests even while generating embeddings for an uploaded document. 

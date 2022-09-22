@@ -1,8 +1,9 @@
-from re import L
+import io
 from PyPDF2 import PdfFileReader
 from haystack.nodes import BaseConverter
 from haystack import Document
 from cupid_ai.model import InProgressDoc
+from cupid_ai.util import s3, bucket_name
 from typing import Any, Dict, List, Optional
 
 
@@ -21,8 +22,10 @@ class CustomPDFToTextConverter(BaseConverter):
         Converts PDF file into documents, applying basic preprocessing 
         
         Parameters:
-        s3_link (str): AWS S3 link to PDF document 
-        title (str): title of document, as input by user during upload (NOT filename)
+        file_path (str): AWS S3 key of the input document
+        meta(Optional[Dict[str, Any]]): {
+            ID (str): UUID of file as it is recorded in the web app database
+        }
         output: 
         '''
 
@@ -40,10 +43,16 @@ class CustomPDFToTextConverter(BaseConverter):
         # END TESTING PORTION -----------------------------------------------------------
         # TODO - for the actual product we should extract a list of page text each pdf (method tbd) by this point, then continue from here
         # https://www.sqlservercentral.com/articles/reading-a-specific-file-from-an-s3-bucket-using-python - this is a good start 
+
+        object = s3.Object(bucket_name, file_path).get()["Body"].read()
+        with io.BytesIO(object) as f:
+            reader = PdfFileReader(f)
+            for page in reader.pages:
+                pages.append(page.extract_text())
         
         docs: List[InProgressDoc] = []
         for i, page in enumerate(pages):
-            in_progress_doc = InProgressDoc(meta["title"], i+1, page, page.splitlines())
+            in_progress_doc = InProgressDoc(meta["doc_uuid"], i+1, page, page.splitlines())
             docs.append(
             in_progress_doc
             .remove_page_numbers()

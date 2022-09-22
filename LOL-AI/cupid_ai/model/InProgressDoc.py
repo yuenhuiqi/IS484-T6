@@ -9,14 +9,14 @@ class InProgressDoc(Doc):
   '''
   Class to contain all preprocessing methods and build the processed doc object later on
   '''
-  def __init__(self, doc_title, page_no, raw_text, lines):
-    Doc.__init__(self, doc_title, page_no, raw_text)
+  def __init__(self, doc_uuid, page_no, raw_text, lines):
+    Doc.__init__(self, doc_uuid, page_no, raw_text)
     self.lines = lines
   
   def build(self):
     processed_text = " ".join(self.lines)
     meta = {
-        "name": self.doc_title,
+        "doc_uuid": self.doc_uuid,
         "page": self.page_no,
         "raw": self.raw_text
       }

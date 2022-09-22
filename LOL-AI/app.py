@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+from urllib import response
+from fastapi import FastAPI, Response, status
 from cupid_ai.handler.SearchRequestHandler import SearchRequestHandler
 from cupid_ai.nodes import documentstore
 from cupid_ai.pipelines import uploaderPipeline
 from cupid_ai.nodes import retriever
 # from cupid_ai.pipelines import uploaderManualPipeline
+from cupid_ai.model.UploadRequest import UploadRequest
 from cupid_ai.model import SearchRequest
 from config import settings
 
@@ -13,22 +15,25 @@ app = FastAPI()
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/fakeupload")
-async def test():
+@app.post("/upload", status_code=201)
+async def upload(uploadRequest: UploadRequest, response: Response):
     '''
-       Dummy upload function. 
-       TODO - run this, close the server and attempt restart. If all ok, delete this line and commit/push
+       Upload documents to the server for indexing.
+       Request body items: 
+            item_s3_key (str): AWS s3 key of the target document 
+            doc_uuid (str): UUID of document in the web app database
     '''
+
     meta = {
-        "title": "test",
-        "page": 1
+        "doc_uuid": uploadRequest.doc_uuid
     }
-    uploaderPipeline.run(file_paths=["test"], meta=meta)
+
+    # todo - implement better error checking and response codes 
+    uploaderPipeline.run(file_paths=[uploadRequest.item_s3_key], meta=meta)
     documentstore.update_embeddings(retriever)
     documentstore.save(settings.faiss_index_path)
+    return {"response": "SUCCESS"}
 
-    # uploaderManualPipeline(url="fakeUrl", meta = meta)
-    return {"Message": "ok"}
 
 @app.post("/search")
 def search(searchrequest: SearchRequest):

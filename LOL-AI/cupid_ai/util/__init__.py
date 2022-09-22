@@ -1,0 +1,1 @@
+from cupid_ai.util.aws_s3 import s3, bucket_name
