@@ -20,17 +20,6 @@ export class EditUploadedDocumentComponent implements OnInit {
   docTitle: any;
   editDocData: any;
 
-  editUploadedDoc(): void {
-    console.log(this.editDocData.docTitle)
-    this.manageDocs.updateDoc(this.docID, this.editDocData.docTitle, this.editDocData.journey)
-      .subscribe((data:any) => {
-        if (data.code == 200) {
-          this.snackbar.open(data.message, 'Close')
-            .afterDismissed().subscribe(() => location.assign('/uploader'))
-        }
-      })
-  }
-
   ngOnInit(): void {
     this.sub = this.route.params.subscribe(params => {
       this.docID = params['id'];
@@ -43,5 +32,19 @@ export class EditUploadedDocumentComponent implements OnInit {
           this.editDocData = { 'journey': data.journey.toLowerCase(), 'docTitle': this.docTitle}
         }
       )
+  }
+
+  editUploadedDoc(): void {
+    console.log(this.editDocData.docTitle)
+    this.manageDocs.updateDoc(this.docID, this.editDocData.docTitle, this.editDocData.journey)
+      .subscribe((data:any) => {
+        if (data.code == 200) {
+          this.snackbar.open(data.message, '', {
+            duration: 1500,
+            verticalPosition: "top"
+          })
+            .afterDismissed().subscribe(() => location.assign('/uploader'))
+        }
+      })
   }
 }

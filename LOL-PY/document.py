@@ -193,7 +193,7 @@ def upload_multiDocs(docs):
                     return f'Document upload error! {upload[1]}'
         else:
             # print('unknown file')
-            return "File extension unknown, unable to download"
+            return f"File extension of {name} not allowed, unable to download"
 
     return 'All documents uploaded!'
 

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ManageDocsService } from '../../service/manage-docs.service';
 import { Router } from '@angular/router'
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-uploader-home',
@@ -11,8 +13,9 @@ export class UploaderHomeComponent implements OnInit {
 
   constructor(
     private manageDocs: ManageDocsService,
-    private router: Router
-    ) { }
+    private router: Router,
+    private snackbar: MatSnackBar
+  ) { }
 
   ngOnInit(): void {
     this.getAllDocDetails()
@@ -41,22 +44,25 @@ export class UploaderHomeComponent implements OnInit {
 
   deleteDoc(docName: any) {
     console.log(docName)
-    docName = {"docName":docName}
+    docName = { "docName": docName }
     this.manageDocs.deleteDoc(docName)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
-          // console.log(err.error.text)
-
           // Upload Success
           if (err.error.text == 'Document deleted!') {
             // RELOAD upon successful deletion
             console.log(err.error.text)
-            location.reload()
+            this.snackbar.open(err.error.text, '', {
+              duration: 1500,
+              verticalPosition: "top"
+            })
+              .afterDismissed().subscribe(() => location.reload())
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
             console.log(err.error.text)
+            this.snackbar.open(err.error.text, 'Close')
           }
         },
       });

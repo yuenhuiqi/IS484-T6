@@ -56,7 +56,7 @@ def upload_files():
     # files = request.files.listvalues()
     docs = request.json
     if len(docs) == 0:
-        return 'No documents found, try again.'
+        return 'No documents found, please try again.'
     else:
         # file = request.json
         # print(files)
