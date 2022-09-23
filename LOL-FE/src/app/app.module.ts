@@ -37,6 +37,7 @@ import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ViewResultsProductComponent } from './components/view-results-product/view-results-product.component';
 import { ViewResultsProcessComponent } from './components/view-results-process/view-results-process.component';
+import { SafePipe } from './safe.pipe';
 
 
 
@@ -51,9 +52,10 @@ import { ViewResultsProcessComponent } from './components/view-results-process/v
     EditDocumentDetailsComponent,
     UploadSuccessComponent, 
     ViewDocumentComponent, 
-    EditUploadedDocumentComponent, 
-    ViewResultsProductComponent, 
-    ViewResultsProcessComponent
+    EditUploadedDocumentComponent,
+    ViewResultsProductComponent,
+    ViewResultsProcessComponent,
+    SafePipe
   ],
   imports: [
     BrowserModule,

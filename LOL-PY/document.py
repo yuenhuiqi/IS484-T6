@@ -10,6 +10,7 @@ from base64 import b64decode
 from collections import deque
 from http import HTTPStatus
 import boto3
+from botocore.exceptions import ClientError
 
 import enum
 from sqlalchemy import Enum
@@ -275,3 +276,14 @@ def deleteAllDocVersions(docName):
 
     print(f'{docName} deleted from Document & Version DB!')
     return f'{docName} deleted!'
+
+
+def getPresignedUrl(file_name):
+    try:
+        response = s3.generate_presigned_url('get_object',
+                                                  Params={'Bucket': app.config["AWS_BUCKET_NAME"],'Key': file_name},
+                                                  ExpiresIn=3600)
+        return response
+    
+    except ClientError as e:
+        return e
