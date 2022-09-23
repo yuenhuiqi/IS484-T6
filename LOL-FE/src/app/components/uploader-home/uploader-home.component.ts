@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ManageDocsService } from '../../service/manage-docs.service';
 import { Router } from '@angular/router'
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-uploader-home',
@@ -11,11 +13,12 @@ export class UploaderHomeComponent implements OnInit {
 
   constructor(
     private manageDocs: ManageDocsService,
-    private router: Router
-    ) { }
+    private router: Router,
+    private snackbar: MatSnackBar
+  ) { }
 
   ngOnInit(): void {
-    this.getDocDetails()
+    this.getAllDocDetails()
   }
 
   docDetails: any = {}
@@ -23,8 +26,8 @@ export class UploaderHomeComponent implements OnInit {
   displayedColumns: string[] = ['docTitle', 'docName', 'docType', 'journey', 'lastUpdated', 'uploaderName', 'upload_status', 'edit', 'delete']
   dataSource = [];
 
-  getDocDetails() {
-    this.manageDocs.getDocDetails()
+  getAllDocDetails() {
+    this.manageDocs.getAllDocDetails()
       .subscribe(
         (res: any) => {
           console.log(res)
@@ -35,32 +38,35 @@ export class UploaderHomeComponent implements OnInit {
       )
   }
 
-  viewDocument(docID: any): void {
-    location.assign(`/viewdocument/${docID}`)
-  }
-
   editUploadedDoc(docID: any) {
     this.router.navigate(['/uploader/editdocument/' + docID]);
   }
 
-  deleteDoc(docID: any) {
-    console.log(docID)
-    this.manageDocs.deleteDoc(docID)
+  viewDocument(docID: any): void {
+    location.assign(`/viewdocument/${docID}`)
+  }
+
+  deleteDoc(docName: any) {
+    console.log(docName)
+    docName = { "docName": docName }
+    this.manageDocs.deleteDoc(docName)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
-          // console.log(err.error.text)
-
           // Upload Success
           if (err.error.text == 'Document deleted!') {
-            console.log('Document deleted!')
-
-            // ADD REDIRECT LINK TO SUCCESS
+            // RELOAD upon successful deletion
             console.log(err.error.text)
+            this.snackbar.open(err.error.text, '', {
+              duration: 1500,
+              verticalPosition: "top"
+            })
+              .afterDismissed().subscribe(() => location.reload())
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
             console.log(err.error.text)
+            this.snackbar.open(err.error.text, 'Close')
           }
         },
       });

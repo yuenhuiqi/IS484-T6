@@ -4,14 +4,14 @@
         Document Title<span style="color:red;">*</span> : 
         <mat-form-field appearance="outline">
         <mat-label>Name your document</mat-label>
-        <input matInput [(ngModel)]="data.title">
+        <input matInput [(ngModel)]="data.title" required>
         </mat-form-field>
     </p>
     <p>
         Journey<span style="color:red;">*</span> :
         <mat-form-field appearance="outline">
             <mat-label>Select</mat-label>
-            <mat-select [(ngModel)]="data.journey">
+            <mat-select [(ngModel)]="data.journey" required>
                 <mat-option value="Lending">Lending</mat-option>
             </mat-select>
         </mat-form-field>

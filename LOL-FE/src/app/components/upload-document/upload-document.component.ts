@@ -3,6 +3,7 @@ import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 // import { Data } from '@angular/router';
 // import * as e from 'express';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDocumentDetailsComponent } from '../edit-document-details/edit-document-details.component';
 import { UserService } from '../../service/user.service';
@@ -23,8 +24,13 @@ export interface DialogData {
 
 export class UploadDocumentComponent {
 
-  constructor(private user: UserService, public http: HttpClient, public dialog: MatDialog) { }
-  
+  constructor(
+    private user: UserService,
+    public http: HttpClient,
+    public dialog: MatDialog,
+    private snackbar: MatSnackBar
+  ) { }
+
 
   ngOnInit(): void {
     this.getUserID()
@@ -76,12 +82,12 @@ export class UploadDocumentComponent {
     }
   }
 
-  editFile(key:any) {
+  editFile(key: any) {
     console.log(key)
     this.openDialog(key)
   }
 
-  deleteFile(key:any) {
+  deleteFile(key: any) {
     console.log(key)
     delete this.fileList[key]
   }
@@ -89,11 +95,11 @@ export class UploadDocumentComponent {
   getUserID() {
     this.user.getUser(this.token)
       .subscribe(
-        (res:any) => {
+        (res: any) => {
           // console.log(res)
           this.userID = res.userID
           // console.log(this.userID)
-        }, 
+        },
         err => console.log(err)
       )
   }
@@ -108,17 +114,25 @@ export class UploadDocumentComponent {
 
           // Upload Success
           if (err.error.text == 'All documents uploaded!') {
-            
+
             console.log('All documents are uploaded!')
-            // Reset fileList
+            // RESET fileList
             this.reset()
-            // ADD REDIRECT LINK TO SUCCESS
+            // REDIRECT to success page
             console.log(err.error.text)
-            location.assign('/uploader/upload/success')
+            this.snackbar.open("Documents have been uploaded successfully!", 'Close', {
+              duration: 2000,
+              verticalPosition: "top"
+            })
+            // location.assign('/uploader/upload/success')
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
             console.log(err.error.text)
+            this.snackbar.open(err.error.text, 'Close', {
+              duration: 2000,
+              verticalPosition: "top"
+            })
           }
         },
       });
@@ -137,10 +151,10 @@ export class UploadDocumentComponent {
     this.fileList = {}
   }
 
-  openDialog(key:any): void {
+  openDialog(key: any): void {
     const dialogRef = this.dialog.open(EditDocumentDetailsComponent, {
       width: '1000px',
-      data: {title: this.fileList[key].title, journey: this.fileList[key].journey},
+      data: { title: key, journey: this.fileList[key].journey },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -151,7 +165,7 @@ export class UploadDocumentComponent {
       this.fileList[key].journey = result.journey
     });
   }
-  
+
   getBase64(file: any) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();

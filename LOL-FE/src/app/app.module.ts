@@ -33,10 +33,10 @@ import { ViewDocumentComponent } from './components/docviewer/doc-viewer.compone
 
 import { MatDialogModule } from '@angular/material/dialog';
 import { EditUploadedDocumentComponent } from './components/edit-uploaded-document/edit-uploaded-document.component';
-import { ViewResultsComponent } from './components/view-results/view-results.component';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ViewResultsProductComponent } from './components/view-results-product/view-results-product.component';
+import { ViewResultsProcessComponent } from './components/view-results-process/view-results-process.component';
 import { SafePipe } from './safe.pipe';
 
 
@@ -52,9 +52,9 @@ import { SafePipe } from './safe.pipe';
     EditDocumentDetailsComponent,
     UploadSuccessComponent, 
     ViewDocumentComponent, 
-    EditUploadedDocumentComponent, 
-    ViewResultsComponent, 
-    ViewResultsProductComponent, 
+    EditUploadedDocumentComponent,
+    ViewResultsProductComponent,
+    ViewResultsProcessComponent,
     SafePipe
   ],
   imports: [
