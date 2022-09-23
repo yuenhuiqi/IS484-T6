@@ -22,7 +22,6 @@ const routes: Routes = [
   { path: 'uploader/editdocument/:id', component: EditUploadedDocumentComponent },
   { path: 'viewresultsproduct', component: ViewResultsProductComponent },
   { path: 'viewresultsprocess', component: ViewResultsProcessComponent }
-
 ]
 
 @NgModule({
