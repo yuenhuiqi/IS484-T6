@@ -36,4 +36,8 @@ export class ReaderHomeComponent implements OnInit {
     });
   }
 
+  submit() {
+    console.log(this.query.value)
+  }
+
 }
