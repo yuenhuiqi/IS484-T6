@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDocumentDetailsComponent } from '../edit-document-details/edit-document-details.component';
-import { UserService } from '../../service/user.service';
+import { AuthService } from '../../service/auth.service';
 
 import { elementAt } from 'rxjs';
 
@@ -25,7 +25,7 @@ export interface DialogData {
 export class UploadDocumentComponent {
 
   constructor(
-    private user: UserService,
+    private user: AuthService,
     public http: HttpClient,
     public dialog: MatDialog,
     private snackbar: MatSnackBar

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../service/user.service'
+import { AuthService } from '../../service/auth.service'
 
 interface User {
   type: string;
@@ -21,7 +21,7 @@ export class NavbarComponent implements OnInit {
 
 
   constructor(
-    private user: UserService,
+    private user: AuthService,
     ) { }
 
   ngOnInit() {

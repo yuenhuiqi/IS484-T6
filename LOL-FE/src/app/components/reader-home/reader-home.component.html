@@ -8,7 +8,12 @@
             <form class="example-form">
                 <mat-form-field class="example-full-width" appearance="outline">
                     <mat-icon matPrefix class="search_icon icon">search</mat-icon>
-                    <input matInput type="search" placeholder="Search input here" class="search-input">
+                    <input matInput type="text" [formControl]="query" [matAutocomplete]="auto" placeholder="Search input here" class="search-input">
+                    <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let option of suggestedQueries | async" [value]="option.searchText">
+                            {{ option.searchText }}
+                        </mat-option>
+                    </mat-autocomplete>
                     <mat-icon matSuffix class="enter_icon icon" enter>arrow_forward</mat-icon>
                 </mat-form-field>
             </form>

@@ -2,6 +2,10 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { AuthService } from './service/auth.service';
+import { ManageDocsService } from './service/manage-docs.service';
+import { ManageSearchQueryService } from './service/manage-search-query.service';
+
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from '@angular/material/input';
@@ -32,9 +36,11 @@ import { UploadSuccessComponent } from './components/upload-success/upload-succe
 import { ViewDocumentComponent } from './components/docviewer/doc-viewer.component';
 
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+
 import { EditUploadedDocumentComponent } from './components/edit-uploaded-document/edit-uploaded-document.component';
-import {CdkAccordionModule} from '@angular/cdk/accordion';
-import {MatExpansionModule} from '@angular/material/expansion';
+import { CdkAccordionModule } from '@angular/cdk/accordion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { ViewResultsProductComponent } from './components/view-results-product/view-results-product.component';
 import { ViewResultsProcessComponent } from './components/view-results-process/view-results-process.component';
 import { SafePipe } from './safe.pipe';
@@ -77,9 +83,10 @@ import { SafePipe } from './safe.pipe';
     MatDialogModule,
     CdkAccordionModule, 
     MatExpansionModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatAutocompleteModule
   ],
-  providers: [],
+  providers: [AuthService, ManageDocsService, ManageSearchQueryService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

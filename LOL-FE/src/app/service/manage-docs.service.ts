@@ -6,21 +6,22 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ManageDocsService {
 
+  private baseurl = "http://localhost:2222/"
   constructor(private http: HttpClient) { }
 
   getAllDocDetails() {
-    return this.http.get(`http://localhost:2222/getAllDocDetails`)
+    return this.http.get(`${this.baseurl}getAllDocDetails`)
   }
 
   getDocDetails(docID:string) {
-    return this.http.get(`http://localhost:2222/getDocDetails/` + docID)
+    return this.http.get(`${this.baseurl}getDocDetails/` + docID)
   }
 
   updateDoc(docID:string, docTitle:string, journey:string) {
-    return this.http.post(`http://localhost:2222/updateDoc/${docID}/${docTitle}/${journey}`, {})
+    return this.http.post(`${this.baseurl}updateDoc/${docID}/${docTitle}/${journey}`, {})
   }
 
   deleteDoc(docName:string) {
-    return this.http.post(`http://localhost:2222/deleteDoc`, docName)
+    return this.http.post(`${this.baseurl}deleteDoc`, docName)
   }
 }
