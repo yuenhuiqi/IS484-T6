@@ -9,7 +9,7 @@ from flask_cors import CORS
 from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
-from searchCount import search_text
+from searchCount import search_text, update_feedback
 from document import Document, upload_multiDocs, dl, getAllDocs, deleteAllDocVersions, update_docDetails, getPresignedUrl
 from user import User
 import jwt
@@ -35,6 +35,18 @@ def search_results(question):
             "data": {
                 "course": data
             }
+        }
+    )
+
+@app.route('/feedback', methods=["POST"])
+def search_results(question):
+    info = request.json
+    code, data = update_feedback(question)
+    
+    return jsonify(
+        {
+            "code": code,
+            "data": data
         }
     )
 
