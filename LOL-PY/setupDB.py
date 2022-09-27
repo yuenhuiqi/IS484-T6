@@ -4,7 +4,7 @@ from versioning import Versioning
 
 from searchCount import SearchCount
 from user import User
-from keywordss import Keywordss
+# from keywordss import Keywordss
 db.drop_all()
 db.create_all()
 

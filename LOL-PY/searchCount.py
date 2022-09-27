@@ -5,17 +5,24 @@ class SearchCount(db.Model):
 
     searchID = db.Column(db.Integer, primary_key=True)
     searchText = db.Column(db.String(200), nullable = False)
-    count = db.Column(db.Integer, nullable=False)
+    count = db.Column(db.Integer, nullable=False) #no of user clicks
+    merit = db.Column(db.Integer, nullable=False) #feedback
+    demerit = db.Column(db.Integer, nullable=False)
+
 
     def init(self, searchText, count):
         self.searchText = searchText
         self.count = count
+        self.merit = 0
+        self.demerit = 0
 
     def json(self):
         return {
             "searchID" : self.searchID,
             "searchText": self.searchText,
-            "count" : self.count
+            "count" : self.count,
+            "merit": self.merit,
+            "demerit": self.demerit
         }
 
 def initial_search():
@@ -41,6 +48,20 @@ def search_text(qn): #crude search no algorithmic smoothening of suggestions yet
             return 200, [suggestion.json() for suggestion in suggestions]
         except:
             print("none found")
+
+
+def update_feedback(qn, feedback):
+    print(feedback)
+    try:
+        current_score = SearchCount.query.filer(searchText=qn).first()
+        if feedback > 0:
+            current_score.merit += feedback
+        else:
+            current_score.demerit += feedback
+        db.session.commit()
+    except:
+        return 400, "couldn't update"
+
 
 
 
