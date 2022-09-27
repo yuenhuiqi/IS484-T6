@@ -12,4 +12,8 @@ export class AuthService {
   loginUser(user : any) {
     return this.http.post(this.loginUrl, user)
   }
+
+  getUser(token : any) {
+    return this.http.get(`${this.loginUrl}/${token}`, token)
+  }
 }

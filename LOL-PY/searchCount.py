@@ -18,17 +18,29 @@ class SearchCount(db.Model):
             "count" : self.count
         }
 
-
-def search_text(qn): #crude search no algorithmic smoothening of suggestions yet (i.e., for each sentence in a word, suggest)
+def initial_search():
     try:
-        looking_for = '%{0}%'.format(qn)
+        suggestions = SearchCount.query.order_by(SearchCount.count.desc()).limit(5).all()
+        # print(suggestions)
 
-        suggestions = SearchCount.query.filter(SearchCount.searchText.ilike(looking_for)).all()
-        
-        print( suggestions)
         return 200, [suggestion.json() for suggestion in suggestions]
     except:
         print("none found")
+
+
+def search_text(qn): #crude search no algorithmic smoothening of suggestions yet (i.e., for each sentence in a word, suggest)
+    print(qn)
+    if '{0}'.format(qn) == "-":
+        return initial_search()
+    else:
+        try:
+            looking_for = '%{0}%'.format(qn)
+            suggestions = SearchCount.query.filter(SearchCount.searchText.ilike(looking_for)).order_by(SearchCount.count.desc()).limit(10).all()
+            # print(suggestions)
+
+            return 200, [suggestion.json() for suggestion in suggestions]
+        except:
+            print("none found")
 
 
 

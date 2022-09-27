@@ -1,4 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+
+import { ManageSearchQueryService } from '../../service/manage-search-query.service';
 
 @Component({
   selector: 'app-reader-home',
@@ -8,9 +12,32 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 })
 export class ReaderHomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private manageSearchQueryService: ManageSearchQueryService) { }
+
+  query = new FormControl();
+  suggestedQueries = new BehaviorSubject<any>([]);
+
+  filtered:any;
 
   ngOnInit(): void {
+    this.getSuggestedQuery("")
+
+    this.query.valueChanges.subscribe(val => {
+      this.getSuggestedQuery(val)
+    });
+  }
+
+  getSuggestedQuery(qn:string) {
+    this.manageSearchQueryService.getSearchQuery(qn)
+    .subscribe(res => {
+      console.log(res)
+      this.filtered = res
+      this.suggestedQueries.next(this.filtered.data.course);
+    });
+  }
+
+  submit() {
+    console.log(this.query.value)
   }
 
 }

@@ -27,7 +27,6 @@ db = SQLAlchemy(app)
 
 @app.route('/search/<string:question>', methods=["GET"])
 def search_results(question):
-
     code, data = search_text(question)
     data = (sorted(data, key=lambda x: x['count'], reverse=True))
     return jsonify(
