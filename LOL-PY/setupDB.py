@@ -4,16 +4,16 @@ from versioning import Versioning
 
 from searchCount import SearchCount
 from user import User
-from keywordss import Keywordss
+# from keywordss import Keywordss
 db.drop_all()
 db.create_all()
 
-search1 = SearchCount(searchText = "how do I lend", count=30)
-search2 = SearchCount(searchText = "where is my lending document", count=2)
-search3 = SearchCount(searchText = "what is lending", count=60)
-search4 = SearchCount(searchText = "what do i need for credit application", count=88)
-search5 = SearchCount(searchText = "clm management roles", count=5)
-search6 = SearchCount(searchText = "how to edit attributes of credit document", count=43)
+search1 = SearchCount(searchText = "how do I lend", count=30, merit =0, demerit=0)
+search2 = SearchCount(searchText = "where is my lending document", count=2, merit =0, demerit=0)
+search3 = SearchCount(searchText = "what is lending", count=60, merit =0, demerit=0)
+search4 = SearchCount(searchText = "what do i need for credit application", count=88, merit =0, demerit=0)
+search5 = SearchCount(searchText = "clm management roles", count=5, merit =0, demerit=0)
+search6 = SearchCount(searchText = "how to edit attributes of credit document", count=43, merit =0, demerit=0)
 
 user1 = User(userID = "lolre", userName = "Reader", role = "reader")
 user2 = User(userID = "lolup1", userName = "Uploader 1", role = "uploader")
