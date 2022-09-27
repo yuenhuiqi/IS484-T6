@@ -39,9 +39,11 @@ def search_results(question):
     )
 
 @app.route('/feedback', methods=["POST"])
-def search_results(question):
+def feedback():
     info = request.json
-    code, data = update_feedback(question)
+    question = info["question"]
+    count = info['feedback']
+    code, data = update_feedback(question, count)
     
     return jsonify(
         {
