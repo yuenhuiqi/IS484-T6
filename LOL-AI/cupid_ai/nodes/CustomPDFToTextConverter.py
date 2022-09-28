@@ -30,20 +30,21 @@ class CustomPDFToTextConverter(BaseConverter):
         '''
 
         # FOR TESTING PURPOSES - use Lending Journey User Guide in ./testdata -----------
-        pages: List[str] = []
-        with open("./cupid_ai/testdata/Lending Journey User Guide.pdf", "rb") as f:
-            reader = PdfFileReader(f)
-            num_pages = reader.getNumPages() 
+        # with open("./cupid_ai/testdata/Lending Journey User Guide.pdf", "rb") as f:
+        #     reader = PdfFileReader(f)
+        #     num_pages = reader.getNumPages() 
 
-            for i in range(num_pages):
-                page = reader.pages[i]
-                text = page.extract_text()
-                pages.append(text)
+        #     for i in range(num_pages):
+        #         page = reader.pages[i]
+        #         text = page.extract_text()
+        #         pages.append(text)
 
         # END TESTING PORTION -----------------------------------------------------------
         # TODO - for the actual product we should extract a list of page text each pdf (method tbd) by this point, then continue from here
         # https://www.sqlservercentral.com/articles/reading-a-specific-file-from-an-s3-bucket-using-python - this is a good start 
 
+        pages: List[str] = []
+        
         object = s3.Object(bucket_name, file_path).get()["Body"].read()
         with io.BytesIO(object) as f:
             reader = PdfFileReader(f)
