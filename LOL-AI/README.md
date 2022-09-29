@@ -27,9 +27,13 @@ This app uses FastAPI as a web server. [Documentation](https://fastapi.tiangolo.
 # Deployment and running in prod 
 Set ENV to PROD (not necessary as of now)
 
+It is not advised to run the Uvicorn server on port 80 itself. There is an NGINX server on the EC2 instance that routes incoming requests from port 80 to port 8080. Much pain was experienced in understanding this fact and finding the solution. 
+
+https://stackoverflow.com/questions/62523183/how-to-change-sqlite-version-used-by-python - This link was also helpful to resolve a particularly nasty SQLite version problem
+
 Run server:
 
-    uvicorn app:app --host 0.0.0.0 --port 80
+    python3 -m uvicorn app:app --host 0.0.0.0 --port 8080
 
 ## Improvements 
 Deployment concepts here - explore if there is time https://fastapi.tiangolo.com/deployment/manually/#deployment-concepts
