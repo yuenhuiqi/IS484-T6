@@ -9,7 +9,7 @@ from flask_cors import CORS
 from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
-from searchCount import search_text, update_feedback
+from searchCount import search_text, add_count, update_feedback
 from document import Document, upload_multiDocs, dl, getAllDocs, deleteAllDocVersions, update_docDetails, getPresignedUrl
 from user import User
 import jwt
@@ -33,7 +33,19 @@ def search_results(question):
         {
             "code": code,
             "data": {
-                "course": data
+                "queryList": data
+            }
+        }
+    )
+
+@app.route('/addQueryCount/<question>', methods=["POST"])
+def search_query(question):
+    code, data = add_count(question)
+    return jsonify(
+        {
+            "code": code,
+            "data": {
+                "status": data
             }
         }
     )
