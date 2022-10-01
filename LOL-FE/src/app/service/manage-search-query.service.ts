@@ -26,4 +26,8 @@ export class ManageSearchQueryService {
     return this.http.get<Query[]>(`${this.baseurl}search/${searchText}`)
       .pipe(map(res => res));
   }
+
+  addQueryCount(query: string) {
+    return this.http.post(`${this.baseurl}addQueryCount/${query}`, {})
+  }
 }

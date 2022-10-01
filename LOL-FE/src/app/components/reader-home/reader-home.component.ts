@@ -32,12 +32,16 @@ export class ReaderHomeComponent implements OnInit {
     .subscribe(res => {
       console.log(res)
       this.filtered = res
-      this.suggestedQueries.next(this.filtered.data.course);
+      this.suggestedQueries.next(this.filtered.data.queryList);
     });
   }
 
   submit() {
     console.log(this.query.value)
+    this.manageSearchQueryService.addQueryCount(this.query.value)
+    .subscribe(res => {
+      console.log(res)
+    });
   }
 
 }
