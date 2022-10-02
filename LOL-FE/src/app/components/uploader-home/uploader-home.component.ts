@@ -43,7 +43,8 @@ export class UploaderHomeComponent implements OnInit {
   }
 
   viewDocument(docID: any): void {
-    location.assign(`/viewdocument/${docID}`)
+    window.open(`/viewdocument/${docID}`)
+    // location.assign(`/viewdocument/${docID}`)
   }
 
   deleteDoc(docName: any) {
