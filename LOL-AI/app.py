@@ -1,5 +1,6 @@
 from urllib import response
 from fastapi import FastAPI, Response, status
+from fastapi.middleware.cors import CORSMiddleware
 from cupid_ai.handler.SearchRequestHandler import SearchRequestHandler
 from cupid_ai.nodes import documentstore
 from cupid_ai.pipelines import uploaderPipeline
@@ -10,6 +11,18 @@ from cupid_ai.model import SearchRequest
 from config import settings
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:4200",
+    "http://54.254.54.186:4200/"
+    ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.get("/")
 async def root():
