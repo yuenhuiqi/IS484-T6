@@ -121,9 +121,10 @@ export class UploadDocumentComponent {
             // REDIRECT to success page
             console.log(err.error.text)
             this.snackbar.open("Documents have been uploaded successfully!", 'Close', {
-              duration: 2000,
+              duration: 6000,
               verticalPosition: "top"
             })
+            .afterDismissed().subscribe(() => location.assign('/uploader'))
             // location.assign('/uploader/upload/success')
           }
           else {
