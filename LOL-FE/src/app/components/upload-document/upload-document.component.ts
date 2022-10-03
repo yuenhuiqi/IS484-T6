@@ -60,7 +60,7 @@ export class UploadDocumentComponent {
 
           var file_dict = {
             'file': '',
-            'title': '',
+            'title': filename,
             'journey': '',
             'userID': this.userID
           }
@@ -154,7 +154,7 @@ export class UploadDocumentComponent {
   openDialog(key: any): void {
     const dialogRef = this.dialog.open(EditDocumentDetailsComponent, {
       width: '1000px',
-      data: { title: key, journey: this.fileList[key].journey },
+      data: { title: this.fileList[key].title, journey: this.fileList[key].journey },
     });
 
     dialogRef.afterClosed().subscribe(result => {
