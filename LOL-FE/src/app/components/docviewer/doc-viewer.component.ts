@@ -13,6 +13,7 @@ export class ViewDocumentComponent implements OnInit {
   sub: any;
   docID: any;
   docLink: any;
+  toggleClose = 0;
   
 
   constructor(private route: ActivatedRoute, private http: HttpClient) { }  
@@ -37,7 +38,8 @@ export class ViewDocumentComponent implements OnInit {
   }
 
   close(){
-    this.showModal = -1; 
+    // this.showModal = -1; 
+    this.toggleClose = 1;
   }
 
 }  
