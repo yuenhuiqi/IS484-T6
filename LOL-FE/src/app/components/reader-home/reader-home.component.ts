@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router'
 
 import { ManageSearchQueryService } from '../../service/manage-search-query.service';
 
@@ -12,12 +13,13 @@ import { ManageSearchQueryService } from '../../service/manage-search-query.serv
 })
 export class ReaderHomeComponent implements OnInit {
 
-  constructor(private manageSearchQueryService: ManageSearchQueryService) { }
+  constructor(private manageSearchQueryService: ManageSearchQueryService, private router: Router) { }
 
   query = new FormControl();
   suggestedQueries = new BehaviorSubject<any>([]);
 
   filtered:any;
+  searchQuery: any;
 
   ngOnInit(): void {
     this.getSuggestedQuery("")
@@ -37,11 +39,14 @@ export class ReaderHomeComponent implements OnInit {
   }
 
   submit() {
-    console.log(this.query.value)
+    this.searchQuery = this.query.value
+    // console.log(this.query.value)
     this.manageSearchQueryService.addQueryCount(this.query.value)
     .subscribe(res => {
       console.log(res)
     });
+
+    this.router.navigate(['/viewresultsprocess/' + this.searchQuery]);
   }
 
 }
