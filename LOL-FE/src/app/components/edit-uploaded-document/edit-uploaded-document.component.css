@@ -6,6 +6,33 @@
     box-shadow: 2px 2px 5px 5px #f3f3f3;
 }
 
+.container {
+    margin-bottom: 10px;
+}
+
+.version {
+    padding-top: 20px;
+}
+
+table{
+    width: 100%;
+    margin-left: -23px;
+    margin-top: -10px;
+    /* padding: 10px; */
+}
+
+.mat-header-row .mat-header-cell {
+    font-weight: bold;
+    font-size: 15px;
+    color: black;
+}
+
+.mat-row .mat-cell {
+    border-bottom: 3px solid transparent;
+    border-top: 1px solid transparent;
+    cursor: pointer;
+}
+
 .mat-stroked-button {
     border: 1px solid #6200ea; 
     color:#6200ea;

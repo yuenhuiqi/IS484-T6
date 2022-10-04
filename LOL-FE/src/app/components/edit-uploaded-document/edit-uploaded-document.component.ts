@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router'
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ManageDocsService } from '../../service/manage-docs.service';
-
+import { ManageVersioningService } from '../../service/manage-versioning.service';
 
 
 @Component({
@@ -13,25 +13,44 @@ import { ManageDocsService } from '../../service/manage-docs.service';
 })
 export class EditUploadedDocumentComponent implements OnInit {
 
-  constructor(private manageDocs: ManageDocsService, private route: ActivatedRoute, private http: HttpClient, private snackbar: MatSnackBar) { }
+  constructor(private manageVersion: ManageVersioningService, private manageDocs: ManageDocsService, private route: ActivatedRoute, private http: HttpClient, private snackbar: MatSnackBar) { }
 
   sub: any;
   docID: any;
   docTitle: any;
   editDocData: any;
 
+  displayedColumns: string[] = ['docName', 'lastUpdated', 'uploaderName']
+  dataSource = [];
+
   ngOnInit(): void {
     this.sub = this.route.params.subscribe(params => {
       this.docID = params['id'];
     });
 
+    this.getDetails()
+    this.getVersions()
+  }
+
+  getDetails() {
     this.manageDocs.getDocDetails(this.docID)
-      .subscribe(
-        (data:any) => { 
-          this.docTitle = data.docTitle
-          this.editDocData = { 'journey': data.journey.toLowerCase(), 'docTitle': this.docTitle}
-        }
-      )
+    .subscribe(
+      (data:any) => { 
+        this.docTitle = data.docTitle
+        this.editDocData = { 'journey': data.journey.toLowerCase(), 'docTitle': this.docTitle}
+      }
+    )
+  }
+
+  getVersions() {
+    this.manageVersion.getAllVersions(this.docID)
+    .subscribe(
+      (res: any) => {
+        console.log(res)
+        this.dataSource = res
+      },
+      err => console.log(err)
+    )
   }
 
   editUploadedDoc(): void {
