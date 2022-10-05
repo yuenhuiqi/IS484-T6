@@ -1,6 +1,6 @@
 <iframe [src]="docLink | safe"></iframe>
 
-<div class="uc-modal">
+<div *ngIf='!toggleClose'class="uc-modal">
     <div class="uc-m-header">
       <span class="material-icons" (click)="close()">close</span>
     </div>
@@ -8,8 +8,8 @@
       <h2>Was the search result helpful?</h2>
     </div>
     <div class="uc-m-footer">
-      <button class="btn" type="submit"><mat-icon>thumb_up</mat-icon></button>
-      <button class="btn" type="submit"><mat-icon>thumb_down</mat-icon></button>
+      <button class="btn" type="submit" (click)="close()"><mat-icon>thumb_up</mat-icon></button>
+      <button class="btn" type="submit" (click)="close()"><mat-icon>thumb_down</mat-icon></button>
     </div>
 </div>
 

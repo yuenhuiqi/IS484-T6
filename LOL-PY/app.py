@@ -11,6 +11,7 @@ from flask_api import status
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text, add_count, update_feedback
 from document import Document, upload_multiDocs, dl, getAllDocs, deleteAllDocVersions, update_docDetails, getPresignedUrl
+from versioning import getAllVersions
 from user import User
 import jwt
 import datetime
@@ -115,6 +116,11 @@ def deleteDoc():
     docName = request.json["docName"]
     deleteAllDocVersions(docName)
     return "Document deleted!"
+
+
+@app.route('/getAllVersions/<doc_id>', methods=['GET'])
+def getAllVersionsDetails(doc_id):
+    return getAllVersions(doc_id)
 
 
 @app.route('/download/<upload_id>')

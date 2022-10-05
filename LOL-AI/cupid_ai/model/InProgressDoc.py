@@ -18,7 +18,7 @@ class InProgressDoc(Doc):
     meta = {
         "doc_uuid": self.doc_uuid,
         "page": self.page_no,
-        "raw": self.raw_text
+        "raw": re.sub(r"\s+", " ", self.raw_text)
       }
 
     return Document(
