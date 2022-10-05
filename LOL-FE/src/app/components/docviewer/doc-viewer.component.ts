@@ -16,9 +16,12 @@ export class ViewDocumentComponent implements OnInit {
   toggleClose = 0;
   
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) { }  
+  constructor(private route: ActivatedRoute, private http: HttpClient) {   }  
   
   ngOnInit(): void {
+    if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:id") {
+      this.toggleClose = 1;
+    }
 
     this.sub = this.route.params.subscribe(params => {
       this.docID = params['id'];
