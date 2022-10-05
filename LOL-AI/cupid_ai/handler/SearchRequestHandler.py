@@ -14,7 +14,8 @@ class SearchRequestHandler:
         res = searchPipeline.run(
             self.query,
             params={
-                "Retriever": {"top_k": 5}
+                "Retriever": {"top_k": 3},
+                "Reader": {"top_k": 3}
             })
         print(res)
         return res
