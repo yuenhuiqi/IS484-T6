@@ -59,7 +59,7 @@ export class UploaderHomeComponent implements OnInit {
             // RELOAD upon successful deletion
             console.log(err.error.text)
             this.snackbar.open(err.error.text, '', {
-              duration: 1500,
+              duration: 6000,
               verticalPosition: "top"
             })
               .afterDismissed().subscribe(() => location.reload())

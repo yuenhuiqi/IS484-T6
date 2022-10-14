@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { FormControl } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ManageSearchQueryService } from '../../service/manage-search-query.service';
 
 @Component({
   selector: 'app-view-results-process',
   templateUrl: './view-results-process.component.html',
-  styleUrls: ['./view-results-process.component.css']
+  styleUrls: ['./view-results-process.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ViewResultsProcessComponent implements OnInit {
   panelOpenState = false;
@@ -14,7 +18,19 @@ export class ViewResultsProcessComponent implements OnInit {
   docArr: any;
   docDict: any = {};
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) { }
+  constructor(private route: ActivatedRoute, 
+                private http: HttpClient, 
+                private manageSearchQueryService: ManageSearchQueryService, 
+                private router: Router
+              ) { }
+
+  newquery = new FormControl();
+  suggestedQueries = new BehaviorSubject<any>([]);
+
+  filtered:any;
+  searchQuery: any;
+            
+
 
   ngOnInit(): void {
 
@@ -46,7 +62,32 @@ export class ViewResultsProcessComponent implements OnInit {
         }
     )
 
+    this.getSuggestedQuery("")
+
+    this.newquery.valueChanges.subscribe(val => {
+      this.getSuggestedQuery(val)
+    });
+
+  }
+
+  getSuggestedQuery(qn:string) {
+    this.manageSearchQueryService.getSearchQuery(qn)
+    .subscribe(res => {
+      console.log(res)
+      this.filtered = res
+      this.suggestedQueries.next(this.filtered.data.queryList);
+    });
+  }
+
+  submit() {
+    this.searchQuery = this.newquery.value
+    console.log(this.newquery.value)
+    this.manageSearchQueryService.addQueryCount(this.newquery.value)
+    .subscribe(res => {
+      console.log(res)
+    });
     
+    this.router.navigate(['/viewresultsprocess/' + this.searchQuery]);
   }
 
 }

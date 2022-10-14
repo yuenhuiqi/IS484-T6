@@ -2,13 +2,18 @@
     <form class="example-form">
         <mat-form-field class="example-full-width" appearance="outline">
             <mat-icon matPrefix class="search_icon icon">search</mat-icon>
-            <input matInput type="search" placeholder="Search input here" class="search-input">
-            <mat-icon matSuffix class="enter_icon icon" enter>arrow_forward</mat-icon>
+            <input matInput [formControl]="newquery" [matAutocomplete]="auto" type="text" required placeholder="{{this.query}}" class="search-input" (keyup.enter)="submit()" ngModel="{{this.query}}">
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let option of suggestedQueries | async" [value]="option.searchText">
+                {{ option.searchText }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-icon matSuffix class="enter_icon icon" (click)="submit()">arrow_forward</mat-icon>
         </mat-form-field>
     </form>
 </div>
-<div style="padding: 0px 2rem 1rem 2rem;">
 
+<div style="padding: 0px 2rem 1rem 2rem;">
 <div *ngFor="let item of docDict | keyvalue">
   <h2>{{item.key}}</h2>
   <mat-accordion *ngFor="let val of $any(item).value">
