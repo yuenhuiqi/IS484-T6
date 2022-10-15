@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ManageSearchQueryService } from '../../service/manage-search-query.service';
+import { ManageDocsService } from '../../service/manage-docs.service';
 
 @Component({
   selector: 'app-view-results-process',
@@ -21,7 +22,8 @@ export class ViewResultsProcessComponent implements OnInit {
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
                 private manageSearchQueryService: ManageSearchQueryService, 
-                private router: Router
+                private router: Router,
+                private manageDocs: ManageDocsService
               ) { }
 
   newquery = new FormControl();
@@ -29,7 +31,6 @@ export class ViewResultsProcessComponent implements OnInit {
 
   filtered:any;
   searchQuery: any;
-            
 
 
   ngOnInit(): void {
@@ -47,7 +48,7 @@ export class ViewResultsProcessComponent implements OnInit {
       this.query = decodeURIComponent(params['query']);
     });
 
-    this.http.post<any>(`http://18.142.140.202/search`, {"query": this.query})
+    this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
     .subscribe(
       data => { 
         // console.log(data)
@@ -62,12 +63,35 @@ export class ViewResultsProcessComponent implements OnInit {
         }
     )
 
+    this.getAllDocDetails()
+
     this.getSuggestedQuery("")
 
     this.newquery.valueChanges.subscribe(val => {
       this.getSuggestedQuery(val)
     });
 
+  }
+
+  docDetails: any = {}
+
+  dataSource = [];
+
+  
+  getAllDocDetails() {
+    this.manageDocs.getAllDocDetails()
+      .subscribe(
+        (res: any) => {
+          console.log(res)
+          this.docDetails = res
+          this.dataSource = this.docDetails
+        },
+        err => console.log(err)
+      )
+  }
+
+  viewDocument(docID: any): void {
+    window.open(`/uploader/viewdocument/${docID}`)
   }
 
   getSuggestedQuery(qn:string) {

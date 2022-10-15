@@ -45,6 +45,8 @@ import { ViewResultsProductComponent } from './components/view-results-product/v
 import { ViewResultsProcessComponent } from './components/view-results-process/view-results-process.component';
 import { SafePipe } from './safe.pipe';
 
+import { MatListModule } from '@angular/material/list';
+
 
 
 @NgModule({
@@ -84,7 +86,8 @@ import { SafePipe } from './safe.pipe';
     CdkAccordionModule, 
     MatExpansionModule,
     MatSnackBarModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatListModule
   ],
   providers: [AuthService, ManageDocsService, ManageSearchQueryService],
   bootstrap: [AppComponent]

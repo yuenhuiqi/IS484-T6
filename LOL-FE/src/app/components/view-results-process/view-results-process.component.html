@@ -1,30 +1,53 @@
-<div  class="search-bar">
-    <form class="example-form">
-        <mat-form-field class="example-full-width" appearance="outline">
-            <mat-icon matPrefix class="search_icon icon">search</mat-icon>
-            <input matInput [formControl]="newquery" [matAutocomplete]="auto" type="text" required placeholder="{{this.query}}" class="search-input" (keyup.enter)="submit()" ngModel="{{this.query}}">
-            <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let option of suggestedQueries | async" [value]="option.searchText">
-                {{ option.searchText }}
-              </mat-option>
-            </mat-autocomplete>
-            <mat-icon matSuffix class="enter_icon icon" (click)="submit()">arrow_forward</mat-icon>
-        </mat-form-field>
-    </form>
+<div id="wrapper">
+  <div class="container1">
+    <div  class="search-bar">
+        <form class="example-form">
+            <mat-form-field class="example-full-width" appearance="outline">
+                <mat-icon matPrefix class="search_icon icon">search</mat-icon>
+                <input matInput [formControl]="newquery" [matAutocomplete]="auto" type="text" required placeholder="{{this.query}}" class="search-input" (keyup.enter)="submit()" ngModel="{{this.query}}">
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of suggestedQueries | async" [value]="option.searchText">
+                    {{ option.searchText }}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-icon matSuffix class="enter_icon icon" (click)="submit()">arrow_forward</mat-icon>
+            </mat-form-field>
+        </form>
+    </div>
+
+    <div style="padding: 1rem 3rem 1rem 2rem;">
+      <div *ngFor="let item of docDict | keyvalue">
+        <h2>
+          <a target="_blank" (click)="viewDocument(item.key)">
+            {{item.key}}
+          </a>
+        </h2>
+        <mat-accordion *ngFor="let val of $any(item).value">
+          <mat-expansion-panel (opened)="panelOpenState = true"
+                              (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+              Page {{val[0]}}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{val[1]}}</p>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="container-fluid">
+    <h2>User Journey Step Identified:</h2>
+    <h4></h4>
+    <p>Tasks to be completed:</p>
+    <mat-list>
+      <mat-list-item></mat-list-item>
+    </mat-list>
+    <h3>Next Journey Step Recommended:</h3>
+    <u><h4></h4></u>
+  </div>
 </div>
 
-<div style="padding: 0px 2rem 1rem 2rem;">
-<div *ngFor="let item of docDict | keyvalue">
-  <h2>{{item.key}}</h2>
-  <mat-accordion *ngFor="let val of $any(item).value">
-    <mat-expansion-panel (opened)="panelOpenState = true"
-                        (closed)="panelOpenState = false">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-        Page {{val[0]}}
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <p>{{val[1]}}</p>
-    </mat-expansion-panel>
-  </mat-accordion>
-</div>
+
