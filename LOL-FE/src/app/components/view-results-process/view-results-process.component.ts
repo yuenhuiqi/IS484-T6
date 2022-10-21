@@ -110,8 +110,10 @@ export class ViewResultsProcessComponent implements OnInit {
     .subscribe(res => {
       console.log(res)
     });
-    
-    this.router.navigate(['/viewresultsprocess/' + this.searchQuery]);
+    this.router.navigate(['/viewresultsprocess/' + this.searchQuery])
+      .then(() => {
+        window.location.reload();
+      });
   }
 
 }
