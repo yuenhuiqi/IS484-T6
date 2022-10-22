@@ -150,18 +150,6 @@ def upload_doc(name, doc, doctype):
 
         print('````````````````````````````````')
 
-        file = doc['file'].split(",")
-        data = BytesIO(b64decode(file[1]))
-        print(data)
-
-        text_wrapper = TextIOWrapper(data, encoding='utf-8')
-        print(text_wrapper)  
-
-        str_test = text_wrapper.read()
-        str_io_object = StringIO(str_test)
-        print(str_io_object)
-        print(str_test)  
-
         docS3 = upload_doc_to_s3(doc, name)
         if docS3[0] == "Err":
             Document.query.filter_by(docID=id).delete()
@@ -264,7 +252,7 @@ def dl(upload_id):
     return send_file(BytesIO(upload.data), attachment_filename=upload.filename, as_attachment=True)
 
 
-def getAllDocs(docs):
+def getAllDocs(docs, item_count):
     docList = []
     for doc in docs:
         uploaderName = getUserByID(doc.userID)
@@ -272,24 +260,28 @@ def getAllDocs(docs):
         docList.append({'uploaderName': uploaderName, 'docID': doc.docID, 'docName': doc.docName, 'docTitle': doc.docTitle,
                         'docType': doc.docType, 'journey': doc.journey, 'docLink': doc.docLink, 'VersionID': doc.VersionID, 'lastUpdated': doc.lastUpdated, 'upload_status': status})
 
-    return jsonify(docList)
+    return jsonify({'details': docList, 'itemCount': item_count})
 
 
 
-def search_doc(title):  # crude search no algorithmic smoothening of suggestions yet (i.e., for each sentence in a word, suggest)
-    print(title)
+def search_doc(title, page_size, page):  # crude search no algorithmic smoothening of suggestions yet (i.e., for each sentence in a word, suggest)
+    # print(title, page_size, page)
     if '{0}'.format(title) == "-":
-        docs = Document.query.order_by(Document.lastUpdated.desc())
+        docs = Document.query.order_by(Document.lastUpdated.desc()).paginate(page=page, per_page=page_size)
+        count = Document.query.count()
+
     else:
         try:
             looking_for = '%{0}%'.format(title)
             docs = Document.query.filter(Document.docTitle.ilike(
-                looking_for)).order_by(Document.lastUpdated.desc()).limit(10).all()
+                looking_for)).order_by(Document.lastUpdated.desc()).paginate(page=page, per_page=page_size)
+            count = Document.query.filter(Document.docTitle.ilike(looking_for)).count()
+
         except:
             print("none found")
             return 404, "Document does not exist"
 
-    return getAllDocs(docs)
+    return getAllDocs(docs.items, int(count))
 
 
 def deleteAllDocVersions(docName):

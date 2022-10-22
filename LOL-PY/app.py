@@ -93,9 +93,9 @@ def upload_files():
         return upload_multiDocs(docs)
 
 
-@app.route('/getAllDocDetails/<string:docTitle>', methods=['GET'])
-def getAllDocDetails(docTitle):
-    return search_doc(docTitle)
+@app.route('/getAllDocDetails/<string:docTitle>/<int:page_size>/<int:page>', methods=['GET'])
+def getAllDocDetails(docTitle, page_size, page):
+    return search_doc(docTitle, page_size, page)
 
 
 @app.route('/getDocDetails/<doc_id>', methods=['GET'])

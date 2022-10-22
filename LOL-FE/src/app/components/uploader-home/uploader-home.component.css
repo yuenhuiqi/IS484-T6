@@ -75,6 +75,14 @@ table{
     text-align: center;
 }
 
+.loading {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .error {
     font-size: 55px;
     width: 100%;

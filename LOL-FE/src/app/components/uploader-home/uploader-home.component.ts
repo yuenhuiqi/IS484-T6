@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ManageDocsService } from '../../service/manage-docs.service';
 import { Router } from '@angular/router'
 import { FormControl } from '@angular/forms';
@@ -6,6 +6,7 @@ import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DialogData, DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-uploader-home',
@@ -21,10 +22,7 @@ export class UploaderHomeComponent implements OnInit {
     public dialog: MatDialog
   ) { }
 
-
-  ngOnInit(): void {
-    this.getAllDocDetails()
-  }
+  isLoading = true
 
   titleQuery = new FormControl();
   searchTitle:any = "-"
@@ -35,24 +33,50 @@ export class UploaderHomeComponent implements OnInit {
 
   result: any;
 
+  // MatPaginator Inputs
+  totalRows = 0;
+  pageSize = 10;
+  currentPage = 0;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
+
+  ngOnInit(): void {
+    this.getAllDocDetails()
+  }
+
   getAllDocDetails() {
+    this.isLoading = true
     if (this.titleQuery.value == null || this.titleQuery.value.trim().length === 0) {
       this.searchTitle = "-"
     }
-    else {
-      this.searchTitle = this.titleQuery.value.trim()
-    }
-    this.manageDocs.getAllDocDetails(this.searchTitle)
+    // console.log(this.currentPage, this.pageSize)
+    this.manageDocs.getAllDocDetails(this.searchTitle, this.pageSize, this.currentPage+1)
       .subscribe(
         (res: any) => {
           console.log(res)
-          this.docDetails = res
+          this.isLoading = false
+          this.docDetails = res.details
           this.dataSource = this.docDetails
+
+          this.totalRows = res.itemCount
         },
         err => {
           console.log(err.statusText)
+          this.isLoading = false
         }
       )
+  }
+
+  searchDoc() {
+    this.searchTitle = this.titleQuery.value.trim()
+    this.currentPage = 0
+    this.getAllDocDetails()
+  }
+
+  pageChanged(event: PageEvent) {
+    console.log(event);
+    this.pageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+    this.getAllDocDetails();
   }
 
   clearSearch() {
@@ -83,6 +107,7 @@ export class UploaderHomeComponent implements OnInit {
       console.log(this.result)
 
       docName = { "docName": docName }
+      this.isLoading = true
       this.manageDocs.deleteDoc(docName)
         .subscribe({
           next: (res) => console.log(res),
@@ -91,8 +116,8 @@ export class UploaderHomeComponent implements OnInit {
             if (err.error.text == 'Document deleted!') {
               // RELOAD upon successful deletion
               console.log(err.error.text)
-              this.snackbar.open(err.error.text, '', {
-                duration: 1500,
+              this.snackbar.open(err.error.text, 'x', {
+                duration: 1000,
                 verticalPosition: "top"
               })
                 .afterDismissed().subscribe(() => location.reload())
@@ -101,6 +126,7 @@ export class UploaderHomeComponent implements OnInit {
               // ADD ERROR snackbar message
               console.log(err.error.text)
               this.snackbar.open(err.error.text, 'Close')
+              this.isLoading = false
             }
           },
         });
