@@ -5,7 +5,7 @@ from versioning import moveDocToVersioning, deleteDocVersions
 
 import uuid
 from datetime import datetime
-from io import BytesIO
+from io import BytesIO, StringIO, TextIOWrapper
 from base64 import b64decode
 from collections import deque
 from http import HTTPStatus
@@ -150,6 +150,18 @@ def upload_doc(name, doc, doctype):
 
         print('````````````````````````````````')
 
+        file = doc['file'].split(",")
+        data = BytesIO(b64decode(file[1]))
+        print(data)
+
+        text_wrapper = TextIOWrapper(data, encoding='utf-8')
+        print(text_wrapper)  
+
+        str_test = text_wrapper.read()
+        str_io_object = StringIO(str_test)
+        print(str_io_object)
+        print(str_test)  
+
         docS3 = upload_doc_to_s3(doc, name)
         if docS3[0] == "Err":
             Document.query.filter_by(docID=id).delete()
@@ -180,6 +192,7 @@ def upload_multiDocs(docs):
         # print(doc)
         if doc and allowed_file(name):
             doctype = name.rsplit('.', 1)[1].lower()
+
 
             if db.session.query(exists().where(Document.docName == name)).scalar():
                 print(name, "doc exist")
@@ -287,3 +300,16 @@ def getPresignedUrl(file_name):
     
     except ClientError as e:
         return e
+
+
+
+def testConvert(files):
+    print("--------")
+    for doc in files:
+
+        # doc = docs[name]
+        print(doc)
+        
+
+    return 'All documents uploaded!'
+

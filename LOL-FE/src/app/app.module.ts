@@ -44,6 +44,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { ViewResultsProductComponent } from './components/view-results-product/view-results-product.component';
 import { ViewResultsProcessComponent } from './components/view-results-process/view-results-process.component';
 import { SafePipe } from './safe.pipe';
+import { DeleteConfirmationComponent } from './components/delete-confirmation/delete-confirmation.component';
 
 
 
@@ -61,7 +62,8 @@ import { SafePipe } from './safe.pipe';
     EditUploadedDocumentComponent,
     ViewResultsProductComponent,
     ViewResultsProcessComponent,
-    SafePipe
+    SafePipe,
+    DeleteConfirmationComponent
   ],
   imports: [
     BrowserModule,

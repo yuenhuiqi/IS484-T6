@@ -10,7 +10,7 @@ from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text, add_count, update_feedback
-from document import Document, upload_multiDocs, dl, getAllDocs, deleteAllDocVersions, update_docDetails, getPresignedUrl
+from document import *
 from versioning import getAllVersions
 from user import User
 import jwt
@@ -153,6 +153,14 @@ def login():
 def getUser(token):
     user = User.query.filter_by(token=token).first()
     return jsonify({"userID": user.userID, "userName": user.userName, "role": user.role})
+
+
+@app.route('/test', methods=['GET'])
+def test():
+    files = request.files.getlist('file')
+    print(f"Number of documents uploaded: {len(files)}")
+    # return upload_doc(file)
+    return testConvert(files)
 
 
 if __name__ == '__main__':
