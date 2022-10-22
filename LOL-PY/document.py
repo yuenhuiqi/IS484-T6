@@ -275,6 +275,23 @@ def getAllDocs(docs):
     return jsonify(docList)
 
 
+
+def search_doc(title):  # crude search no algorithmic smoothening of suggestions yet (i.e., for each sentence in a word, suggest)
+    print(title)
+    if '{0}'.format(title) == "-":
+        docs = Document.query.order_by(Document.lastUpdated.desc())
+    else:
+        try:
+            looking_for = '%{0}%'.format(title)
+            docs = Document.query.filter(Document.docTitle.ilike(
+                looking_for)).order_by(Document.lastUpdated.desc()).limit(10).all()
+        except:
+            print("none found")
+            return 404, "Document does not exist"
+
+    return getAllDocs(docs)
+
+
 def deleteAllDocVersions(docName):
     # Delete ALL Document Versions from AWS S3 bucket
     s3_bucket.object_versions.filter(Prefix=docName).delete()
@@ -300,16 +317,3 @@ def getPresignedUrl(file_name):
     
     except ClientError as e:
         return e
-
-
-
-def testConvert(files):
-    print("--------")
-    for doc in files:
-
-        # doc = docs[name]
-        print(doc)
-        
-
-    return 'All documents uploaded!'
-

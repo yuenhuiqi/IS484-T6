@@ -9,8 +9,8 @@ export class ManageDocsService {
   private baseurl = "http://localhost:2222/"
   constructor(private http: HttpClient) { }
 
-  getAllDocDetails() {
-    return this.http.get(`${this.baseurl}getAllDocDetails`)
+  getAllDocDetails(titleQuery:String) {
+    return this.http.get(`${this.baseurl}getAllDocDetails/` + titleQuery)
   }
 
   getDocDetails(docID:string) {

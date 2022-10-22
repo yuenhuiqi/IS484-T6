@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ManageDocsService } from '../../service/manage-docs.service';
 import { Router } from '@angular/router'
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormControl } from '@angular/forms';
 
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { DialogData, DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -20,10 +21,13 @@ export class UploaderHomeComponent implements OnInit {
     public dialog: MatDialog
   ) { }
 
+
   ngOnInit(): void {
     this.getAllDocDetails()
   }
 
+  titleQuery = new FormControl();
+  searchTitle:any = "-"
   docDetails: any = {}
 
   displayedColumns: string[] = ['docTitle', 'docName', 'docType', 'journey', 'lastUpdated', 'uploaderName', 'upload_status', 'edit', 'delete']
@@ -32,15 +36,28 @@ export class UploaderHomeComponent implements OnInit {
   result: any;
 
   getAllDocDetails() {
-    this.manageDocs.getAllDocDetails()
+    if (this.titleQuery.value == null || this.titleQuery.value.trim().length === 0) {
+      this.searchTitle = "-"
+    }
+    else {
+      this.searchTitle = this.titleQuery.value.trim()
+    }
+    this.manageDocs.getAllDocDetails(this.searchTitle)
       .subscribe(
         (res: any) => {
           console.log(res)
           this.docDetails = res
           this.dataSource = this.docDetails
         },
-        err => console.log(err)
+        err => {
+          console.log(err.statusText)
+        }
       )
+  }
+
+  clearSearch() {
+    this.titleQuery.reset()
+    this.getAllDocDetails()
   }
 
   editUploadedDoc(docID: any) {
