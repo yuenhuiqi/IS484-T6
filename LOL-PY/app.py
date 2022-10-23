@@ -9,7 +9,7 @@ from flask_cors import CORS
 from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
-from searchCount import search_text, add_count, update_feedback
+from searchCount import search_text, add_count, update_feedback, getSuggestedSearches
 from document import *
 from versioning import getAllVersions
 from user import User
@@ -170,15 +170,9 @@ def getAllAcronyms():
         arr.append(acronym_dict)
     return jsonify({'acronyms': arr}), 200
 
-
-
-# @app.route('/test', methods=['GET'])
-# def test():
-#     files = request.files.getlist('file')
-#     print(f"Number of documents uploaded: {len(files)}")
-#     # return upload_doc(file)
-#     return testConvert(files)
-
+@app.route('/getSuggestedQueries/<string:query>', methods=['GET'])
+def getSuggested(query):
+    return jsonify({'suggestedSearches': getSuggestedSearches(query)})
 
 if __name__ == '__main__':
     app.secret_key = 'is484t6'
