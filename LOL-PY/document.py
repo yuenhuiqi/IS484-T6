@@ -217,6 +217,7 @@ def upload_multiDocs(docs):
         if doc and allowed_file(name):
             doctype = name.rsplit('.', 1)[1].lower()
 
+
             if db.session.query(exists().where(Document.docName == name)).scalar():
                 print(name, "doc exist")
                 currentDoc = Document.query.filter_by(docName=name).first()
@@ -304,7 +305,7 @@ def dl(upload_id):
     return send_file(BytesIO(upload.data), attachment_filename=upload.filename, as_attachment=True)
 
 
-def getAllDocs(docs):
+def getAllDocs(docs, item_count):
     docList = []
     for doc in docs:
         uploaderName = getUserByID(doc.userID)
@@ -312,7 +313,28 @@ def getAllDocs(docs):
         docList.append({'uploaderName': uploaderName, 'docID': doc.docID, 'docName': doc.docName, 'docTitle': doc.docTitle,
                         'docType': doc.docType, 'journey': doc.journey, 'docLink': doc.docLink, 'VersionID': doc.VersionID, 'lastUpdated': doc.lastUpdated, 'upload_status': status})
 
-    return jsonify(docList)
+    return jsonify({'details': docList, 'itemCount': item_count})
+
+
+
+def search_doc(title, page_size, page):  # crude search no algorithmic smoothening of suggestions yet (i.e., for each sentence in a word, suggest)
+    # print(title, page_size, page)
+    if '{0}'.format(title) == "-":
+        docs = Document.query.order_by(Document.lastUpdated.desc()).paginate(page=page, per_page=page_size)
+        count = Document.query.count()
+
+    else:
+        try:
+            looking_for = '%{0}%'.format(title)
+            docs = Document.query.filter(Document.docTitle.ilike(
+                looking_for)).order_by(Document.lastUpdated.desc()).paginate(page=page, per_page=page_size)
+            count = Document.query.filter(Document.docTitle.ilike(looking_for)).count()
+
+        except:
+            print("none found")
+            return 404, "Document does not exist"
+
+    return getAllDocs(docs.items, int(count))
 
 
 def deleteAllDocVersions(docName):

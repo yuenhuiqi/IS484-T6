@@ -10,7 +10,7 @@ from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text, add_count, update_feedback
-from document import Document, upload_multiDocs, dl, getAllDocs, deleteAllDocVersions, update_docDetails, getPresignedUrl
+from document import *
 from versioning import getAllVersions
 from user import User
 import jwt
@@ -93,16 +93,15 @@ def upload_files():
         return upload_multiDocs(docs)
 
 
-@app.route('/getAllDocDetails', methods=['GET'])
-def getAllDocDetails():
-    docs = Document.query.order_by(Document.lastUpdated.desc())
-    return getAllDocs(docs)
+@app.route('/getAllDocDetails/<string:docTitle>/<int:page_size>/<int:page>', methods=['GET'])
+def getAllDocDetails(docTitle, page_size, page):
+    return search_doc(docTitle, page_size, page)
 
 
 @app.route('/getDocDetails/<doc_id>', methods=['GET'])
 def getDocDetails(doc_id):
     doc = Document.query.filter_by(docID=doc_id).first()
-    return jsonify({'journey': doc.journey, 'docTitle': doc.docTitle})
+    return jsonify({'journey': doc.journey, 'docTitle': doc.docTitle, 'docName': doc.docName})
 
 
 @app.route('/updateDoc/<doc_id>/<doc_title>/<doc_journey>', methods=['POST'])
@@ -141,7 +140,7 @@ def login():
 
     user = User.query.filter_by(userID=json_data['userName']).first()
     if user and bcrypt.check_password_hash(user.password, json_data['password']):
-        session['logged_in'] = True
+        session.logged_in = True
         token = jwt.encode(
             {'userName': user.userID, 'password': json_data['password']}, app.config['SECRET_KEY'], "HS256")
         return jsonify({'token': token})
@@ -153,6 +152,14 @@ def login():
 def getUser(token):
     user = User.query.filter_by(token=token).first()
     return jsonify({"userID": user.userID, "userName": user.userName, "role": user.role})
+
+
+# @app.route('/test', methods=['GET'])
+# def test():
+#     files = request.files.getlist('file')
+#     print(f"Number of documents uploaded: {len(files)}")
+#     # return upload_doc(file)
+#     return testConvert(files)
 
 
 if __name__ == '__main__':

@@ -9,12 +9,16 @@ export class ManageDocsService {
   private baseurl = "http://localhost:2222/"
   constructor(private http: HttpClient) { }
 
-  getAllDocDetails() {
-    return this.http.get(`${this.baseurl}getAllDocDetails`)
+  getAllDocDetails(titleQuery:String, pageSize:Number, pageNo:Number) {
+    return this.http.get(`${this.baseurl}getAllDocDetails/${titleQuery}/${pageSize}/${pageNo}`)
   }
 
   getDocDetails(docID:string) {
-    return this.http.get(`${this.baseurl}getDocDetails/` + docID)
+    return this.http.get(`${this.baseurl}getDocDetails/${docID}`)
+  }
+
+  uploadDocs(file:any) {
+    return this.http.post(`${this.baseurl}upload`, file)
   }
 
   updateDoc(docID:string, docTitle:string, journey:string) {
