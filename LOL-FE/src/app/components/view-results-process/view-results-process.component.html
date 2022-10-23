@@ -40,9 +40,9 @@
 
   <div class="container-fluid">
     <h2>Similar questions previously asked</h2>
-    <mat-list>
-      <mat-list-item></mat-list-item>
-    </mat-list>
+    <mat-nav-list *ngFor="let q of relevantSearches; let i=index">
+      <a style="color: #003B70;" mat-list-item href="/viewresultsprocess/{{this.q}}">{{i+1}}. {{ q }}</a>
+   </mat-nav-list>
     <h3>Do you mean by this?</h3>
     <mat-list>
       <mat-list-item *ngFor="let acronym of found_acronyms">{{acronym.acronym}} - {{acronym.meaning}}</mat-list-item>
