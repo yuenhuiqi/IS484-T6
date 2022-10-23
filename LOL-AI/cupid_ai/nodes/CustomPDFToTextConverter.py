@@ -5,9 +5,30 @@ from haystack import Document
 from cupid_ai.model import InProgressDoc
 from cupid_ai.util import s3, bucket_name
 from typing import Any, Dict, List, Optional
+import pytesseract as PT  
+from pdf2image import convert_from_path as CFP 
+from PIL import Image
+import fitz
 
 
 class CustomPDFToTextConverter(BaseConverter):
+    
+    def pdf_to_text(file_path, page_number):
+
+        # 1. set dimensions of image
+        zoom_x = 2.0  # horizontal zoom
+        zoom_y = 2.0  # vertical zoom
+        mat = fitz.Matrix(zoom_x, zoom_y)  # zoom factor 2 in each dimension
+
+        # 2. convert each page of pdf into image
+        doc = fitz.open(file_path)
+        page = doc.load_page(page_number)
+        pix = page.get_pixmap(matrix=mat)
+        img_bytes = pix.pil_tobytes(format="JPEG", optimize=True)
+        im = Image.open(io.BytesIO(img_bytes))
+
+        text = PT.image_to_string(im)
+        return text
     
     def convert(
             self,
@@ -48,8 +69,12 @@ class CustomPDFToTextConverter(BaseConverter):
         object = s3.Object(bucket_name, file_path).get()["Body"].read()
         with io.BytesIO(object) as f:
             reader = PdfFileReader(f)
-            for page in reader.pages:
-                pages.append(page.extract_text())
+            num_pages = reader.getNumPages() 
+            for i in range(num_pages):
+                text = reader.pages[i].extract_text()
+                if text == '':
+                    text = self.pdf_to_text(file_path, i)
+            pages.append(text)
         
         docs: List[InProgressDoc] = []
         for i, page in enumerate(pages):
@@ -61,7 +86,6 @@ class CustomPDFToTextConverter(BaseConverter):
             .join_sentences()
             .segment_words()
             )
-
 
         output_docs: List[Document] = []
         for doc in docs:
