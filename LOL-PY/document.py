@@ -177,7 +177,7 @@ def upload_multiDocs(docs):
     for name in docs:
 
         doc = docs[name]
-        # print(doc)
+        # print(doc, '====')
         if doc and allowed_file(name):
             doctype = name.rsplit('.', 1)[1].lower()
 

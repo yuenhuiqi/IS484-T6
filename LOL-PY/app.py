@@ -101,7 +101,7 @@ def getAllDocDetails(docTitle, page_size, page):
 @app.route('/getDocDetails/<doc_id>', methods=['GET'])
 def getDocDetails(doc_id):
     doc = Document.query.filter_by(docID=doc_id).first()
-    return jsonify({'journey': doc.journey, 'docTitle': doc.docTitle})
+    return jsonify({'journey': doc.journey, 'docTitle': doc.docTitle, 'docName': doc.docName})
 
 
 @app.route('/updateDoc/<doc_id>/<doc_title>/<doc_journey>', methods=['POST'])
@@ -140,7 +140,7 @@ def login():
 
     user = User.query.filter_by(userID=json_data['userName']).first()
     if user and bcrypt.check_password_hash(user.password, json_data['password']):
-        session['logged_in'] = True
+        session.logged_in = True
         token = jwt.encode(
             {'userName': user.userID, 'password': json_data['password']}, app.config['SECRET_KEY'], "HS256")
         return jsonify({'token': token})
@@ -154,12 +154,12 @@ def getUser(token):
     return jsonify({"userID": user.userID, "userName": user.userName, "role": user.role})
 
 
-@app.route('/test', methods=['GET'])
-def test():
-    files = request.files.getlist('file')
-    print(f"Number of documents uploaded: {len(files)}")
-    # return upload_doc(file)
-    return testConvert(files)
+# @app.route('/test', methods=['GET'])
+# def test():
+#     files = request.files.getlist('file')
+#     print(f"Number of documents uploaded: {len(files)}")
+#     # return upload_doc(file)
+#     return testConvert(files)
 
 
 if __name__ == '__main__':

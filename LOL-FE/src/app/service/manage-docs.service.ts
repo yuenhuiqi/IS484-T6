@@ -17,6 +17,10 @@ export class ManageDocsService {
     return this.http.get(`${this.baseurl}getDocDetails/${docID}`)
   }
 
+  uploadDocs(file:any) {
+    return this.http.post(`${this.baseurl}upload`, file)
+  }
+
   updateDoc(docID:string, docTitle:string, journey:string) {
     return this.http.post(`${this.baseurl}updateDoc/${docID}/${docTitle}/${journey}`, {})
   }
