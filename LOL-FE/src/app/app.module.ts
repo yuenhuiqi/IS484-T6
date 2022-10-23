@@ -46,6 +46,8 @@ import { ViewResultsProcessComponent } from './components/view-results-process/v
 import { SafePipe } from './safe.pipe';
 import { DeleteConfirmationComponent } from './components/delete-confirmation/delete-confirmation.component';
 
+import { MatListModule } from '@angular/material/list';
+
 
 
 @NgModule({
@@ -87,6 +89,7 @@ import { DeleteConfirmationComponent } from './components/delete-confirmation/de
     MatExpansionModule,
     MatSnackBarModule,
     MatAutocompleteModule,
+    MatListModule,
     MatPaginatorModule,
     MatProgressSpinnerModule
   ],

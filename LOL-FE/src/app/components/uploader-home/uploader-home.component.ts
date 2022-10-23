@@ -89,6 +89,7 @@ export class UploaderHomeComponent implements OnInit {
   }
 
   viewDocument(docID: any): void {
+    console.log(docID)
     window.open(`/uploader/viewdocument/${docID}`)
     // location.assign(`/viewdocument/${docID}`)
   }

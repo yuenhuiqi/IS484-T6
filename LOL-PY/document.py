@@ -5,7 +5,7 @@ from versioning import moveDocToVersioning, deleteDocVersions
 
 import uuid
 from datetime import datetime
-from io import BytesIO, StringIO, TextIOWrapper
+from io import BytesIO, TextIOWrapper, StringIO
 from base64 import b64decode
 from collections import deque
 from http import HTTPStatus
@@ -15,6 +15,7 @@ from botocore.exceptions import ClientError
 import enum
 from sqlalchemy import Enum
 from flask import Flask, render_template, request, send_file, flash, jsonify
+from acronym import *
 
 
 # class UploadStatus(enum.Enum):
@@ -149,6 +150,23 @@ def upload_doc(name, doc, doctype):
         db.session.commit()
 
         print('````````````````````````````````')
+        
+        if 'glossary' in name.lower():
+
+            file = doc['file'].split(",")
+            data = BytesIO(b64decode(file[1]))
+            # print(data)
+
+            text_wrapper = TextIOWrapper(data, encoding='utf-8')
+            # print(text_wrapper)  
+
+            str_test = text_wrapper.read()
+
+            getAllAcronyms(str_test)
+
+            str_io_object = StringIO(str_test)
+            # print(str_test)
+            print(str_io_object)
 
         docS3 = upload_doc_to_s3(doc, name)
         if docS3[0] == "Err":
@@ -177,7 +195,25 @@ def upload_multiDocs(docs):
     for name in docs:
 
         doc = docs[name]
-        # print(doc, '====')
+        # print(doc)
+
+        if 'glossary' in name.lower():
+
+            file = doc['file'].split(",")
+            data = BytesIO(b64decode(file[1]))
+            # print(data)
+
+            text_wrapper = TextIOWrapper(data, encoding='utf-8')
+            # print(text_wrapper)  
+
+            str_test = text_wrapper.read()
+
+            getAllAcronyms(str_test)
+
+            str_io_object = StringIO(str_test)
+            # print(str_test)
+            print(str_io_object)
+
         if doc and allowed_file(name):
             doctype = name.rsplit('.', 1)[1].lower()
 
@@ -202,6 +238,23 @@ def upload_multiDocs(docs):
 
 def update_doc(currentDoc, doc, name):
     dt = str(datetime.now())
+
+    if 'glossary' in name.lower():
+
+        file = doc['file'].split(",")
+        data = BytesIO(b64decode(file[1]))
+        # print(data)
+
+        text_wrapper = TextIOWrapper(data, encoding='utf-8')
+        # print(text_wrapper)  
+
+        str_test = text_wrapper.read()
+
+        getAllAcronyms(str_test)
+
+        str_io_object = StringIO(str_test)
+        # print(str_test)
+        print(str_io_object)
 
     try:
         docS3 = upload_doc_to_s3(doc, name)
