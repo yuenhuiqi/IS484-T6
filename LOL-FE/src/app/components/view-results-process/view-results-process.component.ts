@@ -23,8 +23,8 @@ export class ViewResultsProcessComponent implements OnInit {
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
                 private manageSearchQueryService: ManageSearchQueryService, 
-                private router: Router,
-                private manageDocs: ManageDocsService
+                private router: Router
+                // private manageDocs: ManageDocsService
               ) { }
 
   newquery = new FormControl();

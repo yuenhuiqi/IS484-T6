@@ -1,17 +1,41 @@
-<div  class="search-bar">
-    <form class="example-form">
-        <mat-form-field class="example-full-width" appearance="outline">
-            <mat-icon matPrefix class="search_icon icon">search</mat-icon>
-            <input matInput type="search" placeholder="Search input here" class="search-input">
-            <mat-icon matSuffix class="enter_icon icon" enter>arrow_forward</mat-icon>
-        </mat-form-field>
-    </form>
-</div>
-<div style="padding: 0px 2rem 1rem 2rem;">
-    <div class="container-fluid">
-    <h2> Definition of Credit Loan Application </h2>
-    <p>Key Takeaways. A credit application is a form used by potential borrowers to get approval for credit from lenders. Today, many credit applications are filled out electronically and may be improved in only a short amount of time.
-    </p>
+<div id="wrapper">
+    <div class="container1">
+        <div  class="search-bar">
+            <form class="example-form">
+                <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-icon matPrefix class="search_icon icon">search</mat-icon>
+                    <input matInput [formControl]="newquery" [matAutocomplete]="auto" type="text" required placeholder="{{this.query}}" class="search-input" (keyup.enter)="submit()" ngModel="{{this.query}}">
+                    <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of suggestedQueries | async" [value]="option.searchText">
+                        {{ option.searchText }}
+                    </mat-option>
+                    </mat-autocomplete>
+                    <mat-icon matSuffix class="enter_icon icon" (click)="submit()">arrow_forward</mat-icon>
+                </mat-form-field>
+            </form>
+        </div>
+
+        <div style="padding: 0px 0rem 0rem 0rem;">
+            <div class="container-fluid" style="margin:2rem !important; width:900px; height:auto">
+            <h2 *ngIf="this.query"> {{this.query}}? </h2>
+            <p style="color:black; font-size: larger;">Key Takeaways. A credit application is a form used by potential borrowers to get approval for credit from lenders. Today, many credit applications are filled out electronically and may be improved in only a short amount of time.</p>
+            <h4 style="color:black; padding-top: 10px">View document here: <u style="color: #003B70; padding-left:10px">Credit Application</u></h4>
+            </div>
+        </div>
     </div>
+
+  
+    <div class="container-fluid">
+      <h2>Similar questions previously asked</h2>
+      <mat-list>
+        <mat-list-item></mat-list-item>
+      </mat-list>
+      <h3>Do you mean by this?</h3>
+      <mat-list>
+        <mat-list-item *ngFor="let acronym of found_acronyms">{{acronym.acronym}} - {{acronym.meaning}}</mat-list-item>
+      </mat-list>
+      <!-- <p *ngIf="this.found_acronym">{{this.found_acronym}} - {{this.found_acronym_meaning}}</p> -->
+    </div>
+
 </div>
 
