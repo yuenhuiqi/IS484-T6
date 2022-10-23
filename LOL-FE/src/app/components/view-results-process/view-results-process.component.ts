@@ -19,6 +19,7 @@ export class ViewResultsProcessComponent implements OnInit {
   docArr: any;
   docDict: any = {};
   found_acronyms: any = []
+  relevantSearches: any;
 
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
@@ -48,6 +49,11 @@ export class ViewResultsProcessComponent implements OnInit {
     this.sub = this.route.params.subscribe(params => {
       this.query = decodeURIComponent(params['query']);
     });
+
+
+    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
+      data => {this.relevantSearches = data.suggestedSearches}
+    )
 
     this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
     .subscribe(
@@ -99,7 +105,6 @@ export class ViewResultsProcessComponent implements OnInit {
     // this.getAllDocDetails()
 
     this.getSuggestedQuery("")
-
 
     this.newquery.valueChanges.subscribe(val => {
       this.getSuggestedQuery(val)
