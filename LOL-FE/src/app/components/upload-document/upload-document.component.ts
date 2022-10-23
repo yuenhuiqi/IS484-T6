@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDocumentDetailsComponent } from '../edit-document-details/edit-document-details.component';
 import { AuthService } from '../../service/auth.service';
+import { ManageDocsService } from '../../service/manage-docs.service';
 
 import { elementAt } from 'rxjs';
 
@@ -25,6 +26,7 @@ export interface DialogData {
 export class UploadDocumentComponent {
 
   constructor(
+    private manageDocs: ManageDocsService,
     private user: AuthService,
     public http: HttpClient,
     public dialog: MatDialog,
@@ -105,8 +107,9 @@ export class UploadDocumentComponent {
   }
 
   uploadfile(file: any) {
-    this.http
-      .post('http://localhost:2222/upload', file)
+    // this.http
+    //   .post('http://localhost:2222/upload', file)
+    this.manageDocs.uploadDocs(file)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
@@ -124,7 +127,7 @@ export class UploadDocumentComponent {
               duration: 6000,
               verticalPosition: "top"
             })
-            .afterDismissed().subscribe(() => location.assign('/uploader'))
+            // .afterDismissed().subscribe(() => location.assign('/uploader'))
             // location.assign('/uploader/upload/success')
           }
           else {

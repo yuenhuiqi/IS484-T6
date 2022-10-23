@@ -15,6 +15,20 @@
     margin-right: 35px;
 }
 
+.search-reset {
+    font-size: 13px;
+    padding-right: 5px;
+}
+.search-submit {
+    font-size: 16px;
+    padding-right: 5px;
+    padding-left: 15px;
+}
+
+.mat-label {
+    padding-top: 10px !important;
+}
+
 table{
     width: 100%;
     padding: 10px;
@@ -53,4 +67,25 @@ table{
 
 .mat-button {
     color: blue;
+}
+
+.not-found {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.loading {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.error {
+    font-size: 55px;
+    width: 100%;
+    height: 100%;
+    padding-bottom: 5px;
 }
