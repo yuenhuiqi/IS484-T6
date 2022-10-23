@@ -12,16 +12,18 @@ class Acronym(db.Model):
 
 def getAllAcronyms(str_test):
     acronym_list = str_test.rstrip().split(",")
+    # print(acronym_list)
 
-    for acronym in acronym_list:
-        acronym_meaning = acronym.split(' | ')
+    for acronyms in acronym_list:
+        # print(acronyms)
+        acronym_meaning = acronyms.lstrip().split(' | ')
         # print(acronym_meaning)
 
         try:
-            acronym_list = Acronym(acronym=acronym_meaning[0], meaning=acronym_meaning[1])
-            if acronym_list not in db:
-
-                db.session.add(acronym_list)
+            acronym_db = Acronym(acronym=acronym_meaning[0], meaning=acronym_meaning[1])
+            exists = db.session.query(db.exists().where(Acronym.acronym == acronym_meaning[0])).scalar()
+            if not exists:
+                db.session.add(acronym_db)
                 db.session.commit()
 
             print('````````````````````````````````')
@@ -31,9 +33,9 @@ def getAllAcronyms(str_test):
             return acronym_dict
 
         except Exception as e:
-            # upload.upload_status = UploadStatus.ERROR
+            # db.session.rollback()
             # acronym_list.upload_status = "ERROR"
-            # db.session.commit()
+            db.session.commit()
             return str(e), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
