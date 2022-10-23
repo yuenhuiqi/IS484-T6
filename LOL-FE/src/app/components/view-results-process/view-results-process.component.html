@@ -44,7 +44,10 @@
       <mat-list-item></mat-list-item>
     </mat-list>
     <h3>Do you mean by this?</h3>
-    <u><h4></h4></u>
+    <mat-list>
+      <mat-list-item *ngFor="let acronym of found_acronyms">{{acronym.acronym}} - {{acronym.meaning}}</mat-list-item>
+    </mat-list>
+    <!-- <p *ngIf="this.found_acronym">{{this.found_acronym}} - {{this.found_acronym_meaning}}</p> -->
   </div>
 </div>
 

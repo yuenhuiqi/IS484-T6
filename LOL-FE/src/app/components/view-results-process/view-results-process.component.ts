@@ -18,6 +18,7 @@ export class ViewResultsProcessComponent implements OnInit {
   query: any;
   docArr: any;
   docDict: any = {};
+  found_acronyms: any = []
 
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
@@ -63,13 +64,46 @@ export class ViewResultsProcessComponent implements OnInit {
         }
     )
 
-    this.getAllDocDetails()
+    this.http.get<any>(`http://localhost:2222/getAllAcronyms`)
+    .subscribe(
+      data => {
+        // console.log(data)
+        for (let i in data.acronyms) {
+          // console.log(data.acronyms[i])
+          if (i < data.acronyms.length) {
+            // console.log(this.query)
+            var words = this.query.split(' ')
+            
+            for (let j in words) {
+              // console.log(words[j])
+              // console.log(data.acronyms[i].acronym)
+              if (words[j].toLowerCase() == (data.acronyms[i].acronym.toLowerCase())) {
+                // console.log(data.acronyms[i].meaning)
+                this.found_acronyms.push({
+                  'acronym': data.acronyms[i].acronym,
+                  'meaning': data.acronyms[i].meaning
+                })
+                console.log(this.found_acronyms)
+                // this.found_acronym.push(words[j])
+                // this.found_acronym_meaning.push(data.acronyms[i].meaning)
+              } else {
+                console.log("Next Please")
+              }
+            }
+          }
+          
+        }
+      }
+    )
+
+    // this.getAllDocDetails()
 
     this.getSuggestedQuery("")
 
+
     this.newquery.valueChanges.subscribe(val => {
       this.getSuggestedQuery(val)
-    });
+    })
 
   }
 
@@ -77,18 +111,6 @@ export class ViewResultsProcessComponent implements OnInit {
 
   dataSource = [];
 
-  
-  getAllDocDetails() {
-    this.manageDocs.getAllDocDetails()
-      .subscribe(
-        (res: any) => {
-          console.log(res)
-          this.docDetails = res
-          this.dataSource = this.docDetails
-        },
-        err => console.log(err)
-      )
-  }
 
   viewDocument(docID: any): void {
     window.open(`/uploader/viewdocument/${docID}`)

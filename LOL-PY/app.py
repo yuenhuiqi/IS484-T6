@@ -13,6 +13,7 @@ from searchCount import search_text, add_count, update_feedback
 from document import *
 from versioning import getAllVersions
 from user import User
+from acronym import Acronym, getAllAcronyms
 import jwt
 import datetime
 import bcrypt
@@ -152,6 +153,23 @@ def login():
 def getUser(token):
     user = User.query.filter_by(token=token).first()
     return jsonify({"userID": user.userID, "userName": user.userName, "role": user.role})
+
+@app.route('/getAllAcronyms/<acronym>', methods=['GET'])
+def getAcronymMeaning(acronym):
+    acronyms = Acronym.query.filter_by(acronym=acronym).first()
+    return jsonify({'acronym': acronyms.acronym, 'meaning': acronyms.meaning})
+
+@app.route('/getAllAcronyms', methods=['GET'])
+def getAllAcronyms():
+    acronyms = Acronym.query.all()
+    arr = []
+    for acronym in acronyms:
+        acronym_dict = {}
+        acronym_dict['acronym'] = acronym.acronym
+        acronym_dict['meaning'] = acronym.meaning
+        arr.append(acronym_dict)
+    return jsonify({'acronyms': arr}), 200
+
 
 
 # @app.route('/test', methods=['GET'])

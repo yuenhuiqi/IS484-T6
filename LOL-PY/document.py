@@ -162,7 +162,7 @@ def upload_doc(name, doc, doctype):
 
             str_test = text_wrapper.read()
 
-            matchkeywords(str_test)
+            getAllAcronyms(str_test)
 
             str_io_object = StringIO(str_test)
             # print(str_test)
@@ -208,7 +208,7 @@ def upload_multiDocs(docs):
 
             str_test = text_wrapper.read()
 
-            matchkeywords(str_test)
+            getAllAcronyms(str_test)
 
             str_io_object = StringIO(str_test)
             # print(str_test)
@@ -250,7 +250,7 @@ def update_doc(currentDoc, doc, name):
 
         str_test = text_wrapper.read()
 
-        matchkeywords(str_test)
+        getAllAcronyms(str_test)
 
         str_io_object = StringIO(str_test)
         # print(str_test)
