@@ -150,7 +150,6 @@ export class EditUploadedDocumentComponent implements OnInit {
 
   uploadDoc() {
     // console.log(this.file?.name)
-    
     this.manageDocs.uploadDocs(this.fileList)
       .subscribe({
         next: (res) => console.log(res),
