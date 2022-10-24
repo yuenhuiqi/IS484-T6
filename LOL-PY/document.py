@@ -161,6 +161,7 @@ def upload_doc(name, doc, doctype):
             # print(text_wrapper)  
 
             str_test = text_wrapper.read()
+            # print(str_test)
 
             getAllAcronyms(str_test)
 
@@ -243,18 +244,19 @@ def update_doc(currentDoc, doc, name):
 
         file = doc['file'].split(",")
         data = BytesIO(b64decode(file[1]))
-        # print(data)
+        print(data)
 
         text_wrapper = TextIOWrapper(data, encoding='utf-8')
         # print(text_wrapper)  
 
         str_test = text_wrapper.read()
+        # print(str_test)
 
         getAllAcronyms(str_test)
 
         str_io_object = StringIO(str_test)
         # print(str_test)
-        print(str_io_object)
+        # print(str_io_object)
 
     try:
         docS3 = upload_doc_to_s3(doc, name)
