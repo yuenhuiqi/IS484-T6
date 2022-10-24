@@ -1,25 +1,54 @@
-<div  class="search-bar">
-    <form class="example-form">
-        <mat-form-field class="example-full-width" appearance="outline">
-            <mat-icon matPrefix class="search_icon icon">search</mat-icon>
-            <input matInput type="search" placeholder="Search input here" class="search-input">
-            <mat-icon matSuffix class="enter_icon icon" enter>arrow_forward</mat-icon>
-        </mat-form-field>
-    </form>
-</div>
-<div style="padding: 0px 2rem 1rem 2rem;">
+<div id="wrapper">
+  <div class="container1">
+    <div  class="search-bar">
+        <form class="example-form">
+            <mat-form-field class="example-full-width" appearance="outline">
+                <mat-icon matPrefix class="search_icon icon">search</mat-icon>
+                <input matInput [formControl]="newquery" [matAutocomplete]="auto" type="text" required placeholder="{{this.query}}" class="search-input" (keyup.enter)="submit()" ngModel="{{this.query}}">
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of suggestedQueries | async" [value]="option.searchText">
+                    {{ option.searchText }}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-icon matSuffix class="enter_icon icon" (click)="submit()">arrow_forward</mat-icon>
+            </mat-form-field>
+        </form>
+    </div>
 
-<div *ngFor="let item of docDict | keyvalue">
-  <h2>{{item.key}}</h2>
-  <mat-accordion *ngFor="let val of $any(item).value">
-    <mat-expansion-panel (opened)="panelOpenState = true"
-                        (closed)="panelOpenState = false">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-        Page {{val[0]}}
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <p>{{val[1]}}</p>
-    </mat-expansion-panel>
-  </mat-accordion>
+    <div style="padding: 1rem 3rem 1rem 2rem;">
+      <div *ngFor="let item of docDict | keyvalue">
+        <h2>
+          <a target="_blank" (click)="viewDocument(item.key)">
+            {{item.key}}
+          </a>
+        </h2>
+        <mat-accordion *ngFor="let val of $any(item).value">
+          <mat-expansion-panel (opened)="panelOpenState = true"
+                              (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+              Page {{val[0]}}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{val[1]}}</p>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="container-fluid">
+    <h2>Similar questions previously asked</h2>
+    <mat-nav-list *ngFor="let q of relevantSearches; let i=index">
+      <a style="color: #003B70;" mat-list-item href="/viewresultsprocess/{{this.q}}">{{i+1}}. {{ q }}</a>
+   </mat-nav-list>
+    <h3>Do you mean by this?</h3>
+    <mat-list>
+      <mat-list-item *ngFor="let acronym of found_acronyms">{{acronym.acronym}} - {{acronym.meaning}}</mat-list-item>
+    </mat-list>
+    <!-- <p *ngIf="this.found_acronym">{{this.found_acronym}} - {{this.found_acronym_meaning}}</p> -->
+  </div>
 </div>
+
+

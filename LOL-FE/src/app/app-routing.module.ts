@@ -20,7 +20,7 @@ const routes: Routes = [
   { path: 'uploader/viewdocument/:id', component: ViewDocumentComponent},
   { path: 'viewdocument/:id', component: ViewDocumentComponent},
   { path: 'uploader/editdocument/:id', component: EditUploadedDocumentComponent },
-  { path: 'viewresultsproduct', component: ViewResultsProductComponent },
+  { path: 'viewresultsproduct/:query', component: ViewResultsProductComponent },
   { path: 'viewresultsprocess/:query', component: ViewResultsProcessComponent }
 ]
 

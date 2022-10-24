@@ -1,4 +1,12 @@
 from database import *
+from collections import Counter
+import re
+import math
+
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
+
 
 
 class SearchCount(db.Model):
@@ -96,5 +104,53 @@ def update_feedback(qn, feedback):
         return 400, "couldn't update"
 
 
+def getSuggestedSearches(query):
+    try: 
+        query_list = SearchCount.query.with_entities(SearchCount.searchText).all()
+        sim_dict = {}
+        for q in query_list:
+            q_vector = text_to_vector(q[0])
+            query_vector = text_to_vector(query)
+            sim_dict[q[0]] = get_cosine(q_vector, query_vector)
+            
+        desc_sim_dict = sorted(sim_dict.items(), key=lambda x: x[1], reverse=True)
+        
+        # getting top 3 most relevant searches
+        if len(desc_sim_dict) >= 3: 
+            top_3_searches = [desc_sim_dict[0][0], desc_sim_dict[1][0], desc_sim_dict[2][0]]
+        else:
+            top_3_searches = []
+            for i in range(len(desc_sim_dict)):
+                top_3_searches.append(desc_sim_dict[i][0])
+    
+        return top_3_searches
 
+    except:
+        return 400, "no suggested searches, try making a search first? :)"
+
+def text_to_vector(text):
+    ps = PorterStemmer()
+    stop_words = set(stopwords.words('english')) 
+    query = word_tokenize(text)
+    processedQuery = ''
+    for w in query:
+        if not w in stop_words:
+            processedQuery += " " + ps.stem(w)
+    
+    WORD = re.compile(r"\w+")
+    words = WORD.findall(processedQuery)
+    return Counter(words)
+    
+def get_cosine(vec1, vec2):
+    intersection = set(vec1.keys()) & set(vec2.keys())
+    numerator = sum([vec1[x] * vec2[x] for x in intersection])
+
+    sum1 = sum([vec1[x] ** 2 for x in list(vec1.keys())])
+    sum2 = sum([vec2[x] ** 2 for x in list(vec2.keys())])
+    denominator = math.sqrt(sum1) * math.sqrt(sum2)
+
+    if not denominator:
+        return 0.0
+    else:
+        return float(numerator) / denominator
 
