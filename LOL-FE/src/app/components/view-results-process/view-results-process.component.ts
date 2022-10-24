@@ -83,7 +83,7 @@ export class ViewResultsProcessComponent implements OnInit {
             for (let j in words) {
               // console.log(words[j])
               // console.log(data.acronyms[i].acronym)
-              if (words[j].toLowerCase() == (data.acronyms[i].acronym.toLowerCase())) {
+              if ((words[j].toLowerCase()).includes(data.acronyms[i].acronym.toLowerCase())) {
                 // console.log(data.acronyms[i].meaning)
                 this.found_acronyms.push({
                   'acronym': data.acronyms[i].acronym,
