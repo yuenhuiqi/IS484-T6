@@ -34,11 +34,20 @@
                     </tr>
                 </thead>
                 <tbody class="upload-name-style">
-                    <tr *ngFor="let item of fileList | keyvalue">
+                    <tr *ngFor="let key of objectKeys(fileList)">
+                        <td style="padding-right: 10px;">{{ key }}</td>
+                        <td style="text-align: right; width: 150px">
+                            <button *ngIf="errorList[key]" mat-button (click)="editFile(key)" style="color: #6200ea;">Edit Document Details</button>
+                            <button *ngIf="!errorList[key]" mat-button (click)="editFile(key)" style="color: #6200ea; outline: 1px solid red;">Edit Document Details</button>
+                        </td>
+                        <td style="text-align: right; width: 150px"><button mat-button (click)="deleteFile(key)" style="color: red;">Delete</button></td>
+                    </tr>    
+                    <!-- <tr *ngFor="let item of fileList | keyvalue">
                         <td style="padding-right: 10px;">{{ item.key }}</td>
+                        <td style="text-align: right; width: 150px"><button mat-button (click)="editFile(item.key)" style="color: #6200ea;">{{ errorList.item.key }}</button></td>
                         <td style="text-align: right; width: 150px"><button mat-button (click)="editFile(item.key)" style="color: #6200ea;">Edit Document Details</button></td>
                         <td style="text-align: right; width: 150px"><button mat-button (click)="deleteFile(item.key)" style="color: red;">Delete</button></td>
-                    </tr>    
+                    </tr>     -->
                 </tbody>
             </table>
     
@@ -53,6 +62,6 @@
     <mat-toolbar>
         <span class="example-spacer"></span>
         <button [routerLink] = "['/uploader']" mat-stroked-button>Cancel</button>
-        <button mat-flat-button style="margin: 10px;" (click)="submitForm()">Upload</button>
+        <button [disabled]="checkValidity() || objectKeys(errorList).length == 0" mat-flat-button style="margin: 10px;" (click)="submitForm()">Upload</button>
     </mat-toolbar>
 </div>

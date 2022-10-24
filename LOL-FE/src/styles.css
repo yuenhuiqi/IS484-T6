@@ -54,3 +54,13 @@ button {
     color: #003B70;
 }
 
+.errorAlert {
+    color: white;
+    background-color: rgb(165, 0, 33);
+}
+
+.successAlert {
+    color: white;
+    background-color: rgb(63, 154, 95);
+}
+

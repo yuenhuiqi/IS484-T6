@@ -116,16 +116,21 @@ export class UploaderHomeComponent implements OnInit {
             if (err.error.text == 'Document deleted!') {
               // RELOAD upon successful deletion
               console.log(err.error.text)
-              this.snackbar.open(err.error.text, 'x', {
+              this.snackbar.open(err.error.text, 'close', {
                 duration: 1000,
-                verticalPosition: "top"
+                verticalPosition: "top",
+                panelClass: ["successAlert"]
               })
                 .afterDismissed().subscribe(() => location.reload())
             }
             else {
               // ADD ERROR snackbar message
               console.log(err.error.text)
-              this.snackbar.open(err.error.text, 'Close')
+              this.snackbar.open(err.error.text, 'Close', {
+                duration: 1000,
+                verticalPosition: "top",
+                panelClass: ["errorAlert"]
+              })
               this.isLoading = false
             }
           },
