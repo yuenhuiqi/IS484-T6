@@ -57,7 +57,10 @@ export class ViewResultsProductComponent implements OnInit {
             for (let j in words) {
               // console.log(words[j])
               // console.log(data.acronyms[i].acronym)
-              if ((words[j].toLowerCase()).includes(data.acronyms[i].acronym.toLowerCase())) {
+              var word = words[j].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
+              word = word.replace(/\s{2,}/g," ")
+              console.log(word)
+              if (word.toLowerCase() == (data.acronyms[i].acronym.toLowerCase())) {
                 // console.log(data.acronyms[i].meaning)
                 this.found_acronyms.push({
                   'acronym': data.acronyms[i].acronym,
