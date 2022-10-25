@@ -25,7 +25,7 @@ export interface DialogData {
 })
 
 export class UploadDocumentComponent {
-
+  progress = "20"
   constructor(
     private manageDocs: ManageDocsService,
     private user: AuthService,

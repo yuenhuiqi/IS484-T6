@@ -47,7 +47,8 @@ import { SafePipe } from './safe.pipe';
 import { DeleteConfirmationComponent } from './components/delete-confirmation/delete-confirmation.component';
 
 import { MatListModule } from '@angular/material/list';
-
+// import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 
 @NgModule({
@@ -66,6 +67,8 @@ import { MatListModule } from '@angular/material/list';
     ViewResultsProcessComponent,
     SafePipe,
     DeleteConfirmationComponent
+    // NgxDocViewerModule
+  
   ],
   imports: [
     BrowserModule,
@@ -91,7 +94,9 @@ import { MatListModule } from '@angular/material/list';
     MatAutocompleteModule,
     MatListModule,
     MatPaginatorModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule, 
+    MatProgressBarModule
+
   ],
   providers: [AuthService, ManageDocsService, ManageSearchQueryService],
   bootstrap: [AppComponent]
