@@ -55,6 +55,17 @@ def add_count(fSearchID, fDocID):
             print("Something Happened (Add new DocSearch Query): ", e)
             return 400, e
         
+def get_feedback_info(fSearchID, fDocID):
+
+    try:
+        info = Feedback.query.filter_by(fSearchID == fSearchID and fDocID == fDocID).first()
+
+        return 200, info.json()
+    except Exception as e:
+        print("Something Happened fetching info: ", e)
+        return 400, e
+        
+    
 
 def update_feedback(fSearchID, fDocID, feedback):
     print(fSearchID, fDocID, feedback)

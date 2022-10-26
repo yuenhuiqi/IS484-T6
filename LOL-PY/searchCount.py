@@ -81,19 +81,6 @@ def add_count(qn):
             return 400, e
         
 
-def update_feedback(qn, feedback):
-    print(feedback, qn)
-    try:
-        current_score = SearchCount.query.filter(SearchCount.searchText==qn).first()
-        print(current_score)
-        if feedback > 0:
-            current_score.merit += feedback
-        else:
-            current_score.demerit += feedback
-        db.session.commit()
-        return 200, "updated"
-    except:
-        return 400, "couldn't update"
 
 
 

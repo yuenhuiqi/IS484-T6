@@ -10,6 +10,7 @@ from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
 from searchCount import search_text, add_count, update_feedback
+from feedback import add_count as fAdd_count, get_feedback_info, update_feedback as fUpdate_feedback
 from document import Document, upload_multiDocs, dl, getAllDocs, deleteAllDocVersions, update_docDetails, getPresignedUrl
 from versioning import getAllVersions
 from user import User
@@ -51,12 +52,27 @@ def search_query(question):
         }
     )
 
-@app.route('/feedback', methods=["POST"])
-def feedback():
+
+@app.route('/addDocQueryCount/<questionID>/<docID>', methods=["GET"])
+def add_qn_doc_count(questionID ,docID):
+    code, data = fAdd_count(questionID, docID)
+    return jsonify(
+        {
+            "code": code,
+            "data": {
+                "status": data
+            }
+        }
+    )
+
+
+
+@app.route('/getFeedback', methods=["POST"])
+def get_feedback():
     info = request.json
-    question = info["question"]
-    count = info['feedback']
-    code, data = update_feedback(question, count)
+    search = info["searchID"]
+    doc = info['docID']
+    code, data = get_feedback_info(search, doc)
     
     return jsonify(
         {
@@ -65,6 +81,20 @@ def feedback():
         }
     )
 
+@app.route('/pushFeedback', methods=["POST"])
+def push_feedback():
+    info = request.json
+    questionID = info["question"]
+    docID = info["doc"]
+    count = info['feedback']
+    code, data = fUpdate_feedback(questionID, docID, count)
+    
+    return jsonify(
+        {
+            "code": code,
+            "data": data
+        }
+    )
 
 @app.route('/')
 def index():
