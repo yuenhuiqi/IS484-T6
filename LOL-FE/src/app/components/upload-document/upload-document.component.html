@@ -20,7 +20,7 @@
                 <p style="color: #6200ea">---------------------------------------------</p>
                 <p>PDF, Word, Powerpoint, file size no more than 10MB</p>
                 <br>
-                <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+                <mat-progress-bar *ngIf="this.snackbarOpen === false" mode="indeterminate" [value]="progress"></mat-progress-bar>
                 <br>
                 <button mat-stroked-button (click)="openFileSelector()" class="selectFile">SELECT FILE</button>
             </div>
