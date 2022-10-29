@@ -34,7 +34,7 @@ import { UploadDocumentComponent } from './components/upload-document/upload-doc
 
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { EditDocumentDetailsComponent } from './components/edit-document-details/edit-document-details.component';
 import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
@@ -49,6 +49,7 @@ import { DeleteConfirmationComponent } from './components/delete-confirmation/de
 import { MatListModule } from '@angular/material/list';
 // import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { AppHttpInterceptor } from './AppHttpInterceptor';
 
 
 @NgModule({
@@ -98,7 +99,12 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     MatProgressBarModule
 
   ],
-  providers: [AuthService, ManageDocsService, ManageSearchQueryService],
+  providers: [AuthService, ManageDocsService, ManageSearchQueryService, 
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AppHttpInterceptor,
+      multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
