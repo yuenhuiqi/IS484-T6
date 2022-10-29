@@ -1,6 +1,7 @@
 from distutils.command.upload import upload
 from distutils.version import Version
-from flask import Flask, redirect, url_for, render_template, request, session, jsonify, flash, current_app, make_response
+from multiprocessing import AuthenticationError
+from flask import Flask, redirect, url_for, render_template, request, session, jsonify, flash, current_app, make_response, abort
 from flask_cors import CORS, cross_origin
 
 from database import app
@@ -20,14 +21,32 @@ import bcrypt
 import json
 
 import requests
+import functools
 
 bcrypt = Bcrypt(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = SQLAlchemy(app)
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.getenv("APIKEY")
+
+# authentication decorator, source: https://blog.teclado.com/api-key-authentication-with-flask/ 
+def auth(func):
+    @functools.wraps(func)
+    def decorator(*args, **kwargs):
+        if not "Authorization" in request.headers:
+            abort(401)
+        if request.headers.get("Authorization") != API_KEY:
+            abort(401)
+    return decorator
 
 @app.route('/search/<string:question>', methods=["GET"])
+@auth
 def search_results(question):
     code, data = search_text(question)
     data = (sorted(data, key=lambda x: x['count'], reverse=True))
