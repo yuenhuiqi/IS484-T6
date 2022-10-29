@@ -14,6 +14,7 @@ export class ViewDocumentComponent implements OnInit {
   docID: any;
   docLink: any;
   toggleClose = 0;
+  docType: any;
   
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {   }  
@@ -31,6 +32,13 @@ export class ViewDocumentComponent implements OnInit {
       .subscribe(
         data => { this.docLink = data.presignedUrl }
       )
+
+    this.http.get<any>(`http://localhost:2222/getDocDetails/` + this.docID)
+    .subscribe(
+      data => { this.docType = data.docType 
+      }
+    )
+
 
   }
 

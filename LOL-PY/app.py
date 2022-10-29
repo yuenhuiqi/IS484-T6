@@ -128,7 +128,7 @@ def getAllDocDetails(docTitle, page_size, page):
 @auth
 def getDocDetails(doc_id):
     doc = Document.query.filter_by(docID=doc_id).first()
-    return jsonify({'journey': doc.journey, 'docTitle': doc.docTitle, 'docName': doc.docName})
+    return jsonify({'journey': doc.journey, 'docTitle': doc.docTitle, 'docName': doc.docName, 'docType': doc.docType})
 
 
 @app.route('/updateDoc/<doc_id>/<doc_title>/<doc_journey>', methods=['POST'])
