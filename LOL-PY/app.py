@@ -41,8 +41,10 @@ def auth(func):
     def decorator(*args, **kwargs):
         if not "Authorization" in request.headers:
             abort(401)
+        # print(request.headers.get("Authorization"))
         if request.headers.get("Authorization") != API_KEY:
             abort(401)
+        return func(*args, **kwargs)
     return decorator
 
 @app.route('/search/<string:question>', methods=["GET"])
@@ -60,6 +62,7 @@ def search_results(question):
     )
 
 @app.route('/addQueryCount/<question>', methods=["POST"])
+@auth
 def search_query(question):
     code, data = add_count(question)
     return jsonify(
@@ -72,6 +75,7 @@ def search_query(question):
     )
 
 @app.route('/feedback', methods=["POST"])
+@auth
 def feedback():
     info = request.json
     question = info["question"]
@@ -95,6 +99,7 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 @cross_origin()
+@auth
 def upload_files():
     # if request.method == 'POST':
     # print(request.get_json())
@@ -114,23 +119,27 @@ def upload_files():
 
 
 @app.route('/getAllDocDetails/<string:docTitle>/<int:page_size>/<int:page>', methods=['GET'])
+@auth
 def getAllDocDetails(docTitle, page_size, page):
     return search_doc(docTitle, page_size, page)
 
 
 @app.route('/getDocDetails/<doc_id>', methods=['GET'])
+@auth
 def getDocDetails(doc_id):
     doc = Document.query.filter_by(docID=doc_id).first()
     return jsonify({'journey': doc.journey, 'docTitle': doc.docTitle, 'docName': doc.docName})
 
 
 @app.route('/updateDoc/<doc_id>/<doc_title>/<doc_journey>', methods=['POST'])
+@auth
 def updateDoc(doc_id, doc_title, doc_journey):
     doc = Document.query.filter_by(docID=doc_id).first()
     return update_docDetails(doc, doc_title, doc_journey)
 
 
 @app.route('/deleteDoc', methods=['POST'])
+@auth
 def deleteDoc():
     docName = request.json["docName"]
     deleteAllDocVersions(docName)
@@ -138,15 +147,18 @@ def deleteDoc():
 
 
 @app.route('/getAllVersions/<doc_id>', methods=['GET'])
+@auth
 def getAllVersionsDetails(doc_id):
     return getAllVersions(doc_id)
 
 
 @app.route('/download/<upload_id>')
+@auth
 def download(upload_id):
     return dl(upload_id)
 
 @app.route('/presignedUrl/<doc_id>', methods=['GET'])
+@auth
 def getUrl(doc_id):
     doc = Document.query.filter_by(docID=doc_id).first()
     presignedUrl = getPresignedUrl(doc.docName)
@@ -154,9 +166,10 @@ def getUrl(doc_id):
 
 
 @app.route('/login', methods=['POST'])
+@auth
 def login():
     json_data = request.json
-    auth = request.authorization
+    # auth = request.authorization
 
     user = User.query.filter_by(userID=json_data['userName']).first()
     if user and bcrypt.check_password_hash(user.password, json_data['password']):
@@ -169,16 +182,19 @@ def login():
 
 
 @app.route('/login/<string:token>', methods=['GET'])
+@auth
 def getUser(token):
     user = User.query.filter_by(token=token).first()
     return jsonify({"userID": user.userID, "userName": user.userName, "role": user.role})
 
 @app.route('/getAllAcronyms/<acronym>', methods=['GET'])
+@auth
 def getAcronymMeaning(acronym):
     acronyms = Acronym.query.filter_by(acronym=acronym).first()
     return jsonify({'acronym': acronyms.acronym, 'meaning': acronyms.meaning})
 
 @app.route('/getAllAcronyms', methods=['GET'])
+@auth
 def getAllAcronyms():
     acronyms = Acronym.query.all()
     arr = []
@@ -190,6 +206,7 @@ def getAllAcronyms():
     return jsonify({'acronyms': arr}), 200
 
 @app.route('/getSuggestedQueries/<string:query>', methods=['GET'])
+@auth
 def getSuggested(query):
     return jsonify({'suggestedSearches': getSuggestedSearches(query)})
 
