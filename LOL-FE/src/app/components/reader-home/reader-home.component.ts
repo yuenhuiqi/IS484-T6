@@ -33,7 +33,7 @@ export class ReaderHomeComponent implements OnInit {
       this.getSuggestedQuery(val)
     });
 
-    this.http.get<any>(`http://localhost:2222/getAllAcronyms`)
+    this.http.get<any>(`http://54.254.54.186:2222/getAllAcronyms`)
     .subscribe(
       data => {
         // console.log(data)

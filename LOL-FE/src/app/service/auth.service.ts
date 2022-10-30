@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AuthService {
 
-  private loginUrl = "http://localhost:2222/login"
+  private loginUrl = "http://54.254.54.186:2222/login"
   constructor(private http: HttpClient) { }
 
   loginUser(user : any) {
