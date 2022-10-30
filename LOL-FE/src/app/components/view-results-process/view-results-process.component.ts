@@ -51,7 +51,7 @@ export class ViewResultsProcessComponent implements OnInit {
     });
 
 
-    this.http.get<any>(`http://54.254.54.186:2222/getSuggestedQueries/` + this.query).subscribe(
+    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
       data => {this.relevantSearches = data.suggestedSearches}
     )
 
@@ -70,7 +70,7 @@ export class ViewResultsProcessComponent implements OnInit {
         }
     )
 
-    this.http.get<any>(`http://54.254.54.186:2222/getAllAcronyms`)
+    this.http.get<any>(`http://localhost:2222/getAllAcronyms`)
     .subscribe(
       data => {
         // console.log(data)

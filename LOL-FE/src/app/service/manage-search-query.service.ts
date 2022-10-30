@@ -14,7 +14,7 @@ export interface Query {
 
 export class ManageSearchQueryService {
 
-  private baseurl = "http://54.254.54.186:2222/"
+  private baseurl = "http://localhost:2222/"
 
   constructor(private http: HttpClient) {
   }
