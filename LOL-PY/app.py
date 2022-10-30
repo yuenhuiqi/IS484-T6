@@ -1,6 +1,7 @@
 from distutils.command.upload import upload
 from distutils.version import Version
 from multiprocessing import AuthenticationError
+from urllib import response
 from flask import Flask, redirect, url_for, render_template, request, session, jsonify, flash, current_app, make_response, abort
 from flask_cors import CORS, cross_origin
 
@@ -47,7 +48,7 @@ def auth(func):
         return func(*args, **kwargs)
     return decorator
 
-@app.route('/search/<string:question>', methods=["GET"])
+@app.route('/search/<path:question>', methods=["GET"])
 @auth
 def search_results(question):
     code, data = search_text(question)
@@ -61,7 +62,7 @@ def search_results(question):
         }
     )
 
-@app.route('/addQueryCount/<question>', methods=["POST"])
+@app.route('/addQueryCount/<path:question>', methods=["POST"])
 @auth
 def search_query(question):
     code, data = add_count(question)
@@ -187,23 +188,26 @@ def getUser(token):
     user = User.query.filter_by(token=token).first()
     return jsonify({"userID": user.userID, "userName": user.userName, "role": user.role})
 
-@app.route('/getAllAcronyms/<acronym>', methods=['GET'])
-@auth
-def getAcronymMeaning(acronym):
-    acronyms = Acronym.query.filter_by(acronym=acronym).first()
-    return jsonify({'acronym': acronyms.acronym, 'meaning': acronyms.meaning})
 
-@app.route('/getAllAcronyms', methods=['GET'])
+@app.route('/getAllAcronyms/<path:question>', methods=['GET'])
 @auth
-def getAllAcronyms():
+def getAcronymMeaning(question):
+    qn = '{0}'.format(question)
     acronyms = Acronym.query.all()
     arr = []
     for acronym in acronyms:
-        acronym_dict = {}
-        acronym_dict['acronym'] = acronym.acronym
-        acronym_dict['meaning'] = acronym.meaning
-        arr.append(acronym_dict)
+        print(str(acronym.acronym))
+        if str(acronym.acronym).lower() in qn.lower():
+            print(acronym.acronym, "---------")
+            acronym_dict = {}
+            acronym_dict['acronym'] = acronym.acronym
+            acronym_dict['meaning'] = acronym.meaning
+            arr.append(acronym_dict)
+
+    if len(arr) == 0:
+        return "No acronym found", status.HTTP_404_NOT_FOUND
     return jsonify({'acronyms': arr}), 200
+
 
 @app.route('/getSuggestedQueries/<string:query>', methods=['GET'])
 @auth
