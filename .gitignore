@@ -3,7 +3,12 @@
 .DS_Store
 *.pyc
 
+<<<<<<< HEAD
 .ssl/
+=======
+# SSL cert files 
+.ssl
+>>>>>>> d347efd318e9ac8e2ede87292eba2b977737b953
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
