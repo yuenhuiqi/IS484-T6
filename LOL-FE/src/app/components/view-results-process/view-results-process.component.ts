@@ -15,6 +15,7 @@ import { ManageDocsService } from '../../service/manage-docs.service';
 export class ViewResultsProcessComponent implements OnInit {
   panelOpenState = false;
   sub: any;
+  encodedQuery: any;
   query: any;
   docArr: any;
   docDict: any = {};
@@ -36,7 +37,6 @@ export class ViewResultsProcessComponent implements OnInit {
 
 
   ngOnInit(): void {
-
     if (localStorage.getItem('reload') == null || localStorage.getItem('reload') == '0') {
       localStorage.setItem('reload', '1')
       location.reload()
@@ -48,14 +48,17 @@ export class ViewResultsProcessComponent implements OnInit {
 
     this.sub = this.route.params.subscribe(params => {
       this.query = decodeURIComponent(params['query']);
+      this.encodedQuery = encodeURIComponent(this.query)
     });
 
+    this.getAcronym()
 
-    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
+    console.log(this.encodedQuery)
+    this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.encodedQuery).subscribe(
       data => {this.relevantSearches = data.suggestedSearches}
     )
 
-    this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
+    this.http.post<any>(`https://18.142.140.202/search`, {"query": this.encodedQuery})
     .subscribe(
       data => { 
         // console.log(data)
@@ -70,41 +73,6 @@ export class ViewResultsProcessComponent implements OnInit {
         }
     )
 
-    this.http.get<any>(`http://localhost:2222/getAllAcronyms`)
-    .subscribe(
-      data => {
-        // console.log(data)
-        for (let i in data.acronyms) {
-          // console.log(data.acronyms[i])
-          if (i < data.acronyms.length) {
-            // console.log(this.query)
-            var words = this.query.split(' ')
-            
-            for (let j in words) {
-              // console.log(words[j])
-              // console.log(data.acronyms[i].acronym)
-              var word = words[j].replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()]/g,"")
-              word = word.replace(/\s{2,}/g," ")
-              console.log(word)
-              if (word.toLowerCase() == (data.acronyms[i].acronym.toLowerCase())) {
-                // console.log(data.acronyms[i].meaning)
-                this.found_acronyms.push({
-                  'acronym': data.acronyms[i].acronym,
-                  'meaning': data.acronyms[i].meaning
-                })
-                console.log(this.found_acronyms)
-                // this.found_acronym.push(words[j])
-                // this.found_acronym_meaning.push(data.acronyms[i].meaning)
-              } else {
-                console.log("Next Please")
-              }
-            }
-          }
-          
-        }
-      }
-    )
-
     // this.getAllDocDetails()
 
     this.getSuggestedQuery("")
@@ -116,15 +84,14 @@ export class ViewResultsProcessComponent implements OnInit {
   }
 
   docDetails: any = {}
-
   dataSource = [];
-
 
   viewDocument(docID: any): void {
     window.open(`/uploader/viewdocument/${docID}`)
   }
 
   getSuggestedQuery(qn:string) {
+    qn = encodeURIComponent(qn)
     this.manageSearchQueryService.getSearchQuery(qn)
     .subscribe(res => {
       console.log(res)
@@ -133,14 +100,31 @@ export class ViewResultsProcessComponent implements OnInit {
     });
   }
 
+  getAcronym() {
+    console.log(this.encodedQuery)
+    this.http.get<any>(`https://54.254.54.186:2222/getAllAcronyms/` + this.encodedQuery)
+    .subscribe(
+      data => {
+        for (let i in data.acronyms) {
+          this.found_acronyms.push({
+            'acronym': data.acronyms[i].acronym,
+            'meaning': data.acronyms[i].meaning
+          })
+        }
+        console.log(this.found_acronyms)
+      })
+    
+  }
+
   submit() {
     this.searchQuery = this.newquery.value
     console.log(this.newquery.value)
-    this.manageSearchQueryService.addQueryCount(this.newquery.value)
+    let query = encodeURIComponent(this.searchQuery)
+    this.manageSearchQueryService.addQueryCount(query)
     .subscribe(res => {
       console.log(res)
     });
-    this.router.navigate(['/viewresultsprocess/' + this.searchQuery])
+    this.router.navigate(['/viewresultsprocess/' + query])
       .then(() => {
         window.location.reload();
       });

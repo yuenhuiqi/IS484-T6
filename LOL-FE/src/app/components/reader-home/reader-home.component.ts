@@ -33,41 +33,10 @@ export class ReaderHomeComponent implements OnInit {
       this.getSuggestedQuery(val)
     });
 
-    this.http.get<any>(`http://localhost:2222/getAllAcronyms`)
-    .subscribe(
-      data => {
-        // console.log(data)
-        for (let i in data.acronyms) {
-          // console.log(data.acronyms[i])
-          if (i < data.acronyms.length) {
-            // console.log(this.query)
-            var words = this.searchQuery.split(' ')
-            
-            for (let j in words) {
-              // console.log(words[j])
-              // console.log(data.acronyms[i].acronym)
-              if (words[j].toLowerCase() == (data.acronyms[i].acronym.toLowerCase())) {
-                // console.log(data.acronyms[i].meaning)
-                this.found_acronyms.push({
-                  'acronym': data.acronyms[i].acronym,
-                  'meaning': data.acronyms[i].meaning
-                })
-                console.log(this.found_acronyms)
-                // this.found_acronym.push(words[j])
-                // this.found_acronym_meaning.push(data.acronyms[i].meaning)
-              } else {
-                console.log("Next Please")
-              }
-            }
-          }
-          
-        }
-      }
-    )
-
   }
 
   getSuggestedQuery(qn:string) {
+    qn = encodeURIComponent(qn)
     this.manageSearchQueryService.getSearchQuery(qn)
     .subscribe(res => {
       console.log(res)
@@ -79,12 +48,12 @@ export class ReaderHomeComponent implements OnInit {
   submit() {
     this.searchQuery = this.query.value
     // console.log(this.query.value)
-    this.manageSearchQueryService.addQueryCount(this.query.value)
+    let query = encodeURIComponent(this.searchQuery)
+    this.manageSearchQueryService.addQueryCount(query)
     .subscribe(res => {
       console.log(res)
     });
-
-    this.router.navigate(['/viewresultsprocess/' + this.searchQuery]);
+    this.router.navigate(['/viewresultsprocess/' + query]);
   }
 
 }
