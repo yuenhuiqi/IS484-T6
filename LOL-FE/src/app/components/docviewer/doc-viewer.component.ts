@@ -39,12 +39,12 @@ export class ViewDocumentComponent implements OnInit {
       this.queryID = params['qid']
     });
     
-    this.http.get<any>(`http://localhost:2222/presignedUrl/` + this.docID)
+    this.http.get<any>(`https://54.254.54.186:2222/presignedUrl/` + this.docID)
       .subscribe(
         data => { this.docLink = data.presignedUrl }
       )
 
-    this.http.get<any>(`http://localhost:2222/getDocDetails/` + this.docID)
+    this.http.get<any>(`https://54.254.54.186:2222/getDocDetails/` + this.docID)
     .subscribe(
       data => { this.docType = data.docType 
       }
