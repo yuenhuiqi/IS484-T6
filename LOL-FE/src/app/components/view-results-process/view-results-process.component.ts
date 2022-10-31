@@ -54,7 +54,7 @@ export class ViewResultsProcessComponent implements OnInit {
     this.getAcronym()
 
     console.log(this.encodedQuery)
-    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.encodedQuery).subscribe(
+    this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.encodedQuery).subscribe(
       data => {this.relevantSearches = data.suggestedSearches}
     )
 
@@ -102,7 +102,7 @@ export class ViewResultsProcessComponent implements OnInit {
 
   getAcronym() {
     console.log(this.encodedQuery)
-    this.http.get<any>(`http://localhost:2222/getAllAcronyms/` + this.encodedQuery)
+    this.http.get<any>(`https://54.254.54.186:2222/getAllAcronyms/` + this.encodedQuery)
     .subscribe(
       data => {
         for (let i in data.acronyms) {

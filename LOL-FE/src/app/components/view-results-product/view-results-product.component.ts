@@ -44,7 +44,7 @@ export class ViewResultsProductComponent implements OnInit {
       this.query = decodeURIComponent(params['query']);
     });
 
-    this.http.get<any>(`http://localhost:2222/getAllAcronyms`)
+    this.http.get<any>(`https://54.254.54.186:2222/getAllAcronyms`)
     .subscribe(
       data => {
         // console.log(data)
