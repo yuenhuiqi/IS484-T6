@@ -3,6 +3,9 @@
 .DS_Store
 *.pyc
 
+# SSL cert files 
+.ssl
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
