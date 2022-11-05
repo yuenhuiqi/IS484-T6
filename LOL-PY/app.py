@@ -245,7 +245,10 @@ def getAcronymMeaning(question):
 def getSuggested(query):
     return jsonify({'suggestedSearches': getSuggestedSearches(query)})
 
+# moved these out of the if __name__ == '__main__' block because I want it to run when we run the app using the flask command
+# instead of using python3 app.py
+app.secret_key = 'is484t6'
+app.config['SESSION_TYPE'] = 'filesystem'
+
 if __name__ == '__main__':
-    app.secret_key = 'is484t6'
-    app.config['SESSION_TYPE'] = 'filesystem'
     app.run(host='0.0.0.0', port=2222, debug=True)
