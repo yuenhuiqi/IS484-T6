@@ -1,4 +1,11 @@
-<iframe [src]="docLink | safe"></iframe>
+<iframe *ngIf="docType ==='pdf'" [src]="docLink | safe"></iframe>
+
+<ngx-doc-viewer *ngIf="docType !=='pdf'"
+  [url]=docLink
+  viewer="office"
+  style="width:100%;height:100%;"
+></ngx-doc-viewer>
+
 
 <div *ngIf='!toggleClose'class="uc-modal">
     <div class="uc-m-header">
