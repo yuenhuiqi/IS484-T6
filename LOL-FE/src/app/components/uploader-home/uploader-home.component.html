@@ -23,7 +23,7 @@
 
         <table *ngIf="!isLoading" mat-table [dataSource]="dataSource">
             <ng-container matColumnDef="docTitle">
-                <th mat-header-cell *matHeaderCellDef> Title </th>
+                <th mat-header-cell *matHeaderCellDef> File Title </th>
                 <td mat-cell *matCellDef="let element"> {{element.docTitle}} </td>
             </ng-container>
 
