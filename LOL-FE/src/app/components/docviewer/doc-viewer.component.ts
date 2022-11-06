@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit,  } from '@angular/core';  
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-
+import { AuthService } from '../../service/auth.service'
+import { ManageFeedbackServiceService } from '../../service/manage-feedback-service.service';
   
 @Component({  
   selector: 'app-docviewer',  
@@ -13,11 +14,20 @@ export class ViewDocumentComponent implements OnInit {
   sub: any;
   docID: any;
   docLink: any;
-  toggleClose = 0;
+  toggleClose = 1;
   docType: any;
-  
+  token = localStorage.getItem('token');
+  userRole: String = "";
+  public feedback: any = {};
+  searchID: any = 1;
+  score: any = 0;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {   }  
+  constructor(
+    private user: AuthService, 
+    private route: ActivatedRoute, 
+    private http: HttpClient,
+    private managefeedback: ManageFeedbackServiceService
+  ) {   }  
   
   ngOnInit(): void {
     if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:id") {
@@ -39,19 +49,62 @@ export class ViewDocumentComponent implements OnInit {
       }
     )
 
+    this.getUserName()
+
 
   }
 
-  showModal = -1; 
-
-  show(index: number){
-    this.showModal= index;
+  getUserName() {
+    this.user.getUser(this.token)
+      .subscribe(
+        res => { 
+          this.userRole = (<any>res).role
+        }, 
+        err => console.log(err)
+      )
   }
 
-  close(){
-    // this.showModal = -1; 
-    this.toggleClose = 1;
+  displayStyle = "block";
+  
+  openPopup() {
+    this.displayStyle = "block";
   }
+  closePopup() {
+    this.displayStyle = "none";
+  }
+
+  submitPositive() {
+    this.score = 1
+    this.displayStyle = "none";
+    // console.log(this.docID)
+    this.managefeedback.addFeedbackCount(this.searchID, this.docID)
+    .subscribe(res => {
+      console.log(res)
+    });
+
+    this.managefeedback.updateFeedback(this.searchID, this.docID, this.score)
+    .subscribe(res => {
+      console.log(res)
+    });
+
+  }
+
+  submitNegative() {
+    this.score = 0
+    this.displayStyle = "none";
+
+    this.managefeedback.addFeedbackCount(this.searchID, this.docID)
+    .subscribe(res => {
+      console.log(res)
+    });
+
+    this.managefeedback.updateFeedback(this.searchID, this.docID, this.score)
+    .subscribe(res => {
+      console.log(res)
+    });
+  }
+
 
 }  
+
 

@@ -17,12 +17,12 @@ def getAllAcronyms(str_test):
     for acronyms in acronym_list:
         # print(acronyms)
         acronym_meaning = acronyms.lstrip().split(' | ')
-        print(acronym_meaning)
+        # print(acronym_meaning)
 
         try:
             acronym_db = Acronym(acronym=acronym_meaning[0], meaning=acronym_meaning[1])
             exists = db.session.query(db.exists().where(Acronym.acronym == acronym_meaning[0])).scalar()
-            print(exists)
+            # print(exists)
             if not exists:
                 print("ok")
                 db.session.add(acronym_db)

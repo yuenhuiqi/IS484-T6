@@ -11,11 +11,12 @@ from flask_cors import CORS
 from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
-from searchCount import search_text, add_count, update_feedback, getSuggestedSearches
+from searchCount import search_text, add_count, getSuggestedSearches
 from document import *
 from versioning import getAllVersions
 from user import User
 from acronym import Acronym, getAllAcronyms
+from feedback import Feedback, add_querydoc_count, update_feedback
 import jwt
 import datetime
 import bcrypt
@@ -75,14 +76,29 @@ def search_query(question):
         }
     )
 
-@app.route('/feedback', methods=["POST"])
-@auth
-def feedback():
-    info = request.json
-    question = info["question"]
-    count = info['feedback']
-    code, data = update_feedback(question, count)
+# @app.route('/feedback', methods=["POST"])
+# @auth
+# def feedback():
+#     info = request.json
+#     print(info)
+#     question = info["searchID"]
+#     document = info["docID"]
+#     count = info['feedback']
+#     code, data = add_count(question, document)
+#     code, data = update_feedback(question, document, count)
     
+#     return jsonify(
+#         {
+#             "code": code,
+#             "data": info
+#         }
+#     )
+
+@app.route('/feedback/<path:searchID>/<path:docID>/<path:score>', methods=["POST"])
+@auth
+def feedback(searchID, docID, score):
+
+    code, data = update_feedback(searchID, docID, score)
     return jsonify(
         {
             "code": code,
@@ -90,6 +106,20 @@ def feedback():
         }
     )
 
+
+@app.route('/addFeedback/<path:searchID>/<path:docID>', methods=["POST"])
+@auth
+def addfeedback(searchID, docID):
+    code, data = add_querydoc_count(searchID, docID)
+    
+    return jsonify(
+        {
+            "code": code,
+            "data": {
+                "status": data
+            }
+        }
+    )
 
 @app.route('/')
 def index():
@@ -196,9 +226,9 @@ def getAcronymMeaning(question):
     acronyms = Acronym.query.all()
     arr = []
     for acronym in acronyms:
-        print(str(acronym.acronym))
+        # print(str(acronym.acronym))
         if str(acronym.acronym).lower() in qn.lower():
-            print(acronym.acronym, "---------")
+            # print(acronym.acronym, "---------")
             acronym_dict = {}
             acronym_dict['acronym'] = acronym.acronym
             acronym_dict['meaning'] = acronym.meaning

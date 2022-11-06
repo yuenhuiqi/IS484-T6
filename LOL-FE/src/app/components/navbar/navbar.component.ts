@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit {
   time: Date = new Date();
   greetings: String = "";
   userRole: String = "";
-
+  
 
   constructor(
     private user: AuthService,
