@@ -1,74 +1,93 @@
 from database import *
+from flask import jsonify
 
 
 class Feedback(db.Model):
-    tablename = 'feedback'
+    __tablename__ = 'feedback'
 
-    fSearchID = db.Column(db.Integer, primary_key=True)
-    fDocID = db.Column(db.Integer, primary_key=True)
+    fID = db.Column(db.Integer, primary_key=True)
+    fSearchID = db.Column(db.String(200), nullable=False)
+    fDocID = db.Column(db.String(200), nullable=False)
     count = db.Column(db.Integer, nullable=False)  # no of user clicks on document
     merit = db.Column(db.Integer, nullable=False)  # feedback
     demerit = db.Column(db.Integer, nullable=False)
 
-    def init(self, searchID, docID, count):
-        self.fSearchID = searchID
-        self.fDocID = docID
-        self.count = count
+    def init(self, fSearchID, fDocID, count):
+        self.fSearchID = fSearchID
+        self.fDocID = fDocID
+        self.count = count 
         self.merit = 0
         self.demerit = 0
 
     def json(self):
         return {
-            "searchID": self.fSearchID,
-            "docID": self.fDocID,
+            "fID": self.fID,
+            "fSearchID": self.fSearchID,
+            "fDocID": self.fDocID,
             "count": self.count,
             "merit": self.merit,
             "demerit": self.demerit
         }
 
 
+def add_querydoc_count(searchID, docID):
+    search_ID = '{0}'.format(searchID)
+    doc_ID = '{0}'.format(docID)
 
-
-def add_count(fSearchID, fDocID):
-
-    if db.session.query(exists().where(Feedback.fSearchID == fSearchID and Feedback.fDocID == fDocID)).scalar():
-        print(fDocID, fSearchID, "docSearch exist")
-        
+    if db.session.query(exists().where(Feedback.fSearchID == search_ID)).scalar() and db.session.query(exists().where(Feedback.fDocID == doc_ID)).scalar():
+        print(search_ID, doc_ID, "feedback exist")
+        currentFeedback = Feedback.query.filter_by(fSearchID=search_ID, fDocID=doc_ID).first()
+        currentFeedback.count += 1
         try:
-            currentQuery = Feedback.query.filter_by(fSearchID == fSearchID and fDocID == fDocID).first()
-            currentQuery.count += 1
             db.session.commit()
-            return 200, "DocSearch count updated"
+            return 200, "feedback count updated"
         except Exception as e:
             print("Something Happened (Update DocSearch Query Count): ", e)
             return 400, e
         
     else:
-        print(fDocID, fSearchID, "new query")
-        newQuery = Feedback(fSearchID = fSearchID, fDocID = fDocID, count=1, merit = 0, demerit = 0)
+        print(search_ID, doc_ID, "new feedback")
+        newFeedback = Feedback(fSearchID = search_ID, fDocID = doc_ID, count=1, merit = 0, demerit = 0)
         try: 
-            db.session.add(newQuery)
+            db.session.add(newFeedback)
             db.session.commit()
-            return 200, "QueryCount added to DB!"
+            return 200, "Feedback added to DB!"
 
         except Exception as e:
             print("Something Happened (Add new DocSearch Query): ", e)
             return 400, e
         
 
-def update_feedback(fSearchID, fDocID, feedback):
-    print(fSearchID, fDocID, feedback)
+def update_feedback(searchID, docID, score):
+    # print(searchID, docID, score)
+
+    score = int(score)
+
     try:
-        current_score = Feedback.query.filter(Feedback.fSearchID == fSearchID and Feedback.fDocID == fDocID).first()
-        print(current_score)
-        if feedback > 0:
-            current_score.merit += feedback
+        currentFeedback = Feedback.query.filter_by(fSearchID=searchID, fDocID=docID).first()
+
+        print(currentFeedback.fDocID)
+        if (score > 0):
+            currentFeedback.merit += 1
+            print(currentFeedback.merit, "after commit")
+
         else:
-            current_score.demerit += feedback
+            currentFeedback.demerit += 1
+            print(currentFeedback.demerit, "after commit")
+            
+
         db.session.commit()
-        return 200, "updated"
-    except:
-        return 400, "couldn't update"
+
+        return 200, "Feedback updated"
+
+    except Exception as e:
+        print("Something Happened (Update Feedback Count): ", e)
+        return 400, e
+
+
+
+
+
 
 
 

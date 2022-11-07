@@ -7,16 +7,17 @@
 ></ngx-doc-viewer>
 
 
-<div *ngIf='!toggleClose'class="uc-modal">
+<div *ngIf='this.userRole === "reader"' class="uc-modal" [ngStyle]="{'display':displayStyle}">
     <div class="uc-m-header">
-      <span class="material-icons" (click)="close()">close</span>
+      <span class="material-icons" (click)="closePopup()">close</span>
     </div>
     <div class="uc-m-body">
       <h2>Was the search result helpful?</h2>
     </div>
     <div class="uc-m-footer">
-      <button class="btn" type="submit" (click)="close()"><mat-icon>thumb_up</mat-icon></button>
-      <button class="btn" type="submit" (click)="close()"><mat-icon>thumb_down</mat-icon></button>
+      <button mat-raised-button (click)="submitPositive()"><mat-icon>thumb_up</mat-icon></button>
+      <span style="padding-left:20px;"></span>
+      <button mat-raised-button (click)="submitNegative()"><mat-icon>thumb_down</mat-icon></button>
     </div>
 </div>
 
