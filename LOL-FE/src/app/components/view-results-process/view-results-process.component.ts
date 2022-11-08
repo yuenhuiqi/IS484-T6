@@ -55,13 +55,7 @@ export class ViewResultsProcessComponent implements OnInit {
     });
 
     this.getAcronym()
-<<<<<<< HEAD
-
-    console.log(this.encodedQuery)
-    this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.encodedQuery).subscribe(
-=======
-    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
->>>>>>> fa82b4f533f31e2e374437e5706d19caa03db496
+    this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.query).subscribe(
       data => {this.relevantSearches = data.suggestedSearches}
     )
 
