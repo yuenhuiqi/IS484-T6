@@ -16,6 +16,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -29,22 +34,20 @@ import { UploadDocumentComponent } from './components/upload-document/upload-doc
 
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { EditDocumentDetailsComponent } from './components/edit-document-details/edit-document-details.component';
-import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
 import { ViewDocumentComponent } from './components/docviewer/doc-viewer.component';
-
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-
 import { EditUploadedDocumentComponent } from './components/edit-uploaded-document/edit-uploaded-document.component';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { ViewResultsProductComponent } from './components/view-results-product/view-results-product.component';
 import { ViewResultsProcessComponent } from './components/view-results-process/view-results-process.component';
 import { SafePipe } from './safe.pipe';
+import { DeleteConfirmationComponent } from './components/delete-confirmation/delete-confirmation.component';
 
+import { MatListModule } from '@angular/material/list';
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { AppHttpInterceptor } from './AppHttpInterceptor';
 
 
 @NgModule({
@@ -56,12 +59,12 @@ import { SafePipe } from './safe.pipe';
     UploaderHomeComponent,
     UploadDocumentComponent,
     EditDocumentDetailsComponent,
-    UploadSuccessComponent, 
     ViewDocumentComponent, 
     EditUploadedDocumentComponent,
-    ViewResultsProductComponent,
     ViewResultsProcessComponent,
-    SafePipe
+    SafePipe,
+    DeleteConfirmationComponent
+  
   ],
   imports: [
     BrowserModule,
@@ -84,9 +87,19 @@ import { SafePipe } from './safe.pipe';
     CdkAccordionModule, 
     MatExpansionModule,
     MatSnackBarModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatListModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule, 
+    MatProgressBarModule,
+    NgxDocViewerModule
   ],
-  providers: [AuthService, ManageDocsService, ManageSearchQueryService],
+  providers: [AuthService, ManageDocsService, ManageSearchQueryService, 
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AppHttpInterceptor,
+      multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

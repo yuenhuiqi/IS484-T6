@@ -1,23 +1,46 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { FormControl } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ManageSearchQueryService } from '../../service/manage-search-query.service';
+import { ManageDocsService } from '../../service/manage-docs.service';
+import { ManageFeedbackServiceService } from '../../service/manage-feedback-service.service';
 
 @Component({
   selector: 'app-view-results-process',
   templateUrl: './view-results-process.component.html',
-  styleUrls: ['./view-results-process.component.css']
+  styleUrls: ['./view-results-process.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ViewResultsProcessComponent implements OnInit {
   panelOpenState = false;
   sub: any;
+  encodedQuery: any;
   query: any;
   docArr: any;
   docDict: any = {};
+  found_acronyms: any = []
+  relevantSearches: any;
+  answers: any = [];
+  name: any;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) { }
+  constructor(private route: ActivatedRoute, 
+                private http: HttpClient, 
+                private manageSearchQueryService: ManageSearchQueryService, 
+                private router: Router,
+                private manageDocs: ManageDocsService,
+                private managefeedback: ManageFeedbackServiceService
+              ) { }
+
+  newquery = new FormControl();
+  suggestedQueries = new BehaviorSubject<any>([]);
+
+  filtered:any;
+  searchQuery: any;
+
 
   ngOnInit(): void {
-
     if (localStorage.getItem('reload') == null || localStorage.getItem('reload') == '0') {
       localStorage.setItem('reload', '1')
       location.reload()
@@ -29,11 +52,11 @@ export class ViewResultsProcessComponent implements OnInit {
 
     this.sub = this.route.params.subscribe(params => {
       this.query = decodeURIComponent(params['query']);
+      this.encodedQuery = encodeURIComponent(this.query)
     });
 
-<<<<<<< Updated upstream
-    this.http.post<any>(`http://18.142.140.202/search`, {"query": this.query})
-=======
+
+
     this.getAcronym()
 
     console.log(this.encodedQuery)
@@ -43,47 +66,54 @@ export class ViewResultsProcessComponent implements OnInit {
 
 
 
+
     this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
->>>>>>> Stashed changes
+
+
     .subscribe(
       data => { 
-        // console.log(data)
+        console.log(data)
         for (let i in data.documents) {
-<<<<<<< Updated upstream
-          // console.log(data.documents)
-=======
           console.log(data.documents)
           this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
           .subscribe(res => { 
             // this.name = (<any>res).docTitle
             // this.docNameList.push((<any>res).docTitle)
+
             // console.log(docName)
             //calculate
             searchID, docID, score
             score = data.documents[i].meta.score
+
+
+            // // console.log(docName)
 
             this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
             // console.log(this.docNameList)
             // console.log(this.docDict)
           }, err => console.log(err));
 
->>>>>>> Stashed changes
+
           if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
             this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
           } else {
             this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
           }
-          }
+          console.log(this.docDict)
+        }
+        for (let j in data.answers) {
+          // console.log(data.answers[j].answer)
+          this.answers.push([data.answers[j].answer])
+        }
         }
     )
 
-<<<<<<< Updated upstream
-=======
+
 
     this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query+'/'+).subscribe(
       data => {this.relevantSearches = data.suggestedSearches}
     )
-    
+
     this.getSuggestedQuery("")
 
     this.newquery.valueChanges.subscribe(val => {
@@ -123,8 +153,35 @@ export class ViewResultsProcessComponent implements OnInit {
         }
         console.log(this.found_acronyms)
       })
->>>>>>> Stashed changes
-    
+
+  }
+
+  // getDocName(docID: any): void {
+  //   this.manageDocs.getDocDetails(docID)
+  //   .subscribe(res => { 
+  //     this.name = (<any>res).docTitle
+  //     // this.docNameList.push((<any>res).docTitle)
+  //     // // console.log(docName)
+  //     // // this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
+  //     // console.log(this.docNameList)
+  //     // console.log(this.docDict)
+  //   }, err => console.log(err));
+  //   return this.name
+  // }
+
+
+  submit() {
+    this.searchQuery = this.newquery.value
+    console.log(this.newquery.value)
+    let query = encodeURIComponent(this.searchQuery)
+    this.manageSearchQueryService.addQueryCount(query)
+    .subscribe(res => {
+      console.log(res)
+    });
+    this.router.navigate(['/viewresultsprocess/' + query])
+      .then(() => {
+        window.location.reload();
+      });
   }
 
 }

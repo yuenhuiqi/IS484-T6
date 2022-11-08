@@ -30,6 +30,7 @@ class Feedback(db.Model):
         }
 
 
+
 def get_feedback(searchID, docID):
     search_ID = '{0}'.format(searchID)
     doc_ID = '{0}'.format(docID)
@@ -40,6 +41,7 @@ def get_feedback(searchID, docID):
         return 200, feedback.json()
     except Exception as e:
         return 400, ("none found")
+
 
 
 

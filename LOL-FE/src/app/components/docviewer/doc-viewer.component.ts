@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit,  } from '@angular/core';  
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-
+import { AuthService } from '../../service/auth.service'
+import { ManageFeedbackServiceService } from '../../service/manage-feedback-service.service';
   
 @Component({  
   selector: 'app-docviewer',  
@@ -13,18 +14,29 @@ export class ViewDocumentComponent implements OnInit {
   sub: any;
   docID: any;
   docLink: any;
-  toggleClose = 0;
-  
+  toggleClose = 1;
+  docType: any;
+  token = localStorage.getItem('token');
+  userRole: String = "";
+  public feedback: any = {};
+  score: any = 0;
+  queryID: any;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {   }  
+  constructor(
+    private user: AuthService, 
+    private route: ActivatedRoute, 
+    private http: HttpClient,
+    private managefeedback: ManageFeedbackServiceService
+  ) {   }  
   
   ngOnInit(): void {
-    if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:id") {
+    if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:did/:qid") {
       this.toggleClose = 1;
     }
 
     this.sub = this.route.params.subscribe(params => {
-      this.docID = params['id'];
+      this.docID = params['did'];
+      this.queryID = params['qid']
     });
     
     this.http.get<any>(`http://localhost:2222/presignedUrl/` + this.docID)
@@ -32,18 +44,59 @@ export class ViewDocumentComponent implements OnInit {
         data => { this.docLink = data.presignedUrl }
       )
 
+    this.http.get<any>(`http://localhost:2222/getDocDetails/` + this.docID)
+    .subscribe(
+      data => { this.docType = data.docType 
+      }
+    )
+
+    this.getUserName()
+
+
   }
 
-  showModal = -1; 
-
-  show(index: number){
-    this.showModal= index;
+  getUserName() {
+    this.user.getUser(this.token)
+      .subscribe(
+        res => { 
+          this.userRole = (<any>res).role
+        }, 
+        err => console.log(err)
+      )
   }
 
-  close(){
-    // this.showModal = -1; 
-    this.toggleClose = 1;
+  displayStyle = "block";
+  
+  openPopup() {
+    this.displayStyle = "block";
   }
+  closePopup() {
+    this.displayStyle = "none";
+  }
+
+  submitPositive() {
+    this.score = 1
+    this.displayStyle = "none";
+    // console.log(this.docID)
+
+    this.managefeedback.updateFeedback(this.queryID, this.docID, this.score)
+    .subscribe(res => {
+      console.log(res)
+    });
+
+  }
+
+  submitNegative() {
+    this.score = 0
+    this.displayStyle = "none";
+
+    this.managefeedback.updateFeedback(this.queryID, this.docID, this.score)
+    .subscribe(res => {
+      console.log(res)
+    });
+  }
+
 
 }  
+
 

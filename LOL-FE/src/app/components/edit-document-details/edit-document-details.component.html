@@ -1,28 +1,29 @@
 <h1 mat-dialog-title>Title of the document: </h1>
 <div mat-dialog-content>
-    <p>
-        Document Title<span style="color:red;">*</span> : 
-        <mat-form-field appearance="outline">
-        <mat-label>Name your document</mat-label>
-        <input matInput [(ngModel)]="data.title" required>
-        </mat-form-field>
-    </p>
-    <p>
-        Journey<span style="color:red;">*</span> :
-        <mat-form-field appearance="outline">
-            <mat-label>Select</mat-label>
-            <mat-select [(ngModel)]="data.journey" required>
-                <mat-option value="Lending">Lending</mat-option>
-            </mat-select>
-        </mat-form-field>
-    </p>
-    <!-- <p>
-        <button mat-button><a target="_blank" [routerLink] = "['/viewdocument']"><u>Preview Document</u></a></button> 
-    </p> -->
+    <form [formGroup]="editDocDetails">
+        <p>
+            File Title<span style="color:red;">*</span> : 
+            <mat-form-field appearance="outline">
+            <mat-label>Name your document</mat-label>
+            <input matInput [(ngModel)]="data.title" formControlName="title" name="title" required>
+            <mat-hint *ngIf="data.title.trim().length == 0" style="color:red;">*Please fill in the title</mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            Journey<span style="color:red;">*</span> :
+            <mat-form-field appearance="outline">
+                <mat-label>Select journey</mat-label>
+                <mat-select [(ngModel)]="data.journey" formControlName="journey" name="journey" required>
+                    <mat-option value="Lending">Lending</mat-option>
+                </mat-select>
+                <mat-hint *ngIf="editDocDetails.touched && data.journey.length == 0" style="color:red;">*Please select a journey</mat-hint>
+            </mat-form-field>
+        </p>
+    </form>
 </div>
 <div mat-dialog-actions>
     <span class="example-spacer" style="flex: 1 1 auto; display:flex;"></span>
     <button mat-stroked-button (click)="onNoClick()" >Cancel</button>
-    <button mat-raised-button [mat-dialog-close]="data" cdkFocusInitial>Save</button>
+    <button mat-raised-button [disabled]="editDocDetails.invalid" (click)="save()" cdkFocusInitial>Save</button>
 </div>
 

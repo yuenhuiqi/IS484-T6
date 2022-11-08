@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDocumentDetailsComponent } from '../edit-document-details/edit-document-details.component';
 import { AuthService } from '../../service/auth.service';
+import { ManageDocsService } from '../../service/manage-docs.service';
 
 import { elementAt } from 'rxjs';
 
@@ -14,6 +15,7 @@ import { elementAt } from 'rxjs';
 export interface DialogData {
   title: string;
   journey: string;
+  isDocValid: boolean;
 }
 
 @Component({
@@ -23,8 +25,9 @@ export interface DialogData {
 })
 
 export class UploadDocumentComponent {
-
+  progress = "20"
   constructor(
+    private manageDocs: ManageDocsService,
     private user: AuthService,
     public http: HttpClient,
     public dialog: MatDialog,
@@ -36,10 +39,14 @@ export class UploadDocumentComponent {
     this.getUserID()
   }
 
+  isValid:any = false;
+  isDocValid:any = false;
   public fileList: any = {};
+  public errorList: any = {};
+  objectKeys = Object.keys;
   token = localStorage.getItem('token');
   userID: String = "";
-
+  snackbarOpen:any = true;
 
   public dropped(files: NgxFileDropEntry[]) {
 
@@ -67,10 +74,16 @@ export class UploadDocumentComponent {
 
           if (!(filename in this.fileList)) {
             this.fileList[filename] = file_dict
+            this. errorList[filename] = this.isDocValid
             this.convertfile(file, filename)
           }
           else {
             console.log(filename + "is already added")
+            this.snackbar.open(`${filename} is already selected`, 'Close', {
+              duration: 5000,
+              verticalPosition: "top",
+              panelClass: ["errorAlert"]
+            })
           }
 
         });
@@ -90,6 +103,7 @@ export class UploadDocumentComponent {
   deleteFile(key: any) {
     console.log(key)
     delete this.fileList[key]
+    delete this.errorList[key]
   }
 
   getUserID() {
@@ -105,8 +119,9 @@ export class UploadDocumentComponent {
   }
 
   uploadfile(file: any) {
-    this.http
-      .post('http://localhost:2222/upload', file)
+    // this.http
+    //   .post('http://localhost:2222/upload', file)
+    this.manageDocs.uploadDocs(file)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
@@ -114,34 +129,45 @@ export class UploadDocumentComponent {
 
           // Upload Success
           if (err.error.text == 'All documents uploaded!') {
-
-            console.log('All documents are uploaded!')
             // RESET fileList
             this.reset()
             // REDIRECT to success page
             console.log(err.error.text)
+            this.snackbarOpen = true
             this.snackbar.open("Documents have been uploaded successfully!", 'Close', {
               duration: 6000,
-              verticalPosition: "top"
+              verticalPosition: "top",
+              panelClass: ["successAlert"],
+              
             })
-            .afterDismissed().subscribe(() => location.assign('/uploader'))
-            // location.assign('/uploader/upload/success')
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
             console.log(err.error.text)
+            this.snackbarOpen = true
             this.snackbar.open(err.error.text, 'Close', {
               duration: 2000,
-              verticalPosition: "top"
+              verticalPosition: "top",
+              panelClass: ["errorAlert"]
             })
           }
         },
       });
   }
 
+  checkValidity() {
+    for (let key in this.errorList) {
+      if (!this.errorList[key]){
+        return true
+      }
+    }
+    return false
+  }
+
   submitForm() {
     // Check fileList records
     console.log(this.fileList)
+    this.snackbarOpen = false
 
     // POST FormData to Backend
     this.uploadfile(this.fileList)
@@ -155,15 +181,16 @@ export class UploadDocumentComponent {
   openDialog(key: any): void {
     const dialogRef = this.dialog.open(EditDocumentDetailsComponent, {
       width: '1000px',
-      data: { title: this.fileList[key].title, journey: this.fileList[key].journey },
+      data: { title: this.fileList[key].title, journey: this.fileList[key].journey, isDocValid: this.errorList[key] },
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)
       console.log('The dialog was closed');
 
-      this.fileList[key].title = result.title
+      this.fileList[key].title = result.title.trim()
       this.fileList[key].journey = result.journey
+      this.errorList[key] = result.isDocValid
     });
   }
 
@@ -177,7 +204,6 @@ export class UploadDocumentComponent {
         reject(new Error('Unable to read..'));
       };
       reader.readAsDataURL(file);
-
     });
 
   }
