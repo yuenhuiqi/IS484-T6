@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false, 
-  api_key: 'TkiHatjcSQ1iEWVZrC5KcjaibY7QqFAb0CRx1pt58sKqQ1S5GdY2lxGOJPOQDukzDz8c22qDT1cv6lurKBMGLs7lr7yTUIdZZ5gKA7ex1gTvoVCtqdUY5nfLVfMAb0ZR'
+  api_key: 'TkiHatjcSQ1iEWVZrC5KcjaibY7QqFAb0CRx1pt58sKqQ1S5GdY2lxGOJPOQDukzDz8c22qDT1cv6lurKBMGLs7lr7yTUIdZZ5gKA7ex1gTvoVCtqdUY5nfLVfMAb0ZR',
+  backend_path: 'http://localhost:2222'
 };
 
 /*

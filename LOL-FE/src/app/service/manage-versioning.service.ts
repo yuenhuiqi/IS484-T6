@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ManageVersioningService {
 
-  private baseurl = "https://54.254.54.186:2222/"
+  private baseurl = environment.backend_path
   constructor(private http: HttpClient) { }
 
   getAllVersions(docID:string) {

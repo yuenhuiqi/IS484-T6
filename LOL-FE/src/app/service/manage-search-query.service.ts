@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ObserversModule } from '@angular/cdk/observers';
+import { environment } from 'src/environments/environment'; 
 
 export interface Query {
   searchText: string;
@@ -14,7 +15,7 @@ export interface Query {
 
 export class ManageSearchQueryService {
 
-  private baseurl = "https://54.254.54.186:2222/"
+  private baseurl = environment.backend_path
 
   constructor(private http: HttpClient) {
   }
