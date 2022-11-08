@@ -4,6 +4,8 @@ from versioning import Versioning
 
 from searchCount import SearchCount
 from user import User
+from acronym import Acronym
+from feedback import Feedback
 # from keywordss import Keywordss
 db.drop_all()
 db.create_all()

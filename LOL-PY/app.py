@@ -1,6 +1,7 @@
 from distutils.command.upload import upload
 from distutils.version import Version
 from multiprocessing import AuthenticationError
+from urllib import response
 from flask import Flask, redirect, url_for, render_template, request, session, jsonify, flash, current_app, make_response, abort
 from flask_cors import CORS, cross_origin
 
@@ -10,11 +11,12 @@ from flask_cors import CORS
 from flask_api import status
 
 from flask_sqlalchemy import SQLAlchemy
-from searchCount import search_text, add_count, update_feedback, getSuggestedSearches
+from searchCount import search_text, add_count, getSuggestedSearches
 from document import *
 from versioning import getAllVersions
 from user import User
 from acronym import Acronym, getAllAcronyms
+from feedback import Feedback, add_querydoc_count, update_feedback
 import jwt
 import datetime
 import bcrypt
@@ -47,7 +49,7 @@ def auth(func):
         return func(*args, **kwargs)
     return decorator
 
-@app.route('/search/<string:question>', methods=["GET"])
+@app.route('/search/<path:question>', methods=["GET"])
 @auth
 def search_results(question):
     code, data = search_text(question)
@@ -61,7 +63,7 @@ def search_results(question):
         }
     )
 
-@app.route('/addQueryCount/<question>', methods=["POST"])
+@app.route('/addQueryCount/<path:question>', methods=["POST"])
 @auth
 def search_query(question):
     code, data = add_count(question)
@@ -74,14 +76,29 @@ def search_query(question):
         }
     )
 
-@app.route('/feedback', methods=["POST"])
-@auth
-def feedback():
-    info = request.json
-    question = info["question"]
-    count = info['feedback']
-    code, data = update_feedback(question, count)
+# @app.route('/feedback', methods=["POST"])
+# @auth
+# def feedback():
+#     info = request.json
+#     print(info)
+#     question = info["searchID"]
+#     document = info["docID"]
+#     count = info['feedback']
+#     code, data = add_count(question, document)
+#     code, data = update_feedback(question, document, count)
     
+#     return jsonify(
+#         {
+#             "code": code,
+#             "data": info
+#         }
+#     )
+
+@app.route('/feedback/<path:searchID>/<path:docID>/<path:score>', methods=["POST"])
+@auth
+def feedback(searchID, docID, score):
+
+    code, data = update_feedback(searchID, docID, score)
     return jsonify(
         {
             "code": code,
@@ -89,6 +106,20 @@ def feedback():
         }
     )
 
+
+@app.route('/addFeedback/<path:searchID>/<path:docID>', methods=["POST"])
+@auth
+def addfeedback(searchID, docID):
+    code, data = add_querydoc_count(searchID, docID)
+    
+    return jsonify(
+        {
+            "code": code,
+            "data": {
+                "status": data
+            }
+        }
+    )
 
 @app.route('/')
 def index():
@@ -128,7 +159,8 @@ def getAllDocDetails(docTitle, page_size, page):
 @auth
 def getDocDetails(doc_id):
     doc = Document.query.filter_by(docID=doc_id).first()
-    return jsonify({'journey': doc.journey, 'docTitle': doc.docTitle, 'docName': doc.docName})
+    # print(doc_id)
+    return jsonify({'docTitle': doc.docTitle, 'journey': doc.journey, 'docName': doc.docName, 'docType': doc.docType})
 
 
 @app.route('/updateDoc/<doc_id>/<doc_title>/<doc_journey>', methods=['POST'])
@@ -187,23 +219,26 @@ def getUser(token):
     user = User.query.filter_by(token=token).first()
     return jsonify({"userID": user.userID, "userName": user.userName, "role": user.role})
 
-@app.route('/getAllAcronyms/<acronym>', methods=['GET'])
-@auth
-def getAcronymMeaning(acronym):
-    acronyms = Acronym.query.filter_by(acronym=acronym).first()
-    return jsonify({'acronym': acronyms.acronym, 'meaning': acronyms.meaning})
 
-@app.route('/getAllAcronyms', methods=['GET'])
+@app.route('/getAllAcronyms/<path:question>', methods=['GET'])
 @auth
-def getAllAcronyms():
+def getAcronymMeaning(question):
+    qn = '{0}'.format(question)
     acronyms = Acronym.query.all()
     arr = []
     for acronym in acronyms:
-        acronym_dict = {}
-        acronym_dict['acronym'] = acronym.acronym
-        acronym_dict['meaning'] = acronym.meaning
-        arr.append(acronym_dict)
+        # print(str(acronym.acronym))
+        if str(acronym.acronym).lower() in qn.lower():
+            # print(acronym.acronym, "---------")
+            acronym_dict = {}
+            acronym_dict['acronym'] = acronym.acronym
+            acronym_dict['meaning'] = acronym.meaning
+            arr.append(acronym_dict)
+
+    if len(arr) == 0:
+        return "No acronym found", status.HTTP_404_NOT_FOUND
     return jsonify({'acronyms': arr}), 200
+
 
 @app.route('/getSuggestedQueries/<string:query>', methods=['GET'])
 @auth

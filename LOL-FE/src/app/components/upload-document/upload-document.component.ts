@@ -46,6 +46,7 @@ export class UploadDocumentComponent {
   objectKeys = Object.keys;
   token = localStorage.getItem('token');
   userID: String = "";
+  snackbarOpen:any = true;
 
   public dropped(files: NgxFileDropEntry[]) {
 
@@ -132,15 +133,18 @@ export class UploadDocumentComponent {
             this.reset()
             // REDIRECT to success page
             console.log(err.error.text)
+            this.snackbarOpen = true
             this.snackbar.open("Documents have been uploaded successfully!", 'Close', {
               duration: 6000,
               verticalPosition: "top",
-              panelClass: ["successAlert"]
+              panelClass: ["successAlert"],
+              
             })
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
             console.log(err.error.text)
+            this.snackbarOpen = true
             this.snackbar.open(err.error.text, 'Close', {
               duration: 2000,
               verticalPosition: "top",
@@ -163,6 +167,7 @@ export class UploadDocumentComponent {
   submitForm() {
     // Check fileList records
     console.log(this.fileList)
+    this.snackbarOpen = false
 
     // POST FormData to Backend
     this.uploadfile(this.fileList)

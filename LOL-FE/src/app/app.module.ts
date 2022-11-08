@@ -37,17 +37,15 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { EditDocumentDetailsComponent } from './components/edit-document-details/edit-document-details.component';
-import { UploadSuccessComponent } from './components/upload-success/upload-success.component';
 import { ViewDocumentComponent } from './components/docviewer/doc-viewer.component';
 import { EditUploadedDocumentComponent } from './components/edit-uploaded-document/edit-uploaded-document.component';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
-import { ViewResultsProductComponent } from './components/view-results-product/view-results-product.component';
 import { ViewResultsProcessComponent } from './components/view-results-process/view-results-process.component';
 import { SafePipe } from './safe.pipe';
 import { DeleteConfirmationComponent } from './components/delete-confirmation/delete-confirmation.component';
 
 import { MatListModule } from '@angular/material/list';
-// import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { AppHttpInterceptor } from './AppHttpInterceptor';
 
@@ -61,14 +59,11 @@ import { AppHttpInterceptor } from './AppHttpInterceptor';
     UploaderHomeComponent,
     UploadDocumentComponent,
     EditDocumentDetailsComponent,
-    UploadSuccessComponent, 
     ViewDocumentComponent, 
     EditUploadedDocumentComponent,
-    ViewResultsProductComponent,
     ViewResultsProcessComponent,
     SafePipe,
     DeleteConfirmationComponent
-    // NgxDocViewerModule
   
   ],
   imports: [
@@ -96,8 +91,8 @@ import { AppHttpInterceptor } from './AppHttpInterceptor';
     MatListModule,
     MatPaginatorModule,
     MatProgressSpinnerModule, 
-    MatProgressBarModule
-
+    MatProgressBarModule,
+    NgxDocViewerModule
   ],
   providers: [AuthService, ManageDocsService, ManageSearchQueryService, 
     {
