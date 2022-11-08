@@ -185,11 +185,15 @@ def upload_doc(name, doc, doctype):
             db.session.commit()
 
             # then upload to AI backend 
-            requests.post(f"{AI_BACKEND_URL}/upload", 
-                json= {
-                    "item_s3_key": name,
-                    "doc_uuid": id
-                })
+            try:
+                r = requests.post(f"{AI_BACKEND_URL}/upload", 
+                    json= {
+                        "item_s3_key": name,
+                        "doc_uuid": id
+                    })
+            except requests.ConnectionError as e:
+                print(e)
+
 
             print(f'Uploaded: {name, id, dt}')
             return f'Uploaded: {name, id, dt}', HTTPStatus.OK
