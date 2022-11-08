@@ -24,11 +24,11 @@ export class ManageSearchQueryService {
     if (searchText.length == 0) {
       searchText = "-"
     }
-    return this.http.get<Query[]>(`${this.baseurl}search/${searchText}`)
+    return this.http.get<Query[]>(`${this.baseurl}/search/${searchText}`)
       .pipe(map(res => res));
   }
 
   addQueryCount(query: string) {
-    return this.http.post(`${this.baseurl}addQueryCount/${query}`, {})
+    return this.http.post(`${this.baseurl}/addQueryCount/${query}`, {})
   }
 }

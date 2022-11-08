@@ -11,6 +11,6 @@ export class ManageVersioningService {
   constructor(private http: HttpClient) { }
 
   getAllVersions(docID:string) {
-    return this.http.get(`${this.baseurl}getAllVersions/` + docID)
+    return this.http.get(`${this.baseurl}/getAllVersions/` + docID)
   }
 }
