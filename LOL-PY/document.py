@@ -190,9 +190,12 @@ def upload_doc(name, doc, doctype):
                     json= {
                         "item_s3_key": name,
                         "doc_uuid": id
-                    })
-            except requests.ConnectionError as e:
+                    }, 
+                    verify=False)
+            except requests.exceptions.RequestException as e:
                 print(e)
+            
+            print(r)
 
 
             print(f'Uploaded: {name, id, dt}')
@@ -323,7 +326,9 @@ def dl(upload_id):
 
 def getAllDocs(docs, item_count):
     docList = []
+    print(f"{len(docs)} docs found")
     for doc in docs:
+        print(doc.docName, doc.docTitle, doc.docID)
         uploaderName = getUserByID(doc.userID)
         status = doc.upload_status
         docList.append({'uploaderName': uploaderName, 'docID': doc.docID, 'docName': doc.docName, 'docTitle': doc.docTitle,
