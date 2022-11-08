@@ -24,6 +24,11 @@ export class ViewResultsProcessComponent implements OnInit {
   relevantSearches: any;
   answers: any = [];
   name: any;
+  scores: any = {};
+  docID: any;
+  score: any;
+  merit: any;
+  demerit: any;
 
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
@@ -67,6 +72,7 @@ export class ViewResultsProcessComponent implements OnInit {
 
 
 
+
     this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
 
 
@@ -75,17 +81,17 @@ export class ViewResultsProcessComponent implements OnInit {
         console.log(data)
         for (let i in data.documents) {
           console.log(data.documents)
-          this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
+          this.docID = data.documents[i].meta.doc_uuid
+
+          this.score = data.documents[i].score
+
+          this.manageDocs.getDocDetails(this.docID)
           .subscribe(res => { 
             // this.name = (<any>res).docTitle
             // this.docNameList.push((<any>res).docTitle)
 
             // console.log(docName)
             //calculate
-            searchID, docID, score
-            score = data.documents[i].meta.score
-
-
             // // console.log(docName)
 
             this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
@@ -93,13 +99,38 @@ export class ViewResultsProcessComponent implements OnInit {
             // console.log(this.docDict)
           }, err => console.log(err));
 
+          // Get the feedback and calculate scores
+          this.http.get<any>(`https://localhost:2222/getFeedback/`+ this.docID+"/"+this.query)
+          .subscribe(res => { 
+
+            if (res.code ==200){
+
+              // // console.log(docName)
+              this.merit = res.data.merit
+              this.demerit = res.data.demerit
+              if (this.merit > this.demerit){
+                this.score = this.score + this.score*2*Math.log(1+this.merit-this.demerit)
+              } else {
+                this.score = this.score- this.score*2*Math.log(1+this.demerit-this.merit)
+              }
+
+            }
+            // console.log(this.docNameList)
+            // console.log(this.docDict)
+          }, err => console.log(err));
 
           if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
-            this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
+            this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content, this.score])
           } else {
-            this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
+            this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content, this.score]]
           }
           console.log(this.docDict)
+
+          ////// REFERENCE FOR ORDERING!! (Need to order docDict)
+        //   this.docDict.sort(function(first, second) {
+        //     return (first.score - second.tedad);
+        // });
+        // console.log(this.sample);
         }
         for (let j in data.answers) {
           // console.log(data.answers[j].answer)
@@ -110,9 +141,7 @@ export class ViewResultsProcessComponent implements OnInit {
 
 
 
-    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query+'/'+).subscribe(
-      data => {this.relevantSearches = data.suggestedSearches}
-    )
+
 
     this.getSuggestedQuery("")
 

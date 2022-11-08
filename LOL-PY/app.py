@@ -17,7 +17,7 @@ from versioning import getAllVersions
 from user import User
 
 from acronym import Acronym, getAllAcronyms
-from feedback import Feedback, add_querydoc_count, update_feedback
+from feedback import Feedback, add_querydoc_count, update_feedback, get_feedback
 
 import jwt
 import datetime
@@ -73,9 +73,8 @@ def retrieve_feedback(docID, query):
     return jsonify(
         {
             "code": code,
-            "data": {
-                "status": data
-            }
+            "data": data
+            
         }
     )
 
