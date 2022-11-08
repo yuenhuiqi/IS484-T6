@@ -5,6 +5,7 @@ import { FormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ManageSearchQueryService } from '../../service/manage-search-query.service';
 import { ManageDocsService } from '../../service/manage-docs.service';
+import { ManageFeedbackServiceService } from '../../service/manage-feedback-service.service';
 
 @Component({
   selector: 'app-view-results-process',
@@ -21,12 +22,16 @@ export class ViewResultsProcessComponent implements OnInit {
   docDict: any = {};
   found_acronyms: any = []
   relevantSearches: any;
+  answers: any = [];
+  name: any;
+  docTitleDict: any = {};
 
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
                 private manageSearchQueryService: ManageSearchQueryService, 
-                private router: Router
-                // private manageDocs: ManageDocsService
+                private router: Router,
+                private manageDocs: ManageDocsService,
+                private managefeedback: ManageFeedbackServiceService
               ) { }
 
   newquery = new FormControl();
@@ -34,7 +39,6 @@ export class ViewResultsProcessComponent implements OnInit {
 
   filtered:any;
   searchQuery: any;
-
 
   ngOnInit(): void {
     if (localStorage.getItem('reload') == null || localStorage.getItem('reload') == '0') {
@@ -48,32 +52,38 @@ export class ViewResultsProcessComponent implements OnInit {
 
     this.sub = this.route.params.subscribe(params => {
       this.query = decodeURIComponent(params['query']);
-      this.encodedQuery = encodeURIComponent(this.query)
     });
 
     this.getAcronym()
+<<<<<<< HEAD
 
     console.log(this.encodedQuery)
     this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.encodedQuery).subscribe(
+=======
+    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
+>>>>>>> fa82b4f533f31e2e374437e5706d19caa03db496
       data => {this.relevantSearches = data.suggestedSearches}
     )
 
-    this.http.post<any>(`https://18.142.140.202/search`, {"query": this.encodedQuery})
+    this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
     .subscribe(
       data => { 
-        // console.log(data)
         for (let i in data.documents) {
-          // console.log(data.documents)
+          this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
+          .subscribe(res => { 
+            this.docTitleDict[data.documents[i].meta.doc_uuid] = (<any>res).docTitle
+          }, err => console.log(err));
           if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
             this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
           } else {
             this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
           }
-          }
+        }
+        for (let j in data.answers) {
+          this.answers.push([data.answers[j].answer])
+        }
         }
     )
-
-    // this.getAllDocDetails()
 
     this.getSuggestedQuery("")
 
@@ -83,11 +93,12 @@ export class ViewResultsProcessComponent implements OnInit {
 
   }
 
-  docDetails: any = {}
-  dataSource = [];
-
   viewDocument(docID: any): void {
-    window.open(`/uploader/viewdocument/${docID}`)
+    this.managefeedback.addFeedbackCount(this.query, docID)
+    .subscribe(res => {
+      console.log(res)
+    });
+    window.open(`/uploader/viewdocument/${docID}/${this.query}`)
   }
 
   getSuggestedQuery(qn:string) {

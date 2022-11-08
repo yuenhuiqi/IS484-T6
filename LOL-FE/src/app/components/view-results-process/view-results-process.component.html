@@ -15,11 +15,24 @@
         </form>
     </div>
 
+    <div style="padding: 0px 0rem 0rem 0rem;">
+      <div class="container-fluid" style="margin:2rem !important; width:900px; height:auto">
+        <h2 *ngIf="this.query"> {{this.query}}? </h2>
+        <mat-list>
+          <mat-list-item *ngFor="let answer of answers">
+            <mat-icon matListIcon>arrow_right</mat-icon>
+            {{answer}}
+          </mat-list-item>
+        </mat-list>
+        <h4 style="color:black; padding-top: 10px">View document here: <u style="color: #003B70; padding-left:10px">Credit Application</u></h4>
+      </div>
+    </div>
+
     <div style="padding: 1rem 3rem 1rem 2rem;">
       <div *ngFor="let item of docDict | keyvalue">
         <h2>
           <a target="_blank" (click)="viewDocument(item.key)">
-            {{item.key}}
+            <u>{{this.docTitleDict[$any(item).key]}}</u>
           </a>
         </h2>
         <mat-accordion *ngFor="let val of $any(item).value">
@@ -47,7 +60,6 @@
     <mat-list>
       <mat-list-item *ngFor="let acronym of found_acronyms">{{acronym.acronym}} - {{acronym.meaning}}</mat-list-item>
     </mat-list>
-    <!-- <p *ngIf="this.found_acronym">{{this.found_acronym}} - {{this.found_acronym_meaning}}</p> -->
   </div>
 </div>
 
