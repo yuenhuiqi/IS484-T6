@@ -5,6 +5,7 @@ import { FormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ManageSearchQueryService } from '../../service/manage-search-query.service';
 import { ManageDocsService } from '../../service/manage-docs.service';
+import { ManageFeedbackServiceService } from '../../service/manage-feedback-service.service';
 
 @Component({
   selector: 'app-view-results-process',
@@ -21,12 +22,15 @@ export class ViewResultsProcessComponent implements OnInit {
   docDict: any = {};
   found_acronyms: any = []
   relevantSearches: any;
+  answers: any = [];
+  name: any;
 
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
                 private manageSearchQueryService: ManageSearchQueryService, 
-                private router: Router
-                // private manageDocs: ManageDocsService
+                private router: Router,
+                private manageDocs: ManageDocsService,
+                private managefeedback: ManageFeedbackServiceService
               ) { }
 
   newquery = new FormControl();
@@ -58,22 +62,35 @@ export class ViewResultsProcessComponent implements OnInit {
       data => {this.relevantSearches = data.suggestedSearches}
     )
 
-    this.http.post<any>(`https://18.142.140.202/search`, {"query": this.encodedQuery})
+    this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
     .subscribe(
       data => { 
-        // console.log(data)
+        console.log(data)
         for (let i in data.documents) {
-          // console.log(data.documents)
+          console.log(data.documents)
+          this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
+          .subscribe(res => { 
+            // this.name = (<any>res).docTitle
+            // this.docNameList.push((<any>res).docTitle)
+            // // console.log(docName)
+            this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
+            // console.log(this.docNameList)
+            // console.log(this.docDict)
+          }, err => console.log(err));
+
           if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
             this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
           } else {
             this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
           }
-          }
+          console.log(this.docDict)
+        }
+        for (let j in data.answers) {
+          // console.log(data.answers[j].answer)
+          this.answers.push([data.answers[j].answer])
+        }
         }
     )
-
-    // this.getAllDocDetails()
 
     this.getSuggestedQuery("")
 
@@ -83,11 +100,12 @@ export class ViewResultsProcessComponent implements OnInit {
 
   }
 
-  docDetails: any = {}
-  dataSource = [];
-
   viewDocument(docID: any): void {
-    window.open(`/uploader/viewdocument/${docID}`)
+    this.managefeedback.addFeedbackCount(this.query, docID)
+    .subscribe(res => {
+      console.log(res)
+    });
+    window.open(`/uploader/viewdocument/${docID}/${this.query}`)
   }
 
   getSuggestedQuery(qn:string) {
@@ -115,6 +133,20 @@ export class ViewResultsProcessComponent implements OnInit {
       })
     
   }
+
+  // getDocName(docID: any): void {
+  //   this.manageDocs.getDocDetails(docID)
+  //   .subscribe(res => { 
+  //     this.name = (<any>res).docTitle
+  //     // this.docNameList.push((<any>res).docTitle)
+  //     // // console.log(docName)
+  //     // // this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
+  //     // console.log(this.docNameList)
+  //     // console.log(this.docDict)
+  //   }, err => console.log(err));
+  //   return this.name
+  // }
+
 
   submit() {
     this.searchQuery = this.newquery.value
