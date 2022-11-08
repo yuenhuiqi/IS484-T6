@@ -1,3 +1,4 @@
+import requests
 from database import *
 # from keywordss import Keywordss
 from user import getUserByID
@@ -79,6 +80,8 @@ session = boto3.Session(
 
 s3 = session.client('s3')
 s3_resource = session.resource('s3')
+
+AI_BACKEND_URL = "https://18.142.140.202"
 
 # s3 = boto3.client(
 #     "s3",
@@ -180,6 +183,20 @@ def upload_doc(name, doc, doctype):
             upload.upload_status = "COMPLETE"
             # upload.upload_status = UploadStatus.COMPLETE
             db.session.commit()
+
+            # then upload to AI backend 
+            try:
+                r = requests.post(f"{AI_BACKEND_URL}/upload", 
+                    json= {
+                        "item_s3_key": name,
+                        "doc_uuid": id
+                    }, 
+                    verify=False)
+            except requests.exceptions.RequestException as e:
+                print(e)
+            
+            print(r)
+
 
             print(f'Uploaded: {name, id, dt}')
             return f'Uploaded: {name, id, dt}', HTTPStatus.OK
@@ -309,7 +326,9 @@ def dl(upload_id):
 
 def getAllDocs(docs, item_count):
     docList = []
+    print(f"{len(docs)} docs found")
     for doc in docs:
+        print(doc.docName, doc.docTitle, doc.docID)
         uploaderName = getUserByID(doc.userID)
         status = doc.upload_status
         docList.append({'uploaderName': uploaderName, 'docID': doc.docID, 'docName': doc.docName, 'docTitle': doc.docTitle,
