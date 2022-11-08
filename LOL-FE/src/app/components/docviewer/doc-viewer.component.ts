@@ -19,8 +19,8 @@ export class ViewDocumentComponent implements OnInit {
   token = localStorage.getItem('token');
   userRole: String = "";
   public feedback: any = {};
-  searchID: any = 1;
   score: any = 0;
+  queryID: any;
 
   constructor(
     private user: AuthService, 
@@ -30,12 +30,13 @@ export class ViewDocumentComponent implements OnInit {
   ) {   }  
   
   ngOnInit(): void {
-    if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:id") {
+    if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:did/:qid") {
       this.toggleClose = 1;
     }
 
     this.sub = this.route.params.subscribe(params => {
-      this.docID = params['id'];
+      this.docID = params['did'];
+      this.queryID = params['qid']
     });
     
     this.http.get<any>(`http://localhost:2222/presignedUrl/` + this.docID)
@@ -77,12 +78,8 @@ export class ViewDocumentComponent implements OnInit {
     this.score = 1
     this.displayStyle = "none";
     // console.log(this.docID)
-    this.managefeedback.addFeedbackCount(this.searchID, this.docID)
-    .subscribe(res => {
-      console.log(res)
-    });
 
-    this.managefeedback.updateFeedback(this.searchID, this.docID, this.score)
+    this.managefeedback.updateFeedback(this.queryID, this.docID, this.score)
     .subscribe(res => {
       console.log(res)
     });
@@ -93,12 +90,7 @@ export class ViewDocumentComponent implements OnInit {
     this.score = 0
     this.displayStyle = "none";
 
-    this.managefeedback.addFeedbackCount(this.searchID, this.docID)
-    .subscribe(res => {
-      console.log(res)
-    });
-
-    this.managefeedback.updateFeedback(this.searchID, this.docID, this.score)
+    this.managefeedback.updateFeedback(this.queryID, this.docID, this.score)
     .subscribe(res => {
       console.log(res)
     });
