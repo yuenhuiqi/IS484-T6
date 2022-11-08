@@ -13,11 +13,10 @@ from searchCount import search_text, add_count, update_feedback
 from document import Document, upload_multiDocs, dl, getAllDocs, deleteAllDocVersions, update_docDetails, getPresignedUrl
 from versioning import getAllVersions
 from user import User
-<<<<<<< Updated upstream
-=======
+
 from acronym import Acronym, getAllAcronyms
 from feedback import Feedback, add_querydoc_count, update_feedback, get_feedback
->>>>>>> Stashed changes
+
 import jwt
 import datetime
 import bcrypt
@@ -44,9 +43,6 @@ def search_results(question):
         }
     )
 
-<<<<<<< Updated upstream
-@app.route('/addQueryCount/<question>', methods=["POST"])
-=======
 @app.route('/getFeedback/<path:docID>/<path:query>', methods=['GET'])
 @auth
 def retrieve_feedback(docID, query):
@@ -62,7 +58,6 @@ def retrieve_feedback(docID, query):
 
 @app.route('/addQueryCount/<path:question>', methods=["POST"])
 @auth
->>>>>>> Stashed changes
 def search_query(question):
     code, data = add_count(question)
     return jsonify(
