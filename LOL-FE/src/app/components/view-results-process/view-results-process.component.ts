@@ -128,25 +128,25 @@ export class ViewResultsProcessComponent implements OnInit {
           } else {
             this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content, this.score]]
           }
-
-          this.score=0
-          console.log(this.docDict)
-          for (let doc in this.docDict){
-            for (let each in this.docDict[doc]) {
-              this.score += each[3]
-            }
-            this.scores[doc] = this.score/3
-
+        }
+        this.score=0
+        console.log(this.docDict)
+        for (let doc in this.docDict){
+          for (let each in this.docDict[doc]) {
+            this.score += each[3]
           }
-
-          Object.keys(this.scores)
-            .sort((a, b) => (this.scores[a] > this.scores[b] ? 1 : -1))
-            .map(x => {
-              console.log(x, this.docDict[x]);
-              this.scores.push([x, this.scores[x]]);
-            });
+          this.scores[doc] = this.score/3
 
         }
+
+        Object.keys(this.scores)
+          .sort((a, b) => (this.scores[a] > this.scores[b] ? 1 : -1))
+          .map(x => {
+            console.log(x, this.docDict[x]);
+            this.sorted.push([x, this.scores[x]]);
+          });
+
+        
         console.log(this.docDict)
         for (let j in data.answers) {
           if (Object.keys(this.answers).includes(data.documents[j].meta.doc_uuid)) {
