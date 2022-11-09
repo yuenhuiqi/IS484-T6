@@ -157,7 +157,7 @@ export class ViewResultsProcessComponent implements OnInit {
           console.log(this.answers)
           // this.answers.push([data.answers[j].answer])
         }
-        }
+      }
     )
 
 

@@ -29,13 +29,13 @@
     </div>
 
     <div style="padding: 1rem 3rem 1rem 2rem;">
-      <div *ngFor="let item of docDict | keyvalue">
+      <div *ngFor="let item of sorted | keyvalue">
         <h2>
           <a target="_blank" (click)="viewDocument(item.key)">
             <u>{{this.docTitleDict[$any(item).key]}}</u>
           </a>
         </h2>
-        <mat-accordion *ngFor="let val of $any(item).value">
+        <mat-accordion *ngFor="let val of docDict[$any(item)].value">
           <mat-expansion-panel (opened)="panelOpenState = true"
                               (closed)="panelOpenState = false">
             <mat-expansion-panel-header>
