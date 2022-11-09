@@ -15,10 +15,8 @@ from searchCount import search_text, add_count, getSuggestedSearches
 from document import *
 from versioning import getAllVersions
 from user import User
-
 from acronym import Acronym, getAllAcronyms
-from feedback import Feedback, add_querydoc_count, update_feedback, get_feedback
-
+from feedback import Feedback, add_querydoc_count, update_feedback
 import jwt
 import datetime
 import bcrypt
@@ -64,20 +62,6 @@ def search_results(question):
             }
         }
     )
-
-
-@app.route('/getFeedback/<path:docID>/<path:query>', methods=['GET'])
-@auth
-def retrieve_feedback(docID, query):
-    code, data = get_feedback(query, docID)
-    return jsonify(
-        {
-            "code": code,
-            "data": data
-            
-        }
-    )
-
 
 @app.route('/addQueryCount/<path:question>', methods=["POST"])
 @auth
