@@ -32,8 +32,7 @@
       <div *ngFor="let item of docDict | keyvalue">
         <h2>
           <a target="_blank" (click)="viewDocument(item.key)">
-            <!-- {{this.getDocName(item.key)}} -->
-            {{item.key}}
+            <u>{{this.docTitleDict[$any(item).key]}}</u>
           </a>
         </h2>
         <mat-accordion *ngFor="let val of $any(item).value">
