@@ -29,6 +29,9 @@ export class ViewResultsProcessComponent implements OnInit {
   score: any;
   merit: any;
   demerit: any;
+  sorted: any = {};
+  docTitleDict: any = {};
+
 
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
@@ -44,7 +47,6 @@ export class ViewResultsProcessComponent implements OnInit {
   filtered:any;
   searchQuery: any;
 
-
   ngOnInit(): void {
     if (localStorage.getItem('reload') == null || localStorage.getItem('reload') == '0') {
       localStorage.setItem('reload', '1')
@@ -57,15 +59,12 @@ export class ViewResultsProcessComponent implements OnInit {
 
     this.sub = this.route.params.subscribe(params => {
       this.query = decodeURIComponent(params['query']);
-      this.encodedQuery = encodeURIComponent(this.query)
     });
 
 
 
     this.getAcronym()
-
-    console.log(this.encodedQuery)
-    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.encodedQuery).subscribe(
+    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
       data => {this.relevantSearches = data.suggestedSearches}
     )
 
@@ -78,8 +77,8 @@ export class ViewResultsProcessComponent implements OnInit {
 
     .subscribe(
       data => { 
-        console.log(data)
         for (let i in data.documents) {
+
           console.log(data.documents)
           this.docID = data.documents[i].meta.doc_uuid
 
@@ -119,11 +118,17 @@ export class ViewResultsProcessComponent implements OnInit {
             // console.log(this.docDict)
           }, err => console.log(err));
 
+          this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
+          .subscribe(res => { 
+            this.docTitleDict[data.documents[i].meta.doc_uuid] = (<any>res).docTitle
+          }, err => console.log(err));
+
           if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
             this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content, this.score])
           } else {
             this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content, this.score]]
           }
+
           this.score=0
           console.log(this.docDict)
           for (let doc in this.docDict){
@@ -133,17 +138,24 @@ export class ViewResultsProcessComponent implements OnInit {
             this.scores[doc] = this.score/3
 
           }
-          this.docDict = [];
+
           Object.keys(this.scores)
             .sort((a, b) => (this.scores[a] > this.scores[b] ? 1 : -1))
             .map(x => {
-              console.log(x, this.scores[x]);
+              console.log(x, this.docDict[x]);
               this.scores.push([x, this.scores[x]]);
             });
+
         }
+        console.log(this.docDict)
         for (let j in data.answers) {
-          // console.log(data.answers[j].answer)
-          this.answers.push([data.answers[j].answer])
+          if (Object.keys(this.answers).includes(data.documents[j].meta.doc_uuid)) {
+            this.answers[data.documents[j].meta.doc_uuid].push(data.answers[j].answer)
+          } else {
+            this.answers[data.documents[j].meta.doc_uuid] = [data.answers[j].answer]
+          }
+          console.log(this.answers)
+          // this.answers.push([data.answers[j].answer])
         }
         }
     )
@@ -193,20 +205,6 @@ export class ViewResultsProcessComponent implements OnInit {
       })
 
   }
-
-  // getDocName(docID: any): void {
-  //   this.manageDocs.getDocDetails(docID)
-  //   .subscribe(res => { 
-  //     this.name = (<any>res).docTitle
-  //     // this.docNameList.push((<any>res).docTitle)
-  //     // // console.log(docName)
-  //     // // this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
-  //     // console.log(this.docNameList)
-  //     // console.log(this.docDict)
-  //   }, err => console.log(err));
-  //   return this.name
-  // }
-
 
   submit() {
     this.searchQuery = this.newquery.value

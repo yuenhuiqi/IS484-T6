@@ -18,13 +18,13 @@
     <div style="padding: 0px 0rem 0rem 0rem;">
       <div class="container-fluid" style="margin:2rem !important; width:900px; height:auto">
         <h2 *ngIf="this.query"> {{this.query}}? </h2>
-        <mat-list>
-          <mat-list-item *ngFor="let answer of answers">
+        <mat-list *ngFor="let answer of answers | keyvalue">
+          <mat-list-item style="height:auto; padding-top:10px; padding-bottom: 5px;" *ngFor="let item of $any(answer).value">
             <mat-icon matListIcon>arrow_right</mat-icon>
-            {{answer}}
+              {{item}}
           </mat-list-item>
+          <h4 style="color:black; padding-top: 10px">View document here: <u style="color: #003B70; padding-left:10px">{{this.docTitleDict[$any(answer).key]}}</u></h4>
         </mat-list>
-        <h4 style="color:black; padding-top: 10px">View document here: <u style="color: #003B70; padding-left:10px">Credit Application</u></h4>
       </div>
     </div>
 
@@ -32,8 +32,7 @@
       <div *ngFor="let item of docDict | keyvalue">
         <h2>
           <a target="_blank" (click)="viewDocument(item.key)">
-            <!-- {{this.getDocName(item.key)}} -->
-            {{item.key}}
+            <u>{{this.docTitleDict[$any(item).key]}}</u>
           </a>
         </h2>
         <mat-accordion *ngFor="let val of $any(item).value">
