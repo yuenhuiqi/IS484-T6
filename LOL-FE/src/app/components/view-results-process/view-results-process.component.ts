@@ -24,7 +24,14 @@ export class ViewResultsProcessComponent implements OnInit {
   relevantSearches: any;
   answers: any = [];
   name: any;
+  scores: any = {};
+  docID: any;
+  score: any;
+  merit: any;
+  demerit: any;
+  sorted: any = {};
   docTitleDict: any = {};
+
 
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
@@ -54,24 +61,91 @@ export class ViewResultsProcessComponent implements OnInit {
       this.query = decodeURIComponent(params['query']);
     });
 
+
+
     this.getAcronym()
     this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
       data => {this.relevantSearches = data.suggestedSearches}
     )
 
+
+
+
+
     this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
+
+
     .subscribe(
       data => { 
         for (let i in data.documents) {
+
+          console.log(data.documents)
+          this.docID = data.documents[i].meta.doc_uuid
+
+          this.score = data.documents[i].score
+
+          this.manageDocs.getDocDetails(this.docID)
+          .subscribe(res => { 
+            // this.name = (<any>res).docTitle
+            // this.docNameList.push((<any>res).docTitle)
+
+            // console.log(docName)
+            //calculate
+            // // console.log(docName)
+
+            this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
+            // console.log(this.docNameList)
+            // console.log(this.docDict)
+          }, err => console.log(err));
+
+          // Get the feedback and calculate scores
+          this.http.get<any>(`https://localhost:2222/getFeedback/`+ this.docID+"/"+this.query)
+          .subscribe(res => { 
+
+            if (res.code ==200){
+
+              // // console.log(docName)
+              this.merit = res.data.merit
+              this.demerit = res.data.demerit
+              if (this.merit > this.demerit){
+                this.score = this.score + this.score*2*Math.log(1+this.merit-this.demerit)
+              } else {
+                this.score = this.score- this.score*2*Math.log(1+this.demerit-this.merit)
+              }
+
+            }
+            // console.log(this.docNameList)
+            // console.log(this.docDict)
+          }, err => console.log(err));
+
           this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
           .subscribe(res => { 
             this.docTitleDict[data.documents[i].meta.doc_uuid] = (<any>res).docTitle
           }, err => console.log(err));
+
           if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
-            this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
+            this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content, this.score])
           } else {
-            this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
+            this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content, this.score]]
           }
+
+          this.score=0
+          console.log(this.docDict)
+          for (let doc in this.docDict){
+            for (let each in this.docDict[doc]) {
+              this.score += each[3]
+            }
+            this.scores[doc] = this.score/3
+
+          }
+
+          Object.keys(this.scores)
+            .sort((a, b) => (this.scores[a] > this.scores[b] ? 1 : -1))
+            .map(x => {
+              console.log(x, this.docDict[x]);
+              this.scores.push([x, this.scores[x]]);
+            });
+
         }
         console.log(this.docDict)
         for (let j in data.answers) {
@@ -85,6 +159,10 @@ export class ViewResultsProcessComponent implements OnInit {
         }
         }
     )
+
+
+
+
 
     this.getSuggestedQuery("")
 
@@ -125,7 +203,7 @@ export class ViewResultsProcessComponent implements OnInit {
         }
         console.log(this.found_acronyms)
       })
-    
+
   }
 
   submit() {
