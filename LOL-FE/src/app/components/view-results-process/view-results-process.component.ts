@@ -73,8 +73,15 @@ export class ViewResultsProcessComponent implements OnInit {
             this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
           }
         }
+        console.log(this.docDict)
         for (let j in data.answers) {
-          this.answers.push([data.answers[j].answer])
+          if (Object.keys(this.answers).includes(data.documents[j].meta.doc_uuid)) {
+            this.answers[data.documents[j].meta.doc_uuid].push(data.answers[j].answer)
+          } else {
+            this.answers[data.documents[j].meta.doc_uuid] = [data.answers[j].answer]
+          }
+          console.log(this.answers)
+          // this.answers.push([data.answers[j].answer])
         }
         }
     )
