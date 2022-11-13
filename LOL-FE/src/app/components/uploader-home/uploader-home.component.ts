@@ -88,9 +88,9 @@ export class UploaderHomeComponent implements OnInit {
     this.router.navigate(['/uploader/editdocument/' + docID]);
   }
 
-  viewDocument(docID: any): void {
+  viewDocument(docID: any, docTitle:any): void {
     console.log(docID)
-    window.open(`/uploader/viewdocument/${docID}`)
+    window.open(`/uploader/viewdocument/${docID}/${docTitle}`)
     // location.assign(`/viewdocument/${docID}`)
   }
 
