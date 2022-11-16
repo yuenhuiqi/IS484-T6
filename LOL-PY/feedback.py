@@ -30,21 +30,6 @@ class Feedback(db.Model):
         }
 
 
-
-def get_feedback(searchID, docID):
-    search_ID = '{0}'.format(searchID)
-    doc_ID = '{0}'.format(docID)
-
-    try:
-        feedback = Feedback.query.filter_by(fSearchID=search_ID, fDocID=doc_ID).first()
-        print(search_ID, doc_ID, "feedback exist")
-        return 200, feedback.json()
-    except Exception as e:
-        return 400, ("none found")
-
-
-
-
 def add_querydoc_count(searchID, docID):
     search_ID = '{0}'.format(searchID)
     doc_ID = '{0}'.format(docID)

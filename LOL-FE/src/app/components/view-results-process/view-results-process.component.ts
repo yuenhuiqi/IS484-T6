@@ -33,7 +33,6 @@ export class ViewResultsProcessComponent implements OnInit {
   sorted: any = [];
   docTitleDict: any = {};
 
-
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
                 private manageSearchQueryService: ManageSearchQueryService, 
@@ -62,20 +61,12 @@ export class ViewResultsProcessComponent implements OnInit {
       this.query = decodeURIComponent(params['query']);
     });
 
-
-
     this.getAcronym()
     this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
       data => {this.relevantSearches = data.suggestedSearches}
     )
 
-
-
-
-
     this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
-
-
     .subscribe(
       data => { 
         for (let i in data.documents) {
@@ -128,7 +119,6 @@ export class ViewResultsProcessComponent implements OnInit {
           .subscribe(res => { 
             this.docTitleDict[data.documents[i].meta.doc_uuid] = (<any>res).docTitle
           }, err => console.log(err));
-
           if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
             this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
             this.scores[data.documents[i].meta.doc_uuid] += this.score
@@ -173,10 +163,6 @@ export class ViewResultsProcessComponent implements OnInit {
       }
     )
 
-
-
-
-
     this.getSuggestedQuery("")
 
     this.newquery.valueChanges.subscribe(val => {
@@ -216,7 +202,7 @@ export class ViewResultsProcessComponent implements OnInit {
         }
         console.log(this.found_acronyms)
       })
-
+    
   }
 
   submit() {

@@ -15,10 +15,8 @@ from searchCount import search_text, add_count, getSuggestedSearches
 from document import *
 from versioning import getAllVersions
 from user import User
-
 from acronym import Acronym, getAllAcronyms
 from feedback import Feedback, add_querydoc_count, update_feedback, get_feedback
-
 import jwt
 import datetime
 import bcrypt
