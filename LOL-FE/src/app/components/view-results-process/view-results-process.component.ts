@@ -100,11 +100,12 @@ export class ViewResultsProcessComponent implements OnInit {
           }, err => console.log(err));
 
           // Get the feedback and calculate scores
-          this.http.get<any>(`https://localhost:2222/getFeedback/`+ this.docID+"/"+this.query)
-          .subscribe(res => { 
-
+          this.managefeedback.getFeedback(this.query, this.docID)
+          .subscribe((res:any )=> { 
+           
+            // console.log(res[0]+"this my feedback")
             if (res.code ==200){
-
+              console.log(res.data)
               // // console.log(docName)
               this.merit = res.data.merit
               this.demerit = res.data.demerit
@@ -117,9 +118,11 @@ export class ViewResultsProcessComponent implements OnInit {
               }
 
             }
-            console.log("gg got error calling feedback")
+            
             // console.log(this.docDict)
-          }, err => console.log(err));
+          }, err => {
+            console.log("gg got error calling feedback")
+            console.log(err)});
 
           this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
           .subscribe(res => { 
