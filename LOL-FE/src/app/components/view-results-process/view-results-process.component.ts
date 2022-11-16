@@ -30,7 +30,7 @@ export class ViewResultsProcessComponent implements OnInit {
   score: any = 0;
   merit: any;
   demerit: any;
-  sorted: any = {};
+  sorted: any = [];
   docTitleDict: any = {};
 
 
@@ -130,10 +130,12 @@ export class ViewResultsProcessComponent implements OnInit {
             this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
             this.scores[data.documents[i].meta.doc_uuid] += this.score
             console.log("miscore"+this.score)
+            console.log(this.docDict)
           } else {
             this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
             this.scores[data.documents[i].meta.doc_uuid] = this.score
             console.log("miscore"+this.score)
+            console.log(this.docDict)
           }
         }
         this.score=0
@@ -146,11 +148,11 @@ export class ViewResultsProcessComponent implements OnInit {
         }
 
         Object.keys(this.scores)
-          .sort((a, b) => (this.scores[a] > this.scores[b] ? 1 : -1))
+          .sort((a, b) => (this.scores[a] < this.scores[b] ? 1 : -1))
           .map(x => {
             console.log("MEEEEEEp")
             console.log(x, this.scores[x]);
-            this.sorted[x]=this.scores[x];
+            this.sorted.push(x);
             
           });
 
