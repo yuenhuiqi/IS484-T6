@@ -3,6 +3,7 @@ import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 // import { Data } from '@angular/router';
 // import * as e from 'express';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDocumentDetailsComponent } from '../edit-document-details/edit-document-details.component';
@@ -31,7 +32,8 @@ export class UploadDocumentComponent {
     private user: AuthService,
     public http: HttpClient,
     public dialog: MatDialog,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private router: Router
   ) { }
 
 
@@ -137,9 +139,10 @@ export class UploadDocumentComponent {
             this.snackbar.open("Documents have been uploaded successfully!", 'Close', {
               duration: 6000,
               verticalPosition: "top",
-              panelClass: ["successAlert"],
-              
-            })
+              panelClass: ["successAlert"]   
+            }).afterDismissed().subscribe(()=>{
+              this.router.navigate(['/uploader']);
+            });
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
