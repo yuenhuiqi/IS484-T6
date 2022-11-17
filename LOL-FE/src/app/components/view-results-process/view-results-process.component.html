@@ -17,22 +17,20 @@
 
     <div style="padding: 0px 0rem 0rem 0rem;">
       <div class="container-fluid" style="margin:2rem !important; width:900px; height:auto">
-        <h2 *ngIf="this.query"> {{this.query}}? </h2>
+        <h2 *ngIf="this.query"> Here are some suggested answers:  </h2>
         <mat-list *ngFor="let answer of answers | keyvalue">
           <mat-list-item style="height:auto; padding-top:10px; padding-bottom: 5px;" *ngFor="let item of $any(answer).value">
             <mat-icon matListIcon>arrow_right</mat-icon>
               {{item}}
           </mat-list-item>
-          <h4 style="color:black; padding-top: 10px"  (click)="viewDocument($any(answer).key)">View document here: <u style="color: #003B70; padding-left:10px">{{this.docTitleDict[$any(answer).key]}}</u></h4>
+          <h4 style="color:black; padding-top: 20px"  (click)="viewDocument($any(answer).key)">View document here: <u style="color: #003B70; padding-left:10px">{{this.docTitleDict[$any(answer).key]}}</u></h4>
         </mat-list>
       </div>
     </div>
 
     <div style="padding: 1rem 3rem 1rem 2rem;">
       <div *ngFor="let item of sorted">
-       
-        
-        <h2>
+        <h2  style="padding-bottom: 10px; padding-top: 20px;">
           <a target="_blank" (click)="viewDocument(item)">
             <u>{{this.docTitleDict[$any(item)]}}</u>
           </a>
