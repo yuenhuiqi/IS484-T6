@@ -21,6 +21,7 @@ import jwt
 import datetime
 import bcrypt
 import json
+import base64
 
 import requests
 import functools
@@ -238,12 +239,14 @@ def getUser(token):
 @auth
 def getAcronymMeaning(question):
     qn = '{0}'.format(question)
+    qn = qn.split()
+    qn = [x.lower() for x in qn]
     acronyms = Acronym.query.all()
     arr = []
     for acronym in acronyms:
         # print(str(acronym.acronym))
-        if str(acronym.acronym).lower() in qn.lower():
-            # print(acronym.acronym, "---------")
+        if str(acronym.acronym).lower() in qn:
+            print(acronym.acronym, "---------")
             acronym_dict = {}
             acronym_dict['acronym'] = acronym.acronym
             acronym_dict['meaning'] = acronym.meaning
