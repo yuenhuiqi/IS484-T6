@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ManageFeedbackServiceService {
 
-  private baseurl = "http://54.254.54.186:4200/"
+  private baseurl = "https://54.254.54.186:4200/"
 
   constructor(private http: HttpClient) { }
 
