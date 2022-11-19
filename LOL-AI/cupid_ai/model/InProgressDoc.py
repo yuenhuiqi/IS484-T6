@@ -5,8 +5,7 @@ import regex as re
 from wordsegment import load, segment
 
 import nltk
-
-words = set(nltk.corpus.words.words())
+from nltk.corpus import words
 
 
 class InProgressDoc(Doc):
