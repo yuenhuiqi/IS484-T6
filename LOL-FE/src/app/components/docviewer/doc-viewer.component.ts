@@ -103,7 +103,7 @@ export class ViewDocumentComponent implements OnInit {
       console.log(res)
     });
 
-    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.queryID).subscribe(
+    this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.queryID).subscribe(
       data => {this.relevantSearches = data.suggestedSearches
         const message = `Do you want to search for these instead?`;
         const dialogData = new DialogData(this.relevantSearches, message);
