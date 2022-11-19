@@ -17,4 +17,8 @@ export class ManageFeedbackServiceService {
   addFeedbackCount(searchID:String, docID:String) {
     return this.http.post(`${this.baseurl}addFeedback/${searchID}/${docID}`, {})
   }
+
+  getFeedback(searchID:String, docID:String) {
+    return this.http.post(`${this.baseurl}getFeedback/${docID}/${searchID}`, {})
+  }
 }

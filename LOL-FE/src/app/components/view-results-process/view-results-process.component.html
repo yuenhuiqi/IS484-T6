@@ -29,13 +29,16 @@
     </div>
 
     <div style="padding: 1rem 3rem 1rem 2rem;">
-      <div *ngFor="let item of docDict | keyvalue">
+      <div *ngFor="let item of sorted">
+       
+        
         <h2>
-          <a target="_blank" (click)="viewDocument(item.key)">
-            <u>{{this.docTitleDict[$any(item).key]}}</u>
+          <a target="_blank" (click)="viewDocument(item)">
+            <u>{{this.docTitleDict[$any(item)]}}</u>
           </a>
         </h2>
-        <mat-accordion *ngFor="let val of $any(item).value">
+        <mat-accordion *ngFor="let val of docDict[$any(item)]">
+          <!-- <h2>{{val}}</h2> -->
           <mat-expansion-panel (opened)="panelOpenState = true"
                               (closed)="panelOpenState = false">
             <mat-expansion-panel-header>
@@ -56,7 +59,7 @@
     <mat-nav-list *ngFor="let q of relevantSearches; let i=index" style="padding: 0px;">
       <a *ngIf="i != 0" style="color: #003B70;" mat-list-item href="/viewresultsprocess/{{this.q}}">{{i}}. {{ q }}</a>
    </mat-nav-list>
-    <h3 style="padding-top: 10px;">Do you mean by this?</h3>
+    <h3 style="padding-top: 10px;">Do you mean this?</h3>
     <mat-list>
       <mat-list-item *ngFor="let acronym of found_acronyms">{{acronym.acronym}} - {{acronym.meaning}}</mat-list-item>
     </mat-list>

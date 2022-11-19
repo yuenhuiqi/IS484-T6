@@ -7,6 +7,7 @@ import { ManageSearchQueryService } from '../../service/manage-search-query.serv
 import { ManageDocsService } from '../../service/manage-docs.service';
 import { ManageFeedbackServiceService } from '../../service/manage-feedback-service.service';
 
+
 @Component({
   selector: 'app-view-results-process',
   templateUrl: './view-results-process.component.html',
@@ -24,6 +25,12 @@ export class ViewResultsProcessComponent implements OnInit {
   relevantSearches: any;
   answers: any = [];
   name: any;
+  scores: any = {};
+  docID: any;
+  score: any = 0;
+  merit: any;
+  demerit: any;
+  sorted: any = [];
   docTitleDict: any = {};
 
   constructor(private route: ActivatedRoute, 
@@ -64,17 +71,87 @@ export class ViewResultsProcessComponent implements OnInit {
     .subscribe(
       data => { 
         for (let i in data.documents) {
+
+          console.log(data.documents)
+          this.docID = data.documents[i].meta.doc_uuid
+
+          this.score = data.documents[i].score
+
+          this.manageDocs.getDocDetails(this.docID)
+          .subscribe(res => { 
+            // this.name = (<any>res).docTitle
+            // this.docNameList.push((<any>res).docTitle)
+
+            // console.log(docName)
+            //calculate
+            // // console.log(docName)
+
+            this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
+            // console.log(this.docNameList)
+            // console.log(this.docDict)
+          }, err => console.log(err));
+
+          // Get the feedback and calculate scores
+          this.managefeedback.getFeedback(this.query, this.docID)
+          .subscribe((res:any )=> { 
+           
+            // console.log(res[0]+"this my feedback")
+            if (res.code ==200){
+              console.log(res.data)
+              // // console.log(docName)
+              this.merit = res.data.merit
+              this.demerit = res.data.demerit
+              if (this.merit > this.demerit){
+                this.score = this.score + this.score*2*Math.log(1+this.merit-this.demerit)
+                console.log("going through!!")
+              } else {
+                this.score = this.score- this.score*2*Math.log(1+this.demerit-this.merit)
+                console.log("going through 2222")
+              }
+
+            }
+            
+            // console.log(this.docDict)
+          }, err => {
+            console.log("gg got error calling feedback")
+            console.log(err)});
+
           this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
           .subscribe(res => { 
             this.docTitleDict[data.documents[i].meta.doc_uuid] = (<any>res).docTitle
           }, err => console.log(err));
           if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
             this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
+            this.scores[data.documents[i].meta.doc_uuid] += this.score
+            console.log("miscore"+this.score)
+            console.log(this.docDict)
           } else {
             this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
+            this.scores[data.documents[i].meta.doc_uuid] = this.score
+            console.log("miscore"+this.score)
+            console.log(this.docDict)
           }
         }
+        this.score=0
         console.log(this.docDict)
+        for (let doc in this.scores){
+          
+          this.scores[doc] = this.scores[doc]/3
+          console.log("hereeee we are"+this.scores[doc])
+
+        }
+
+        Object.keys(this.scores)
+          .sort((a, b) => (this.scores[a] < this.scores[b] ? 1 : -1))
+          .map(x => {
+            console.log("MEEEEEEp")
+            console.log(x, this.scores[x]);
+            this.sorted.push(x);
+            
+          });
+
+        console.log("check!!")
+        console.log(this.sorted)
         for (let j in data.answers) {
           if (Object.keys(this.answers).includes(data.documents[j].meta.doc_uuid)) {
             this.answers[data.documents[j].meta.doc_uuid].push(data.answers[j].answer)
@@ -84,7 +161,7 @@ export class ViewResultsProcessComponent implements OnInit {
           console.log(this.answers)
           // this.answers.push([data.answers[j].answer])
         }
-        }
+      }
     )
 
     this.getSuggestedQuery("")
