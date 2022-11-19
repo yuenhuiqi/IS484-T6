@@ -1,0 +1,7 @@
+<h1 mat-dialog-title style="padding-bottom: 0px">
+    {{data.message}}
+</h1>
+<div mat-dialog-actions *ngFor="let s of data.suggestedSearches; let i=index">
+    <a *ngIf="i != 0" style="color: #003B70; font-size: 20px; padding-bottom: 30px" mat-list-item href="/viewresultsprocess/{{this.s}}">{{i}}. {{ s }}</a>
+</div>
+<button mat-raised-button style="margin-left: 350px" (click)="onDismiss()">No thanks</button>
