@@ -88,9 +88,9 @@ export class UploaderHomeComponent implements OnInit {
     this.router.navigate(['/uploader/editdocument/' + docID]);
   }
 
-  viewDocument(docID: any): void {
+  viewDocument(docID: any, docTitle:any): void {
     console.log(docID)
-    window.open(`/uploader/viewdocument/${docID}`)
+    window.open(`/uploader/viewdocument/${docID}/${docTitle}`)
     // location.assign(`/viewdocument/${docID}`)
   }
 
@@ -107,35 +107,40 @@ export class UploaderHomeComponent implements OnInit {
       this.result = dialogResult;
       console.log(this.result)
 
-      docName = { "docName": docName }
-      this.isLoading = true
-      this.manageDocs.deleteDoc(docName)
-        .subscribe({
-          next: (res) => console.log(res),
-          error: (err) => {
-            // DELETE Success
-            if (err.error.text == 'Document deleted!') {
-              // RELOAD upon successful deletion
-              console.log(err.error.text)
-              this.snackbar.open(err.error.text, 'close', {
-                duration: 1000,
-                verticalPosition: "top",
-                panelClass: ["successAlert"]
-              })
-                .afterDismissed().subscribe(() => location.reload())
-            }
-            else {
-              // ADD ERROR snackbar message
-              console.log(err.error.text)
-              this.snackbar.open(err.error.text, 'Close', {
-                duration: 1000,
-                verticalPosition: "top",
-                panelClass: ["errorAlert"]
-              })
-              this.isLoading = false
-            }
-          },
-        });
+      if (this.result == false) {
+        location.reload()
+      } else {
+
+        docName = { "docName": docName }
+        this.isLoading = true
+        this.manageDocs.deleteDoc(docName)
+          .subscribe({
+            next: (res) => console.log(res),
+            error: (err) => {
+              // DELETE Success
+              if (err.error.text == 'Document deleted!') {
+                // RELOAD upon successful deletion
+                console.log(err.error.text)
+                this.snackbar.open(err.error.text, 'close', {
+                  duration: 1000,
+                  verticalPosition: "top",
+                  panelClass: ["successAlert"]
+                })
+                  .afterDismissed().subscribe(() => location.reload())
+              }
+              else {
+                // ADD ERROR snackbar message
+                console.log(err.error.text)
+                this.snackbar.open(err.error.text, 'Close', {
+                  duration: 1000,
+                  verticalPosition: "top",
+                  panelClass: ["errorAlert"]
+                })
+                this.isLoading = false
+              }
+            },
+          });
+        }
 
     });
   }

@@ -16,11 +16,12 @@ from document import *
 from versioning import getAllVersions
 from user import User
 from acronym import Acronym, getAllAcronyms
-from feedback import Feedback, add_querydoc_count, update_feedback
+from feedback import Feedback, add_querydoc_count, update_feedback, get_feedback
 import jwt
 import datetime
 import bcrypt
 import json
+import base64
 
 import requests
 import functools
@@ -62,6 +63,20 @@ def search_results(question):
             }
         }
     )
+
+
+@app.route('/getFeedback/<path:docID>/<path:query>', methods=['POST'])
+# @auth
+def retrieve_feedback(docID, query):
+    code, data = get_feedback(query, docID)
+    return jsonify(
+        {
+            "code": code,
+            "data": data
+            
+        }
+    )
+
 
 @app.route('/addQueryCount/<path:question>', methods=["POST"])
 @auth
@@ -224,12 +239,14 @@ def getUser(token):
 @auth
 def getAcronymMeaning(question):
     qn = '{0}'.format(question)
+    qn = qn.split()
+    qn = [x.lower() for x in qn]
     acronyms = Acronym.query.all()
     arr = []
     for acronym in acronyms:
         # print(str(acronym.acronym))
-        if str(acronym.acronym).lower() in qn.lower():
-            # print(acronym.acronym, "---------")
+        if str(acronym.acronym).lower() in qn:
+            print(acronym.acronym, "---------")
             acronym_dict = {}
             acronym_dict['acronym'] = acronym.acronym
             acronym_dict['meaning'] = acronym.meaning
