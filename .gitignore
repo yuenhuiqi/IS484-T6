@@ -6,7 +6,6 @@
 # SSL cert files 
 .ssl
 .ssl/
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

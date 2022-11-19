@@ -60,16 +60,12 @@ export class ViewResultsProcessComponent implements OnInit {
     this.sub = this.route.params.subscribe(params => {
       this.encodedQuery = params['query']
       this.query = decodeURIComponent(params['query']);
+      this.encodedQuery = params['query']
     });
 
     this.getAcronym()
-<<<<<<< HEAD
-    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
-=======
 
-    console.log(this.encodedQuery)
-    this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.encodedQuery).subscribe(
->>>>>>> a121583 (Testing endpoint)
+    this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.query).subscribe(
       data => {this.relevantSearches = data.suggestedSearches}
     )
 

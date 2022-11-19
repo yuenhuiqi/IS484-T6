@@ -6,6 +6,7 @@ import math
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
+import requests
 
 
 
@@ -106,14 +107,23 @@ def add_count(qn):
 
 def getSuggestedSearches(query):
     try: 
+        query = requests.utils.unquote(query)
+        print("check query")
+        print(query)
         query_list = SearchCount.query.with_entities(SearchCount.searchText).all()
+        print("check query list")
+        print(query_list)
         sim_dict = {}
         for q in query_list:
             q_vector = text_to_vector(q[0])
             query_vector = text_to_vector(query)
             sim_dict[q[0]] = get_cosine(q_vector, query_vector)
+            print("check sim dict")
+            print(sim_dict)
             
         desc_sim_dict = sorted(sim_dict.items(), key=lambda x: x[1], reverse=True)
+        print("check desc sim dict")
+        print(desc_sim_dict)
         
         # getting top 3 most relevant searches
         if len(desc_sim_dict) >= 3: 
