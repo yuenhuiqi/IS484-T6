@@ -102,17 +102,17 @@ export class ViewResultsProcessComponent implements OnInit {
               this.demerit = res.data.demerit
               if (this.merit > this.demerit){
                 this.score = this.score + this.score*2*Math.log(1+this.merit-this.demerit)
-                console.log("going through!!")
+                // console.log("going through!!")
               } else {
                 this.score = this.score- this.score*2*Math.log(1+this.demerit-this.merit)
-                console.log("going through 2222")
+                // console.log("going through 2222")
               }
 
             }
             
             // console.log(this.docDict)
           }, err => {
-            console.log("gg got error calling feedback")
+            // console.log("gg got error calling feedback")
             console.log(err)});
 
           this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
@@ -174,9 +174,10 @@ export class ViewResultsProcessComponent implements OnInit {
   viewDocument(docID: any): void {
     this.managefeedback.addFeedbackCount(this.query, docID)
     .subscribe(res => {
+      window.open(`/uploader/viewdocument/${docID}/${this.query}`)
       console.log(res)
     });
-    window.open(`/uploader/viewdocument/${docID}/${this.query}`)
+  
   }
 
   getSuggestedQuery(qn:string) {
