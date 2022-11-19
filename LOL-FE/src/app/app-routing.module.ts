@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'reader', component: ReaderHomeComponent },
   { path: 'uploader', component: UploaderHomeComponent },
   { path: 'uploader/upload', component: UploadDocumentComponent},
-  { path: 'uploader/viewdocument/:did/:qid', component: ViewDocumentComponent},
+  { path: 'uploader/viewdocument/:did/:qid/:type', component: ViewDocumentComponent},
   { path: 'viewdocument/:id', component: ViewDocumentComponent},
   { path: 'uploader/editdocument/:id', component: EditUploadedDocumentComponent },
   { path: 'viewresultsprocess/:query', component: ViewResultsProcessComponent }

@@ -175,10 +175,18 @@ export class ViewResultsProcessComponent implements OnInit {
   viewDocument(docID: any): void {
     this.managefeedback.addFeedbackCount(this.query, docID)
     .subscribe(res => {
-      window.open(`/uploader/viewdocument/${docID}/${this.query}`)
+      window.open(`/uploader/viewdocument/${docID}/${this.query}/view`)
       console.log(res)
     });
   
+  }
+
+  toPage(docID:any, pageNo: any): void {
+    this.managefeedback.addFeedbackCount(this.query, docID)
+    .subscribe(res => {
+      window.open(`/uploader/viewdocument/${docID}/${this.query}/${pageNo}`)
+      console.log(res)
+    });
   }
 
   getSuggestedQuery(qn:string) {
