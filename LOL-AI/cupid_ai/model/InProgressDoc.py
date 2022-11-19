@@ -69,7 +69,7 @@ class InProgressDoc(Doc):
   
   def remove_non_en(self):
     for (i, line) in enumerate(self.lines):
-      self.lines[i] = " ".join(w for w in nltk.wordpunct_tokenize(line) if w.lower() in words)
+      self.lines[i] = " ".join(w for w in nltk.wordpunct_tokenize(line) if w.lower() in words.words())
     return self 
 
       
