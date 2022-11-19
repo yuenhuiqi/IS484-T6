@@ -257,7 +257,7 @@ def getAcronymMeaning(question):
     return jsonify({'acronyms': arr}), 200
 
 
-@app.route('/getSuggestedQueries/<string:query>', methods=['GET'])
+@app.route('/getSuggestedQueries/<path:query>', methods=['GET'])
 @auth
 def getSuggested(query):
     return jsonify({'suggestedSearches': getSuggestedSearches(query)})
