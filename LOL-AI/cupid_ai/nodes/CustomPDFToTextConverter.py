@@ -83,6 +83,7 @@ class CustomPDFToTextConverter(BaseConverter):
             .remove_non_alpha()
             .join_sentences()
             .segment_words()
+            .remove_non_en()
             )
 
         output_docs: List[Document] = []
