@@ -58,6 +58,7 @@ export class ViewResultsProcessComponent implements OnInit {
     }
 
     this.sub = this.route.params.subscribe(params => {
+      this.encodedQuery = params['query']
       this.query = decodeURIComponent(params['query']);
     });
 
