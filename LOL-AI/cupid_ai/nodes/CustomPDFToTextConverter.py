@@ -74,7 +74,7 @@ class CustomPDFToTextConverter(BaseConverter):
                 text = reader.pages[i].extract_text()
                 if text == '':
                     text = self.pdf_to_text(f, i)
-                pages.append(text):
+                pages.append(text)
         
         docs: List[InProgressDoc] = []
         for i, page in enumerate(pages):
