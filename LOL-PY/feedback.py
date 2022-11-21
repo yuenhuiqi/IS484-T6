@@ -34,7 +34,8 @@ def add_querydoc_count(searchID, docID):
     search_ID = '{0}'.format(searchID)
     doc_ID = '{0}'.format(docID)
 
-    if db.session.query(exists().where(Feedback.fSearchID == search_ID)).scalar() and db.session.query(exists().where(Feedback.fDocID == doc_ID)).scalar():
+    if db.session.query(exists().where((Feedback.fSearchID == search_ID) & (Feedback.fDocID == doc_ID))).scalar():
+
         print(search_ID, doc_ID, "feedback exist")
         currentFeedback = Feedback.query.filter_by(fSearchID=search_ID, fDocID=doc_ID).first()
         currentFeedback.count += 1
