@@ -41,7 +41,7 @@
                               (closed)="panelOpenState = false">
             <mat-expansion-panel-header>
               <mat-panel-title>
-              Page {{val[0]}}
+                <a target="_blank" (click)="toPage(item, val[0])">Page {{val[0]}}</a>
               </mat-panel-title>
             </mat-expansion-panel-header>
             <p>{{val[1]}}</p>

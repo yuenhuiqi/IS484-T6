@@ -27,6 +27,7 @@ export class ViewDocumentComponent implements OnInit {
   isLoading = true
   result: any;
   relevantSearches: any;
+  type: any;
 
   constructor(
     private user: AuthService, 
@@ -38,18 +39,25 @@ export class ViewDocumentComponent implements OnInit {
   ) {   }  
   
   ngOnInit(): void {
-    if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:did/:qid") {
+    if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:did/:qid/:type") {
       this.toggleClose = 1;
     }
 
     this.sub = this.route.params.subscribe(params => {
       this.docID = params['did'];
       this.queryID = params['qid']
+      this.type = params['type']
     });
     
     this.http.get<any>(`https://54.254.54.186:2222/presignedUrl/` + this.docID)
       .subscribe(
-        data => { this.docLink = data.presignedUrl }
+        data => { 
+          if (this.type == 'view') {
+            this.docLink = data.presignedUrl 
+          } else {
+            this.docLink = data.presignedUrl + "#page=" + String(this.type) 
+          }
+        }
       )
 
     this.http.get<any>(`https://54.254.54.186:2222/getDocDetails/` + this.docID)
