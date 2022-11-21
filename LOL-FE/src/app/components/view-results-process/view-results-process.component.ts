@@ -32,6 +32,7 @@ export class ViewResultsProcessComponent implements OnInit {
   demerit: any;
   sorted: any = [];
   docTitleDict: any = {};
+  documents: any={};
 
   constructor(private route: ActivatedRoute, 
                 private http: HttpClient, 
@@ -70,12 +71,17 @@ export class ViewResultsProcessComponent implements OnInit {
     this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
     .subscribe(
       data => { 
+        this.documents=data.documents
         for (let i in data.documents) {
-
-          console.log(data.documents)
-          this.docID = data.documents[i].meta.doc_uuid
-
-          this.score = data.documents[i].score
+          this.score=0
+          // console.log(data.documents)
+          this.docID = data.documents[i].meta.doc_uuid //actual docID
+          
+          // console.log("sortedddd:"+this.scores)
+          console.log(this.docID, "-------")
+          if (!this.scores[this.docID]){
+            this.calculateFeedback(data.documents[i].meta.doc_uuid)
+          }
 
           this.manageDocs.getDocDetails(this.docID)
           .subscribe(res => { 
@@ -92,66 +98,27 @@ export class ViewResultsProcessComponent implements OnInit {
           }, err => console.log(err));
 
           // Get the feedback and calculate scores
-          this.managefeedback.getFeedback(this.query, this.docID)
-          .subscribe((res:any )=> { 
-           
-            // console.log(res[0]+"this my feedback")
-            if (res.code ==200){
-              console.log(res.data)
-              // // console.log(docName)
-              this.merit = res.data.merit
-              this.demerit = res.data.demerit
-              if (this.merit > this.demerit){
-                this.score = this.score + this.score*2*Math.log(1+this.merit-this.demerit)
-                // console.log("going through!!")
-              } else {
-                this.score = this.score- this.score*2*Math.log(1+this.demerit-this.merit)
-                // console.log("going through 2222")
-              }
 
-            }
-            
-            // console.log(this.docDict)
-          }, err => {
-            // console.log("gg got error calling feedback")
-            console.log(err)});
 
           this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
           .subscribe(res => { 
             this.docTitleDict[data.documents[i].meta.doc_uuid] = (<any>res).docTitle
           }, err => console.log(err));
+
           if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
             this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
-            this.scores[data.documents[i].meta.doc_uuid] += this.score
-            console.log("miscore"+this.score)
-            console.log(this.docDict)
+            // console.log(this.docDict)
           } else {
             this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
-            this.scores[data.documents[i].meta.doc_uuid] = this.score
-            console.log("miscore"+this.score)
-            console.log(this.docDict)
+
+            // console.log(this.docDict)
           }
         }
-        this.score=0
-        console.log(this.docDict)
-        for (let doc in this.scores){
-          
-          this.scores[doc] = this.scores[doc]/3
-          console.log("hereeee we are"+this.scores[doc])
 
-        }
+        // console.log("the scores"+)
 
-        Object.keys(this.scores)
-          .sort((a, b) => (this.scores[a] < this.scores[b] ? 1 : -1))
-          .map(x => {
-            console.log("MEEEEEEp")
-            console.log(x, this.scores[x]);
-            this.sorted.push(x);
-            
-          });
 
-        console.log("check!!")
-        console.log(this.sorted)
+        //separate answers box
         for (let j in data.answers) {
           if (Object.keys(this.answers).includes(data.documents[j].meta.doc_uuid)) {
             this.answers[data.documents[j].meta.doc_uuid].push(data.answers[j].answer)
@@ -214,6 +181,72 @@ export class ViewResultsProcessComponent implements OnInit {
       })
     
   }
+
+  calculateFeedback(docid:any) {
+    console.log(this.docID, "''''''''''''''''''''")
+            this.managefeedback.getFeedback(this.query, docid)
+              .subscribe((res:any )=> { 
+                  console.log(docid, "oooooooooooo")
+                  //get average of documents page scores
+                  this.score = 0
+                  for (let num in this.documents) {
+                    if (this.documents[num].meta.doc_uuid == docid && this.score>0){
+                      this.score = (this.score+this.documents[num].score)/2 //pagescore
+                      console.log("original"+this.documents[num].score)
+                    } else if (this.documents[num].meta.doc_uuid == docid && this.score==0){
+                      this.score=this.documents[num].score
+                      console.log("original"+this.documents[num].score)
+                    }
+                  }
+      
+                  console.log("average of"+docid+" is:"+this.score)
+                  
+                  //calculating feedback
+                  // is.getAndCalculateFeedback()
+      
+                  // "going through"
+                // console.log(res[0]+"this my feedback")
+                console.log("sortedddd:"+this.sorted)
+                console.log(docid, "-------")
+                if (res.code == 200 && (!this.sorted.includes(docid))){
+                  console.log(docid, "*********************")
+                  console.log(res.data)
+                  // // console.log(docName)
+                  this.merit = res.data.merit
+                  console.log("merit"+this.merit)
+                  this.demerit = res.data.demerit
+                  console.log("testing" +this.score)
+                  if (this.merit > this.demerit){
+                    this.score = this.score + this.score*2*Math.log(1+this.merit-this.demerit)
+                    console.log("going through!!")
+                  } else {
+                    this.score = this.score- this.score*2*Math.log(1+this.demerit-this.merit)
+                    console.log("going through 2222")
+                    
+                  }
+                  console.log(this.score)
+                  this.scores[docid]=this.score
+                  this.sorted=[]
+                  Object.keys(this.scores)
+                    .sort((a, b) => (this.scores[a] < this.scores[b] ? 1 : -1))
+                    .map(x => {
+                      console.log("MEEEEEEp")
+                      console.log(x, this.scores[x]);
+                      this.sorted.push(x);
+                    });
+                
+                  console.log("check!!")
+                  console.log(this.sorted)
+                }
+                
+                // console.log(this.docDict)
+                }, err => {
+                  // console.log("gg got error calling feedback")
+                  console.log("going through"+err)});
+            //storing scores
+            
+  }
+
 
   submit() {
     this.searchQuery = this.newquery.value
