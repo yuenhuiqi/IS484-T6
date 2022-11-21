@@ -67,8 +67,9 @@ def search_results(question):
 
 @app.route('/getFeedback/<path:docID>/<path:query>', methods=['POST'])
 # @auth
-def retrieve_feedback(docID, query):
-    code, data = get_feedback(query, docID)
+def retrieve_feedback(docID,query):
+
+    code, data = get_feedback(docID, query)
     return jsonify(
         {
             "code": code,
