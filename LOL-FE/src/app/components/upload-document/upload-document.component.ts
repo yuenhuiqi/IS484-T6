@@ -50,6 +50,8 @@ export class UploadDocumentComponent {
   userID: String = "";
   snackbarOpen:any = true;
 
+  disabled:any = false
+
   public dropped(files: NgxFileDropEntry[]) {
 
     for (const droppedFile of files) {
@@ -141,6 +143,7 @@ export class UploadDocumentComponent {
               verticalPosition: "top",
               panelClass: ["successAlert"]   
             }).afterDismissed().subscribe(()=>{
+              this.disabled = false;
               this.router.navigate(['/uploader']);
             });
           }
@@ -153,6 +156,7 @@ export class UploadDocumentComponent {
               verticalPosition: "top",
               panelClass: ["errorAlert"]
             })
+            this.disabled = false;
           }
         },
       });
@@ -168,12 +172,14 @@ export class UploadDocumentComponent {
   }
 
   submitForm() {
+    this.disabled = true;
     // Check fileList records
     console.log(this.fileList)
     this.snackbarOpen = false
 
     // POST FormData to Backend
     this.uploadfile(this.fileList)
+    
   }
 
   reset() {

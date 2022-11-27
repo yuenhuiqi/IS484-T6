@@ -62,7 +62,7 @@
 <div>
     <mat-toolbar>
         <span class="example-spacer"></span>
-        <button [routerLink] = "['/uploader']" mat-stroked-button>Cancel</button>
+        <button [disabled]="disabled" [routerLink] = "['/uploader']" mat-stroked-button>Cancel</button>
         <button [disabled]="checkValidity() || objectKeys(errorList).length == 0" mat-flat-button style="margin: 10px;" (click)="submitForm()">Upload</button>
     </mat-toolbar>
 </div>

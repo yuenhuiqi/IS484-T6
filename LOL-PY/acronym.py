@@ -24,11 +24,11 @@ def getAllAcronyms(str_test):
             exists = db.session.query(db.exists().where(Acronym.acronym == acronym_meaning[0])).scalar()
             # print(exists)
             if not exists:
-                print("ok")
+                print("new acronym added")
                 db.session.add(acronym_db)
                 db.session.commit()
 
-            print('````````````````````````````````')
+            # print('````````````````````````````````')
             # acronym_dict = {}
             # acronym_dict[acronym_meaning[0]] = acronym_meaning[1]
 

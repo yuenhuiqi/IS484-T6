@@ -137,31 +137,16 @@ def addfeedback(searchID, docID):
         }
     )
 
-@app.route('/')
-def index():
-    return render_template('test.html')
-
 # app.config['MAX_CONTENT_LENGTH'] = file_mb_max * 1024 * 1024
-
-
 @app.route('/upload', methods=['POST'])
 @cross_origin()
 @auth
 def upload_files():
-    # if request.method == 'POST':
-    # print(request.get_json())
-
-    # files = request.files.listvalues()
     docs = request.json
     if len(docs) == 0:
         return 'No documents found, please try again.'
     else:
-        # file = request.json
-        # print(files)
-
-        # files = request.files.getlist('file')
         print(f"Number of documents uploaded: {len(docs)}")
-        # return upload_doc(file)
         return upload_multiDocs(docs)
 
 
@@ -175,7 +160,6 @@ def getAllDocDetails(docTitle, page_size, page):
 @auth
 def getDocDetails(doc_id):
     doc = Document.query.filter_by(docID=doc_id).first()
-    # print(doc_id)
     return jsonify({'docTitle': doc.docTitle, 'journey': doc.journey, 'docName': doc.docName, 'docType': doc.docType})
 
 
@@ -189,8 +173,11 @@ def updateDoc(doc_id, doc_title, doc_journey):
 @app.route('/deleteDoc', methods=['POST'])
 @auth
 def deleteDoc():
+    before = time.time()
     docName = request.json["docName"]
     deleteAllDocVersions(docName)
+    print(time.time() - before)
+
     return "Document deleted!"
 
 
@@ -198,12 +185,6 @@ def deleteDoc():
 @auth
 def getAllVersionsDetails(doc_id):
     return getAllVersions(doc_id)
-
-
-@app.route('/download/<upload_id>')
-@auth
-def download(upload_id):
-    return dl(upload_id)
 
 @app.route('/presignedUrl/<doc_id>', methods=['GET'])
 @auth
@@ -245,9 +226,7 @@ def getAcronymMeaning(question):
     acronyms = Acronym.query.all()
     arr = []
     for acronym in acronyms:
-        # print(str(acronym.acronym))
         if str(acronym.acronym).lower() in qn:
-            print(acronym.acronym, "---------")
             acronym_dict = {}
             acronym_dict['acronym'] = acronym.acronym
             acronym_dict['meaning'] = acronym.meaning
