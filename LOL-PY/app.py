@@ -173,10 +173,8 @@ def updateDoc(doc_id, doc_title, doc_journey):
 @app.route('/deleteDoc', methods=['POST'])
 @auth
 def deleteDoc():
-    before = time.time()
     docName = request.json["docName"]
     deleteAllDocVersions(docName)
-    print(time.time() - before)
 
     return "Document deleted!"
 
