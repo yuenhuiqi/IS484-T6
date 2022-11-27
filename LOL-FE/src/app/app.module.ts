@@ -46,7 +46,7 @@ import { DeleteConfirmationComponent } from './components/delete-confirmation/de
 
 import { MatListModule } from '@angular/material/list';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AppHttpInterceptor } from './AppHttpInterceptor';
 import { SuggestedSearchesComponent } from './components/suggested-searches/suggested-searches.component';
 

@@ -1,20 +1,17 @@
 from database import *
-# from keywordss import Keywordss
 from user import getUserByID
 from versioning import moveDocToVersioning, deleteDocVersions
 
 import uuid
 from datetime import datetime
-from io import BytesIO, TextIOWrapper, StringIO
+from io import BytesIO, TextIOWrapper
 from base64 import b64decode
 from collections import deque
 from http import HTTPStatus
 import boto3
 from botocore.exceptions import ClientError
 
-import enum
-from sqlalchemy import Enum
-from flask import Flask, render_template, request, send_file, flash, jsonify
+from flask import jsonify
 from acronym import *
 
 class Document(db.Model):
@@ -72,11 +69,9 @@ def upload_doc_to_s3(doc, fn):
             fn,
             ExtraArgs={
                 "ContentType": ct  # Set appropriate content type as per the file
-                # "ContentType": ct.content_type
             }
         )
     except Exception as e:
-        print("Something Happened (S3 Upload): ", e)
         return "Err", e
 
     # Retrieve VersionID of uploaded document
@@ -88,7 +83,6 @@ def upload_doc_to_s3(doc, fn):
             s3_object_versions.append(obj.get('VersionId'))
 
     except Exception as e:
-        print("Something Happened (S3 Versioning): ", e)
         return "Err", e
 
     return ["{}{}".format(app.config["AWS_DOMAIN"], fn), s3_object_versions[0]]
@@ -123,7 +117,6 @@ def upload_doc(name, doc, doctype):
             upload.upload_status = "COMPLETE"
             db.session.commit()
 
-            print(f'Uploaded: {name, id, dt}')
             return f'Uploaded: {name, id, dt}', HTTPStatus.OK
 
     except Exception as e:
@@ -134,20 +127,17 @@ def upload_doc(name, doc, doctype):
 
 def upload_multiDocs(docs):
     for name in docs:
-
         doc = docs[name]
 
         if doc and allowed_file(name):
             doctype = name.rsplit('.', 1)[1].lower()
 
             if db.session.query(exists().where(Document.docName == name)).scalar():
-                # print(name, "doc exist")
                 currentDoc = Document.query.filter_by(docName=name).first()
                 moveDocToVersioning(currentDoc)
                 update_doc(currentDoc, doc, name)
 
             else:
-                # print(name, "new doc")
                 upload = upload_doc(name, doc, doctype)
                 if upload[0] == 'Err':
                     return f'Document upload error! {upload[1]}'
@@ -181,7 +171,6 @@ def update_doc(currentDoc, doc, name):
             update.VersionID = docS3[1]
             db.session.commit()
 
-            print(f'Updated: {name, dt}')
             return f'Updated: {name, dt}', HTTPStatus.OK
 
     except Exception as e:
@@ -241,7 +230,6 @@ def search_doc(title, page_size, page):  # crude search no algorithmic smootheni
 def deleteAllDocVersions(docName):
     # Delete ALL Document Versions from AWS S3 bucket
     s3_bucket.object_versions.filter(Prefix=docName).delete()
-    print(f'All versions of {docName} has been deleted from S3!')
 
     # Delete from Document DB
     Document.query.filter_by(docName=docName).delete()
@@ -250,7 +238,6 @@ def deleteAllDocVersions(docName):
     deleteDocVersions(docName)
     db.session.commit()
 
-    print(f'{docName} deleted from Document & Version DB!')
     return f'{docName} deleted!'
 
 

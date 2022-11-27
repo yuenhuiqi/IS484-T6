@@ -9,21 +9,17 @@ from database import app
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_api import status
-
 from flask_sqlalchemy import SQLAlchemy
+
 from searchCount import search_text, add_count, getSuggestedSearches
 from document import *
 from versioning import getAllVersions
 from user import User
-from acronym import Acronym, getAllAcronyms
-from feedback import Feedback, add_querydoc_count, update_feedback, get_feedback
-import jwt
-import datetime
-import bcrypt
-import json
-import base64
+from acronym import Acronym
+from feedback import add_querydoc_count, update_feedback, get_feedback
 
-import requests
+import jwt
+import bcrypt
 import functools
 
 bcrypt = Bcrypt(app)
@@ -44,7 +40,6 @@ def auth(func):
     def decorator(*args, **kwargs):
         if not "Authorization" in request.headers:
             abort(401)
-        # print(request.headers.get("Authorization"))
         if request.headers.get("Authorization") != API_KEY:
             abort(401)
         return func(*args, **kwargs)
@@ -92,23 +87,6 @@ def search_query(question):
         }
     )
 
-# @app.route('/feedback', methods=["POST"])
-# @auth
-# def feedback():
-#     info = request.json
-#     print(info)
-#     question = info["searchID"]
-#     document = info["docID"]
-#     count = info['feedback']
-#     code, data = add_count(question, document)
-#     code, data = update_feedback(question, document, count)
-    
-#     return jsonify(
-#         {
-#             "code": code,
-#             "data": info
-#         }
-#     )
 
 @app.route('/feedback/<path:searchID>/<path:docID>/<path:score>', methods=["POST"])
 @auth
@@ -146,7 +124,6 @@ def upload_files():
     if len(docs) == 0:
         return 'No documents found, please try again.'
     else:
-        print(f"Number of documents uploaded: {len(docs)}")
         return upload_multiDocs(docs)
 
 
@@ -196,8 +173,6 @@ def getUrl(doc_id):
 @auth
 def login():
     json_data = request.json
-    # auth = request.authorization
-
     user = User.query.filter_by(userID=json_data['userName']).first()
     if user and bcrypt.check_password_hash(user.password, json_data['password']):
         session.logged_in = True

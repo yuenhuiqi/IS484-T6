@@ -35,19 +35,15 @@ def add_querydoc_count(searchID, docID):
     doc_ID = '{0}'.format(docID)
 
     if db.session.query(exists().where((Feedback.fSearchID == search_ID) & (Feedback.fDocID == doc_ID))).scalar():
-
-        print(search_ID, doc_ID, "feedback exist")
         currentFeedback = Feedback.query.filter_by(fSearchID=search_ID, fDocID=doc_ID).first()
         currentFeedback.count += 1
         try:
             db.session.commit()
             return 200, "feedback count updated"
         except Exception as e:
-            print("Something Happened (Update DocSearch Query Count): ", e)
             return 400, e
         
     else:
-        print(search_ID, doc_ID, "new feedback")
         newFeedback = Feedback(fSearchID = search_ID, fDocID = doc_ID, count=1, merit = 0, demerit = 0)
         try: 
             db.session.add(newFeedback)
@@ -55,34 +51,26 @@ def add_querydoc_count(searchID, docID):
             return 200, "Feedback added to DB!"
 
         except Exception as e:
-            print("Something Happened (Add new DocSearch Query): ", e)
             return 400, e
         
 
 def update_feedback(searchID, docID, score):
-    # print(searchID, docID, score)
-
     score = int(score)
 
     try:
         currentFeedback = Feedback.query.filter_by(fSearchID=searchID, fDocID=docID).first()
 
-        print(currentFeedback.fDocID)
         if (score > 0):
             currentFeedback.merit += 1
-            print(currentFeedback.merit, "after commit")
 
         else:
-            currentFeedback.demerit += 1
-            print(currentFeedback.demerit, "after commit")
-            
+            currentFeedback.demerit += 1            
 
         db.session.commit()
 
         return 200, "Feedback updated"
 
     except Exception as e:
-        print("Something Happened (Update Feedback Count): ", e)
         return 400, e
 
 def get_feedback(docid, query):
@@ -95,9 +83,8 @@ def get_feedback(docid, query):
             "merit": feedback.merit,
             "demerit": feedback.demerit}
         return 200, data
+        
     except Exception as e:
-        print(e)
-
         return 400, e
 
 
