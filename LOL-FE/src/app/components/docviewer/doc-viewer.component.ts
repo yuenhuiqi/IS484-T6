@@ -24,7 +24,6 @@ export class ViewDocumentComponent implements OnInit {
   public feedback: any = {};
   score: any = 0;
   queryID: any;
-  isLoading = true
   result: any;
   relevantSearches: any;
   type: any;

@@ -60,15 +60,8 @@ export class UploadDocumentComponent {
       if (droppedFile.fileEntry.isFile) {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file((file: File) => {
-
-          console.log(file);
-
-
-          // Here you can access the real file
+          // Access file
           var filename = droppedFile.relativePath
-          // console.log(filename, file);
-          // console.log(this.userID)
-
           var file_dict = {
             'file': '',
             'title': filename,
@@ -82,7 +75,6 @@ export class UploadDocumentComponent {
             this.convertfile(file, filename)
           }
           else {
-            console.log(filename + "is already added")
             this.snackbar.open(`${filename} is already selected`, 'Close', {
               duration: 5000,
               verticalPosition: "top",
@@ -92,20 +84,17 @@ export class UploadDocumentComponent {
 
         });
       } else {
-        // It was a directory (empty directories are added, otherwise only files)
+        // Directory (empty directories are added, otherwise only files)
         const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
-        console.log(droppedFile.relativePath, fileEntry);
       }
     }
   }
 
   editFile(key: any) {
-    console.log(key)
     this.openDialog(key)
   }
 
   deleteFile(key: any) {
-    console.log(key)
     delete this.fileList[key]
     delete this.errorList[key]
   }
@@ -114,29 +103,22 @@ export class UploadDocumentComponent {
     this.user.getUser(this.token)
       .subscribe(
         (res: any) => {
-          // console.log(res)
           this.userID = res.userID
-          // console.log(this.userID)
         },
         err => console.log(err)
       )
   }
 
   uploadfile(file: any) {
-    // this.http
-    //   .post('http://localhost:2222/upload', file)
     this.manageDocs.uploadDocs(file)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
-          // console.log(err.error.text)
-
           // Upload Success
           if (err.error.text == 'All documents uploaded!') {
             // RESET fileList
             this.reset()
             // REDIRECT to success page
-            console.log(err.error.text)
             this.snackbarOpen = true
             this.snackbar.open("Documents have been uploaded successfully!", 'Close', {
               duration: 6000,
@@ -149,7 +131,6 @@ export class UploadDocumentComponent {
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
-            console.log(err.error.text)
             this.snackbarOpen = true
             this.snackbar.open(err.error.text, 'Close', {
               duration: 2000,
@@ -173,13 +154,10 @@ export class UploadDocumentComponent {
 
   submitForm() {
     this.disabled = true;
-    // Check fileList records
-    console.log(this.fileList)
     this.snackbarOpen = false
 
     // POST FormData to Backend
     this.uploadfile(this.fileList)
-    
   }
 
   reset() {
@@ -194,9 +172,6 @@ export class UploadDocumentComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
-      console.log('The dialog was closed');
-
       this.fileList[key].title = result.title.trim()
       this.fileList[key].journey = result.journey
       this.errorList[key] = result.isDocValid
@@ -220,11 +195,7 @@ export class UploadDocumentComponent {
   async convertfile(file: any, filename: string) {
     try {
       const data = await this.getBase64(file);
-
-      // console.log(file)
       this.fileList[filename].file = data
-
-      // console.log(this.fileList)
     } catch (error) {
       console.log(error)
     }
