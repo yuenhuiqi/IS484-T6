@@ -49,9 +49,8 @@ export class ReaderHomeComponent implements OnInit {
     let query = encodeURIComponent(this.searchQuery)
     this.manageSearchQueryService.addQueryCount(query)
     .subscribe(res => {
-      this.router.navigate(['/viewresultsprocess/' + query]);
     });
-    
+    this.router.navigate(['/viewresultsprocess/' + query]);
   }
 
 }
