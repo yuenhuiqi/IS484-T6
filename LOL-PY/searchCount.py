@@ -60,7 +60,7 @@ def search_text(qn):  # crude search no algorithmic smoothening of suggestions y
 
 def add_count(qn):
     query = '{0}'.format(qn)
-    query = query.lower()
+    query = query.lower().rstrip('_+!@#$?^/ ')
 
     if db.session.query(exists().where(SearchCount.searchText == query)).scalar():
         currentQuery = SearchCount.query.filter_by(searchText=query).first()
