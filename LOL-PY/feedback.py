@@ -75,17 +75,27 @@ def update_feedback(searchID, docID, score):
 
 def get_feedback(docid, query):
     try:
-        feedback = Feedback.query.filter_by(fSearchID=query, fDocID=docid).first()
-        data = {"fID": feedback.fID,
-            "fSearchID": feedback.fSearchID,
-            "fDocID": feedback.fDocID,
-            "count": feedback.count,
-            "merit": feedback.merit,
-            "demerit": feedback.demerit}
-        return 200, data
-        
+        if db.session.query(exists().where(Feedback.fDocID == docid, Feedback.fSearchID==query)).scalar():
+            feedback = Feedback.query.filter_by(fSearchID=query, fDocID=docid).first()
+            data = {"fID": feedback.fID,
+                "fSearchID": feedback.fSearchID,
+                "fDocID": feedback.fDocID,
+                "count": feedback.count,
+                "merit": feedback.merit,
+                "demerit": feedback.demerit}
+        else:
+            data = {
+                "fSearchID": query,
+                "fDocID": docid,
+                "count": 0,
+                "merit": 0,
+                "demerit": 0}
+
+        return 200, data 
     except Exception as e:
-        return 400, e
+        print(e)
+
+        return 400, 
 
 
 
