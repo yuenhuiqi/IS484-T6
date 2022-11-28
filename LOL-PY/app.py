@@ -9,20 +9,17 @@ from database import app
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_api import status
-
 from flask_sqlalchemy import SQLAlchemy
+
 from searchCount import search_text, add_count, getSuggestedSearches
 from document import *
 from versioning import getAllVersions
 from user import User
-from acronym import Acronym, getAllAcronyms
-from feedback import Feedback, add_querydoc_count, update_feedback
-import jwt
-import datetime
-import bcrypt
-import json
+from acronym import Acronym
+from feedback import add_querydoc_count, update_feedback, get_feedback
 
-import requests
+import jwt
+import bcrypt
 import functools
 
 bcrypt = Bcrypt(app)
@@ -43,7 +40,6 @@ def auth(func):
     def decorator(*args, **kwargs):
         if not "Authorization" in request.headers:
             abort(401)
-        # print(request.headers.get("Authorization"))
         if request.headers.get("Authorization") != API_KEY:
             abort(401)
         return func(*args, **kwargs)
@@ -63,6 +59,21 @@ def search_results(question):
         }
     )
 
+
+@app.route('/getFeedback/<path:docID>/<path:query>', methods=['POST'])
+# @auth
+def retrieve_feedback(docID,query):
+
+    code, data = get_feedback(docID, query)
+    return jsonify(
+        {
+            "code": code,
+            "data": data
+            
+        }
+    )
+
+
 @app.route('/addQueryCount/<path:question>', methods=["POST"])
 @auth
 def search_query(question):
@@ -76,23 +87,6 @@ def search_query(question):
         }
     )
 
-# @app.route('/feedback', methods=["POST"])
-# @auth
-# def feedback():
-#     info = request.json
-#     print(info)
-#     question = info["searchID"]
-#     document = info["docID"]
-#     count = info['feedback']
-#     code, data = add_count(question, document)
-#     code, data = update_feedback(question, document, count)
-    
-#     return jsonify(
-#         {
-#             "code": code,
-#             "data": info
-#         }
-#     )
 
 @app.route('/feedback/<path:searchID>/<path:docID>/<path:score>', methods=["POST"])
 @auth
@@ -121,31 +115,15 @@ def addfeedback(searchID, docID):
         }
     )
 
-@app.route('/')
-def index():
-    return render_template('test.html')
-
 # app.config['MAX_CONTENT_LENGTH'] = file_mb_max * 1024 * 1024
-
-
 @app.route('/upload', methods=['POST'])
 @cross_origin()
 @auth
 def upload_files():
-    # if request.method == 'POST':
-    # print(request.get_json())
-
-    # files = request.files.listvalues()
     docs = request.json
     if len(docs) == 0:
         return 'No documents found, please try again.'
     else:
-        # file = request.json
-        # print(files)
-
-        # files = request.files.getlist('file')
-        print(f"Number of documents uploaded: {len(docs)}")
-        # return upload_doc(file)
         return upload_multiDocs(docs)
 
 
@@ -159,7 +137,6 @@ def getAllDocDetails(docTitle, page_size, page):
 @auth
 def getDocDetails(doc_id):
     doc = Document.query.filter_by(docID=doc_id).first()
-    # print(doc_id)
     return jsonify({'docTitle': doc.docTitle, 'journey': doc.journey, 'docName': doc.docName, 'docType': doc.docType})
 
 
@@ -175,6 +152,7 @@ def updateDoc(doc_id, doc_title, doc_journey):
 def deleteDoc():
     docName = request.json["docName"]
     deleteAllDocVersions(docName)
+
     return "Document deleted!"
 
 
@@ -182,12 +160,6 @@ def deleteDoc():
 @auth
 def getAllVersionsDetails(doc_id):
     return getAllVersions(doc_id)
-
-
-@app.route('/download/<upload_id>')
-@auth
-def download(upload_id):
-    return dl(upload_id)
 
 @app.route('/presignedUrl/<doc_id>', methods=['GET'])
 @auth
@@ -201,8 +173,6 @@ def getUrl(doc_id):
 @auth
 def login():
     json_data = request.json
-    # auth = request.authorization
-
     user = User.query.filter_by(userID=json_data['userName']).first()
     if user and bcrypt.check_password_hash(user.password, json_data['password']):
         session.logged_in = True
@@ -224,12 +194,12 @@ def getUser(token):
 @auth
 def getAcronymMeaning(question):
     qn = '{0}'.format(question)
+    qn = qn.split()
+    qn = [x.lower() for x in qn]
     acronyms = Acronym.query.all()
     arr = []
     for acronym in acronyms:
-        # print(str(acronym.acronym))
-        if str(acronym.acronym).lower() in qn.lower():
-            # print(acronym.acronym, "---------")
+        if str(acronym.acronym).lower() in qn:
             acronym_dict = {}
             acronym_dict['acronym'] = acronym.acronym
             acronym_dict['meaning'] = acronym.meaning
@@ -240,7 +210,7 @@ def getAcronymMeaning(question):
     return jsonify({'acronyms': arr}), 200
 
 
-@app.route('/getSuggestedQueries/<string:query>', methods=['GET'])
+@app.route('/getSuggestedQueries/<path:query>', methods=['GET'])
 @auth
 def getSuggested(query):
     return jsonify({'suggestedSearches': getSuggestedSearches(query)})

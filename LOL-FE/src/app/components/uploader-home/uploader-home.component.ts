@@ -48,11 +48,9 @@ export class UploaderHomeComponent implements OnInit {
     if (this.titleQuery.value == null || this.titleQuery.value.trim().length === 0) {
       this.searchTitle = "-"
     }
-    // console.log(this.currentPage, this.pageSize)
     this.manageDocs.getAllDocDetails(this.searchTitle, this.pageSize, this.currentPage+1)
       .subscribe(
         (res: any) => {
-          console.log(res)
           this.isLoading = false
           this.docDetails = res.details
           this.dataSource = this.docDetails
@@ -73,7 +71,6 @@ export class UploaderHomeComponent implements OnInit {
   }
 
   pageChanged(event: PageEvent) {
-    console.log(event);
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
     this.getAllDocDetails();
@@ -88,14 +85,11 @@ export class UploaderHomeComponent implements OnInit {
     this.router.navigate(['/uploader/editdocument/' + docID]);
   }
 
-  viewDocument(docID: any): void {
-    console.log(docID)
-    window.open(`/uploader/viewdocument/${docID}`)
-    // location.assign(`/viewdocument/${docID}`)
+  viewDocument(docID: any, docTitle:any): void {
+    window.open(`/uploader/viewdocument/${docID}/${docTitle}/view`)
   }
 
   deleteDoc(docName: any) {
-    // console.log(docName)
     const message = `Are you sure you want to delete the document and all it's versions?`;
     const dialogData = new DialogData(docName, message);
     const dialogRef = this.dialog.open(DeleteConfirmationComponent, {
@@ -105,38 +99,39 @@ export class UploaderHomeComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((dialogResult:any) => {
       this.result = dialogResult;
-      console.log(this.result)
 
-      docName = { "docName": docName }
-      this.isLoading = true
-      this.manageDocs.deleteDoc(docName)
-        .subscribe({
-          next: (res) => console.log(res),
-          error: (err) => {
-            // DELETE Success
-            if (err.error.text == 'Document deleted!') {
-              // RELOAD upon successful deletion
-              console.log(err.error.text)
-              this.snackbar.open(err.error.text, 'close', {
-                duration: 1000,
-                verticalPosition: "top",
-                panelClass: ["successAlert"]
-              })
-                .afterDismissed().subscribe(() => location.reload())
-            }
-            else {
-              // ADD ERROR snackbar message
-              console.log(err.error.text)
-              this.snackbar.open(err.error.text, 'Close', {
-                duration: 1000,
-                verticalPosition: "top",
-                panelClass: ["errorAlert"]
-              })
-              this.isLoading = false
-            }
-          },
-        });
+      if (this.result == false) {
+        location.reload()
+      } else {
 
+        docName = { "docName": docName }
+        this.isLoading = true
+        this.manageDocs.deleteDoc(docName)
+          .subscribe({
+            next: (res) => console.log(res),
+            error: (err) => {
+              // DELETE Success
+              if (err.error.text == 'Document deleted!') {
+                // RELOAD upon successful deletion
+                this.snackbar.open(err.error.text, 'close', {
+                  duration: 1000,
+                  verticalPosition: "top",
+                  panelClass: ["successAlert"]
+                })
+                  .afterDismissed().subscribe(() => location.reload())
+              }
+              else {
+                // ADD ERROR snackbar message
+                this.snackbar.open(err.error.text, 'Close', {
+                  duration: 1000,
+                  verticalPosition: "top",
+                  panelClass: ["errorAlert"]
+                })
+                this.isLoading = false
+              }
+            },
+          });
+        }
     });
   }
 

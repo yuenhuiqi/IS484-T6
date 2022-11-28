@@ -3,6 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../service/auth.service'
 import { ManageFeedbackServiceService } from '../../service/manage-feedback-service.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { DialogData, SuggestedSearchesComponent } from '../suggested-searches/suggested-searches.component';
+import { MatDialog } from '@angular/material/dialog';
   
 @Component({  
   selector: 'app-docviewer',  
@@ -21,27 +24,39 @@ export class ViewDocumentComponent implements OnInit {
   public feedback: any = {};
   score: any = 0;
   queryID: any;
+  result: any;
+  relevantSearches: any;
+  type: any;
 
   constructor(
     private user: AuthService, 
     private route: ActivatedRoute, 
     private http: HttpClient,
-    private managefeedback: ManageFeedbackServiceService
+    private managefeedback: ManageFeedbackServiceService,
+    private snackbar: MatSnackBar,
+    public dialog: MatDialog
   ) {   }  
   
   ngOnInit(): void {
-    if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:did/:qid") {
+    if (this.route.snapshot.routeConfig?.path && this.route.snapshot.routeConfig?.path === "uploader/viewdocument/:did/:qid/:type") {
       this.toggleClose = 1;
     }
 
     this.sub = this.route.params.subscribe(params => {
       this.docID = params['did'];
       this.queryID = params['qid']
+      this.type = params['type']
     });
     
     this.http.get<any>(`http://localhost:2222/presignedUrl/` + this.docID)
       .subscribe(
-        data => { this.docLink = data.presignedUrl }
+        data => { 
+          if (this.type == 'view') {
+            this.docLink = data.presignedUrl 
+          } else {
+            this.docLink = data.presignedUrl + "#page=" + String(this.type) 
+          }
+        }
       )
 
     this.http.get<any>(`http://localhost:2222/getDocDetails/` + this.docID)
@@ -94,6 +109,31 @@ export class ViewDocumentComponent implements OnInit {
     .subscribe(res => {
       console.log(res)
     });
+
+    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.queryID).subscribe(
+      data => {this.relevantSearches = data.suggestedSearches
+        const message = `Do you want to search for these instead?`;
+        const dialogData = new DialogData(this.relevantSearches, message);
+        const dialogRef = this.dialog.open(SuggestedSearchesComponent, {
+          maxWidth: "500px",
+          maxHeight: "1000px",
+          data: dialogData
+        });
+        dialogRef.afterClosed().subscribe((dialogResult:any) => {
+          this.result = dialogResult;
+          console.log(this.result)
+    
+          if (this.result == false) {
+            location.reload()
+          } 
+    
+        });
+      }
+    )
+
+
+
+
   }
 
 
