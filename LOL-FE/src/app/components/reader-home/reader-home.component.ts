@@ -39,7 +39,6 @@ export class ReaderHomeComponent implements OnInit {
     qn = encodeURIComponent(qn)
     this.manageSearchQueryService.getSearchQuery(qn)
     .subscribe(res => {
-      console.log(res)
       this.filtered = res
       this.suggestedQueries.next(this.filtered.data.queryList);
     });
@@ -47,11 +46,9 @@ export class ReaderHomeComponent implements OnInit {
 
   submit() {
     this.searchQuery = this.query.value
-    // console.log(this.query.value)
     let query = encodeURIComponent(this.searchQuery)
     this.manageSearchQueryService.addQueryCount(query)
     .subscribe(res => {
-      console.log(res)
     });
     this.router.navigate(['/viewresultsprocess/' + query]);
   }

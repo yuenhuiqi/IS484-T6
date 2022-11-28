@@ -14,7 +14,6 @@ export class SuggestedSearchesComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<SuggestedSearchesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
       this.suggestedSearches = data.suggestedSearches;
-      console.log(this.suggestedSearches)
       this.message = data.message;
      }
 

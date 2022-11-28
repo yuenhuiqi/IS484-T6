@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router'
-import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ManageDocsService } from '../../service/manage-docs.service';
@@ -19,8 +18,7 @@ export class EditUploadedDocumentComponent implements OnInit {
     private user: AuthService,
     private manageVersion: ManageVersioningService, 
     private manageDocs: ManageDocsService, 
-    private route: ActivatedRoute, 
-    private http: HttpClient, 
+    private route: ActivatedRoute,
     private snackbar: MatSnackBar
   ) { }
 
@@ -64,7 +62,6 @@ export class EditUploadedDocumentComponent implements OnInit {
     this.manageVersion.getAllVersions(this.docID)
     .subscribe(
       (res: any) => {
-        console.log(res)
         this.dataSource = res
       },
       err => console.log(err)
@@ -91,11 +88,9 @@ export class EditUploadedDocumentComponent implements OnInit {
     this.fileList[`${this.file?.name}`] = file_dict
 
     this.convertfile(this.file, this.file?.name.toString())
-    console.log(this.fileList)
   }
 
   editUploadedDoc(): void {
-    console.log(this.editDocData.docTitle)
     this.manageDocs.updateDoc(this.docID, this.editDocData.docTitle, this.editDocData.journey)
       .subscribe((data:any) => {
         if (data.code == 200) {
@@ -112,9 +107,7 @@ export class EditUploadedDocumentComponent implements OnInit {
     this.user.getUser(this.token)
       .subscribe(
         (res: any) => {
-          // console.log(res)
           this.userID = res.userID
-          // console.log(this.userID)
         },
         err => console.log(err)
       )
@@ -138,30 +131,20 @@ export class EditUploadedDocumentComponent implements OnInit {
   async convertfile(file: any, filename: any) {
     try {
       const data = await this.getBase64(file);
-
-      // console.log(file)
       this.fileList[filename].file = data
-
-      // console.log(this.fileList)
     } catch (error) {
       console.log(error)
     }
   }
 
   uploadDoc() {
-    // console.log(this.file?.name)
     this.manageDocs.uploadDocs(this.fileList)
       .subscribe({
         next: (res) => console.log(res),
         error: (err) => {
-          // console.log(err.error.text)
-
           // Upload Success
           if (err.error.text == 'All documents uploaded!') {
-
-            console.log('All documents are uploaded!')
             // REDIRECT to success page
-            console.log(err.error.text)
             this.snackbar.open("Document have been uploaded successfully!", '', {
                 duration: 1500,
                 verticalPosition: "top"
@@ -170,7 +153,6 @@ export class EditUploadedDocumentComponent implements OnInit {
           }
           else {
             // ADD ERROR MESSAGE/DIALOG
-            console.log(err)
             this.snackbar.open(err.statusText, 'Close', {
               duration: 2000,
               verticalPosition: "top"

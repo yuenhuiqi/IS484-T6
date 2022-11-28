@@ -1,5 +1,5 @@
 from database import *
-import bcrypt, jwt, datetime
+import bcrypt, jwt
 
 class User(db.Model):
     __tablename__ = 'users'

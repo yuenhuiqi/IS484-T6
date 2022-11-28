@@ -15,6 +15,8 @@ export class DeleteConfirmationComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DialogData) { 
       this.docName = data.docName;
       this.message = data.message;
+      
+      dialogRef.disableClose = true;
     }
 
   ngOnInit(): void {

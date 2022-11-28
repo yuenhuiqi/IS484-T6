@@ -32,20 +32,20 @@ export class ViewResultsProcessComponent implements OnInit {
   demerit: any;
   sorted: any = [];
   docTitleDict: any = {};
-  documents: any={};
+  documents: any = {};
 
-  constructor(private route: ActivatedRoute, 
-                private http: HttpClient, 
-                private manageSearchQueryService: ManageSearchQueryService, 
-                private router: Router,
-                private manageDocs: ManageDocsService,
-                private managefeedback: ManageFeedbackServiceService
-              ) { }
+  constructor(private route: ActivatedRoute,
+    private http: HttpClient,
+    private manageSearchQueryService: ManageSearchQueryService,
+    private router: Router,
+    private manageDocs: ManageDocsService,
+    private managefeedback: ManageFeedbackServiceService
+  ) { }
 
   newquery = new FormControl();
   suggestedQueries = new BehaviorSubject<any>([]);
 
-  filtered:any;
+  filtered: any;
   searchQuery: any;
 
   ngOnInit(): void {
@@ -65,73 +65,51 @@ export class ViewResultsProcessComponent implements OnInit {
     });
 
     this.getAcronym()
-
-    this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.query).subscribe(
-      data => {this.relevantSearches = data.suggestedSearches}
+    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.query).subscribe(
+      data => { this.relevantSearches = data.suggestedSearches }
     )
 
-    this.http.post<any>(`https://18.142.140.202/search`, {"query": this.query})
-    .subscribe(
-      data => { 
-        this.documents=data.documents
-        for (let i in data.documents) {
-          this.score=0
-          // console.log(data.documents)
-          this.docID = data.documents[i].meta.doc_uuid //actual docID
-          
-          // console.log("sortedddd:"+this.scores)
-          // console.log(this.docID, "-------")
-          if (!this.scores[this.docID]){
-            this.calculateFeedback(data.documents[i].meta.doc_uuid)
+    this.http.post<any>(`https://18.142.140.202/search`, { "query": this.query })
+      .subscribe(
+        data => {
+          this.documents = data.documents
+          for (let i in data.documents) {
+            this.score = 0
+            this.docID = data.documents[i].meta.doc_uuid //actual docID
+
+            if (!this.scores[this.docID]) {
+              this.calculateFeedback(data.documents[i].meta.doc_uuid)
+            }
+
+            this.manageDocs.getDocDetails(this.docID)
+              .subscribe(res => {
+                this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
+              }, err => console.log(err));
+
+            // Get the feedback and calculate scores
+
+            this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
+              .subscribe(res => {
+                this.docTitleDict[data.documents[i].meta.doc_uuid] = (<any>res).docTitle
+              }, err => console.log(err));
+
+            if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
+              this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
+            } else {
+              this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
+            }
           }
 
-          this.manageDocs.getDocDetails(this.docID)
-          .subscribe(res => { 
-            // this.name = (<any>res).docTitle
-            // this.docNameList.push((<any>res).docTitle)
-
-            // console.log(docName)
-            //calculate
-            // // console.log(docName)
-
-            this.docDict[data.documents[i].meta.doc_uuid][i].push((<any>res).docTitle)
-            // console.log(this.docNameList)
-            // console.log(this.docDict)
-          }, err => console.log(err));
-
-          // Get the feedback and calculate scores
-
-
-          this.manageDocs.getDocDetails(data.documents[i].meta.doc_uuid)
-          .subscribe(res => { 
-            this.docTitleDict[data.documents[i].meta.doc_uuid] = (<any>res).docTitle
-          }, err => console.log(err));
-
-          if (Object.keys(this.docDict).includes(data.documents[i].meta.doc_uuid)) {
-            this.docDict[data.documents[i].meta.doc_uuid].push([data.documents[i].meta.page, data.documents[i].content])
-            // console.log(this.docDict)
-          } else {
-            this.docDict[data.documents[i].meta.doc_uuid] = [[data.documents[i].meta.page, data.documents[i].content]]
-
-            // console.log(this.docDict)
+          //separate answers box
+          for (let j in data.answers) {
+            if (Object.keys(this.answers).includes(data.documents[j].meta.doc_uuid)) {
+              this.answers[data.documents[j].meta.doc_uuid].push(data.answers[j].answer)
+            } else {
+              this.answers[data.documents[j].meta.doc_uuid] = [data.answers[j].answer]
+            }
           }
         }
-
-        // console.log("the scores"+)
-
-
-        //separate answers box
-        for (let j in data.answers) {
-          if (Object.keys(this.answers).includes(data.documents[j].meta.doc_uuid)) {
-            this.answers[data.documents[j].meta.doc_uuid].push(data.answers[j].answer)
-          } else {
-            this.answers[data.documents[j].meta.doc_uuid] = [data.answers[j].answer]
-          }
-          // console.log(this.answers)
-          // this.answers.push([data.answers[j].answer])
-        }
-      }
-    )
+      )
 
     this.getSuggestedQuery("")
 
@@ -143,111 +121,76 @@ export class ViewResultsProcessComponent implements OnInit {
 
   viewDocument(docID: any): void {
     this.managefeedback.addFeedbackCount(this.query.replace('?', ''), docID)
-    .subscribe(res => {
-      window.open(`/uploader/viewdocument/${docID}/${this.query.replace('?', '')}/view`)
-      // console.log(res)
-    });
-  
+      .subscribe(res => {
+        window.open(`/uploader/viewdocument/${docID}/${this.query.replace('?', '')}/view`)
+      });
+
   }
 
-  toPage(docID:any, pageNo: any): void {
+  toPage(docID: any, pageNo: any): void {
     this.managefeedback.addFeedbackCount(this.query.replace('?', ''), docID)
-    .subscribe(res => {
-      window.open(`/uploader/viewdocument/${docID}/${this.query.replace('?', '')}/${pageNo}`)
-      // console.log(res)
-    });
+      .subscribe(res => {
+        window.open(`/uploader/viewdocument/${docID}/${this.query.replace('?', '')}/${pageNo}`)
+      });
   }
 
-  getSuggestedQuery(qn:string) {
+  getSuggestedQuery(qn: string) {
     qn = encodeURIComponent(qn)
     this.manageSearchQueryService.getSearchQuery(qn)
-    .subscribe(res => {
-      // console.log(res)
-      this.filtered = res
-      this.suggestedQueries.next(this.filtered.data.queryList);
-    });
+      .subscribe(res => {
+        this.filtered = res
+        this.suggestedQueries.next(this.filtered.data.queryList);
+      });
   }
 
   getAcronym() {
-    console.log(this.encodedQuery)
-    this.http.get<any>(`https://54.254.54.186:2222/getAllAcronyms/` + this.encodedQuery)
-    .subscribe(
-      data => {
-        for (let i in data.acronyms) {
-          this.found_acronyms.push({
-            'acronym': data.acronyms[i].acronym,
-            'meaning': data.acronyms[i].meaning
-          })
-        }
-        // console.log(this.found_acronyms)
-      })
-    
+    this.http.get<any>(`http://localhost:2222/getAllAcronyms/` + this.encodedQuery)
+      .subscribe(
+        data => {
+          for (let i in data.acronyms) {
+            this.found_acronyms.push({
+              'acronym': data.acronyms[i].acronym,
+              'meaning': data.acronyms[i].meaning
+            })
+          }
+        })
+
   }
 
-  calculateFeedback(docid:any) {
-    // console.log(this.docID, "''''''''''''''''''''")
-            this.managefeedback.getFeedback(this.query, docid)
-              .subscribe((res:any )=> { 
-                  // console.log(docid, "oooooooooooo")
-                  //get average of documents page scores
-                  this.score = 0
-                  for (let num in this.documents) {
-                    if (this.documents[num].meta.doc_uuid == docid && this.score>0){
-                      this.score = (this.score+this.documents[num].score)/2 //pagescore
-                      // console.log("original"+this.documents[num].score)
-                    } else if (this.documents[num].meta.doc_uuid == docid && this.score==0){
-                      this.score=this.documents[num].score
-                      // console.log("original"+this.documents[num].score)
-                    }
-                  }
-      
-                  // console.log("average of"+docid+" is:"+this.score)
-                  
-                  //calculating feedback
-                  // is.getAndCalculateFeedback()
-      
-                  // "going through"
-                // console.log(res[0]+"this my feedback")
-                // console.log("sortedddd:"+this.sorted)
-                // console.log(docid, "-------")
-                if (res.code == 200 && (!this.sorted.includes(docid))){
-                  // console.log(docid, "*********************")
-                  // console.log(res.data)
-                  // // console.log(docName)
-                  this.merit = res.data.merit
-                  // console.log("merit"+this.merit)
-                  this.demerit = res.data.demerit
-                  // console.log("testing" +this.score)
-                  if (this.merit > this.demerit){
-                    this.score = this.score + this.score*2*Math.log(1+this.merit-this.demerit)
-                    // console.log("going through!!")
-                  } else {
-                    this.score = this.score- this.score*2*Math.log(1+this.demerit-this.merit)
-                    // console.log("going through 2222")
-                    
-                  }
-                  // console.log(this.score)
-                  this.scores[docid]=this.score
-                  this.sorted=[]
-                  Object.keys(this.scores)
-                    .sort((a, b) => (this.scores[a] < this.scores[b] ? 1 : -1))
-                    .map(x => {
-                    //   console.log("MEEEEEEp")
-                    //   console.log(x, this.scores[x]);
-                      this.sorted.push(x);
-                    });
-                
-                  // console.log("check!!")
-                  // console.log(this.sorted)
-                }
-                
-                // console.log(this.docDict)
-                }, err => {
-                  // console.log("gg got error calling feedback")
-                  // console.log("going through"+err)
-                });
-            //storing scores
-            
+  calculateFeedback(docid: any) {
+    this.managefeedback.getFeedback(this.query, docid)
+      .subscribe((res: any) => {
+        //get average of documents page scores
+        this.score = 0
+        for (let num in this.documents) {
+          if (this.documents[num].meta.doc_uuid == docid && this.score > 0) {
+            this.score = (this.score + this.documents[num].score) / 2 //pagescore
+          } else if (this.documents[num].meta.doc_uuid == docid && this.score == 0) {
+            this.score = this.documents[num].score
+          }
+        }
+        //calculating feedback
+        if (res.code == 200 && (!this.sorted.includes(docid))) {
+          this.merit = res.data.merit
+          this.demerit = res.data.demerit
+          if (this.merit > this.demerit) {
+            this.score = this.score + this.score * 2 * Math.log(1 + this.merit - this.demerit)
+          } else {
+            this.score = this.score - this.score * 2 * Math.log(1 + this.demerit - this.merit)
+          }
+          this.scores[docid] = this.score
+          this.sorted = []
+          Object.keys(this.scores)
+            .sort((a, b) => (this.scores[a] < this.scores[b] ? 1 : -1))
+            .map(x => {
+              this.sorted.push(x);
+            });
+        }
+
+      }, err => {
+        console.log(err)
+      });
+    //storing scores
   }
 
 
@@ -256,9 +199,9 @@ export class ViewResultsProcessComponent implements OnInit {
     console.log(this.newquery.value)
     let query = encodeURIComponent(this.searchQuery)
     this.manageSearchQueryService.addQueryCount(query)
-    .subscribe(res => {
-      // console.log(res)
-    });
+      .subscribe(res => {
+        // console.log(res)
+      });
     this.router.navigate(['/viewresultsprocess/' + query])
       .then(() => {
         window.location.reload();

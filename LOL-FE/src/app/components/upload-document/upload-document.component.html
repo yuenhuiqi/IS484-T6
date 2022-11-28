@@ -18,7 +18,7 @@
                 <br>
                 <h6>Select a file or drag and drop here</h6>
                 <p style="color: #6200ea">---------------------------------------------</p>
-                <p>PDF, Word, Powerpoint, file size no more than 10MB</p>
+                <p>PDF, Word, Powerpoint, file only</p>
                 <br>
                 <mat-progress-bar *ngIf="this.snackbarOpen === false" mode="indeterminate" [value]="progress"></mat-progress-bar>
                 <br>
@@ -42,13 +42,7 @@
                             <button *ngIf="!errorList[key]" mat-button (click)="editFile(key)" style="color: #6200ea; outline: 1px solid red;">Edit Document Details</button>
                         </td>
                         <td style="text-align: right; width: 150px"><button mat-button (click)="deleteFile(key)" style="color: red;">Delete</button></td>
-                    </tr>    
-                    <!-- <tr *ngFor="let item of fileList | keyvalue">
-                        <td style="padding-right: 10px;">{{ item.key }}</td>
-                        <td style="text-align: right; width: 150px"><button mat-button (click)="editFile(item.key)" style="color: #6200ea;">{{ errorList.item.key }}</button></td>
-                        <td style="text-align: right; width: 150px"><button mat-button (click)="editFile(item.key)" style="color: #6200ea;">Edit Document Details</button></td>
-                        <td style="text-align: right; width: 150px"><button mat-button (click)="deleteFile(item.key)" style="color: red;">Delete</button></td>
-                    </tr>     -->
+                    </tr> 
                 </tbody>
             </table>
     
@@ -62,7 +56,7 @@
 <div>
     <mat-toolbar>
         <span class="example-spacer"></span>
-        <button [routerLink] = "['/uploader']" mat-stroked-button>Cancel</button>
+        <button [disabled]="disabled" [routerLink] = "['/uploader']" mat-stroked-button>Cancel</button>
         <button [disabled]="checkValidity() || objectKeys(errorList).length == 0" mat-flat-button style="margin: 10px;" (click)="submitForm()">Upload</button>
     </mat-toolbar>
 </div>
