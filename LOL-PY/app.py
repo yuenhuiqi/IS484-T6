@@ -195,7 +195,6 @@ def getUser(token):
 def getAcronymMeaning(question):
     qn = '{0}'.format(question)
     qn = qn.lower().rstrip('_+!@#$?^/ ').split()
-    # qn = [x.lower() for x in qn]
     acronyms = Acronym.query.all()
     arr = []
     for acronym in acronyms:
