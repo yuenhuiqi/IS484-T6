@@ -49,6 +49,11 @@ export class ViewResultsProcessComponent implements OnInit {
   searchQuery: any;
 
   ngOnInit(): void {
+    var startTime = performance.now()
+
+     // <---- measured code goes between startTime and endTime
+        
+ 
     if (localStorage.getItem('reload') == null || localStorage.getItem('reload') == '0') {
       localStorage.setItem('reload', '1')
       location.reload()
@@ -116,6 +121,8 @@ export class ViewResultsProcessComponent implements OnInit {
     this.newquery.valueChanges.subscribe(val => {
       this.getSuggestedQuery(val)
     })
+
+    
 
   }
 
