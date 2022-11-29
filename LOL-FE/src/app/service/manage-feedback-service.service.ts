@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 export class ManageFeedbackServiceService {
 
   // private baseurl = "https://54.254.54.186:2222/"
-  private baseurl = "https://localhost:2222/"
+  private baseurl = "http://localhost:2222/"
 
   constructor(private http: HttpClient) { }
 
@@ -19,7 +19,7 @@ export class ManageFeedbackServiceService {
     return this.http.post(`${this.baseurl}addFeedback/${searchID}/${docID}`, {})
   }
 
-  getFeedback(searchID:String, docID:String) {
+  getFeedback(docID:String, searchID:String) {
     return this.http.post(`${this.baseurl}getFeedback/${docID}/${searchID}`, {})
   }
 }

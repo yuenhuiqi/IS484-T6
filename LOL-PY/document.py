@@ -94,6 +94,8 @@ def upload_doc(name, doc, doctype):
     id = id.hex
     dt = str(datetime.now())
 
+    AI_BACKEND_URL = "https://18.142.140.202"
+
     try:
         upload = Document(userID=doc['userID'], docID=id, docName=name, docTitle=doc['title'], docType=doctype, journey=doc['journey'],
                           lastUpdated=dt, upload_status="PROCESSING")
