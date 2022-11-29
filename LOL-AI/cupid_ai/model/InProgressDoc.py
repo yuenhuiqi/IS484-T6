@@ -4,6 +4,9 @@ from cupid_ai.model import Doc
 import regex as re
 from wordsegment import load, segment
 
+import nltk
+from english_words import english_words_set
+
 
 class InProgressDoc(Doc):
   '''
@@ -63,3 +66,11 @@ class InProgressDoc(Doc):
       # print("---AFTER---\n", newlines)
       self.lines = newlines
     return self
+  
+  def remove_non_en(self):
+    for (i, line) in enumerate(self.lines):
+      self.lines[i] = " ".join(w for w in nltk.wordpunct_tokenize(line) if w.lower() in english_words_set)
+    return self 
+
+      
+      

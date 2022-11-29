@@ -1,3 +1,4 @@
+import requests
 from database import *
 from user import getUserByID
 from versioning import moveDocToVersioning, deleteDocVersions
@@ -117,6 +118,21 @@ def upload_doc(name, doc, doctype):
             upload.upload_status = "COMPLETE"
             db.session.commit()
 
+            # then upload to AI backend 
+            try:
+                r = requests.post(f"{AI_BACKEND_URL}/upload", 
+                    json= {
+                        "item_s3_key": name,
+                        "doc_uuid": id
+                    }, 
+                    verify=False)
+            except requests.exceptions.RequestException as e:
+                print(e)
+            
+            print(r)
+
+
+            print(f'Uploaded: {name, id, dt}')
             return f'Uploaded: {name, id, dt}', HTTPStatus.OK
 
     except Exception as e:
@@ -200,7 +216,9 @@ def update_docDetails(doc, doc_title, doc_journey):
 
 def getAllDocs(docs, item_count):
     docList = []
+    print(f"{len(docs)} docs found")
     for doc in docs:
+        print(doc.docName, doc.docTitle, doc.docID)
         uploaderName = getUserByID(doc.userID)
         status = doc.upload_status
         docList.append({'uploaderName': uploaderName, 'docID': doc.docID, 'docName': doc.docName, 'docTitle': doc.docTitle,

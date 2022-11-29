@@ -9,12 +9,15 @@ from cupid_ai.nodes import retriever
 from cupid_ai.model.UploadRequest import UploadRequest
 from cupid_ai.model import SearchRequest
 from config import settings
+from haystack.document_stores.faiss import FAISSDocumentStore
 
 app = FastAPI()
 
 origins = [
     "http://localhost:4200",
-    "http://54.254.54.186:4200/"
+    "https://54.254.54.186:2222/",
+    "https://18.142.140.202:2222",
+    "https://18.142.140.202"
     ]
 
 app.add_middleware(
@@ -26,6 +29,15 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
+    
+    documentstore = FAISSDocumentStore(
+        sql_url="sqlite:///cupid_ai/db/faiss_meta.db", 
+        progress_bar=False
+    )
+    
+    print(documentstore)
+    
+    
     return {"message": "Hello World"}
 
 @app.post("/upload", status_code=201)

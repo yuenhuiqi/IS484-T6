@@ -13,7 +13,7 @@ import fitz
 
 class CustomPDFToTextConverter(BaseConverter):
     
-    def pdf_to_text(file_path, page_number):
+    def pdf_to_text(self, f, page_number):
 
         # 1. set dimensions of image
         zoom_x = 2.0  # horizontal zoom
@@ -21,7 +21,7 @@ class CustomPDFToTextConverter(BaseConverter):
         mat = fitz.Matrix(zoom_x, zoom_y)  # zoom factor 2 in each dimension
 
         # 2. convert each page of pdf into image
-        doc = fitz.open(file_path)
+        doc = fitz.open("pdf", f)
         page = doc.load_page(page_number)
         pix = page.get_pixmap(matrix=mat)
         img_bytes = pix.pil_tobytes(format="JPEG", optimize=True)
@@ -73,8 +73,8 @@ class CustomPDFToTextConverter(BaseConverter):
             for i in range(num_pages):
                 text = reader.pages[i].extract_text()
                 if text == '':
-                    text = self.pdf_to_text(file_path, i)
-            pages.append(text)
+                    text = self.pdf_to_text(f, i)
+                pages.append(text)
         
         docs: List[InProgressDoc] = []
         for i, page in enumerate(pages):
@@ -85,6 +85,7 @@ class CustomPDFToTextConverter(BaseConverter):
             .remove_non_alpha()
             .join_sentences()
             .segment_words()
+            .remove_non_en()
             )
 
         output_docs: List[Document] = []

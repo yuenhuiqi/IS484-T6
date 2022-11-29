@@ -6,7 +6,11 @@ import math
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
+import requests
 
+import spacy
+en = spacy.load('en_core_web_sm')
+stopwords = en.Defaults.stop_words
 
 class SearchCount(db.Model):
     tablename = 'searchcount'
@@ -84,6 +88,7 @@ def add_count(qn):
 
 def getSuggestedSearches(query):
     try: 
+        query = requests.utils.unquote(query)
         query_list = SearchCount.query.with_entities(SearchCount.searchText).all()
         sim_dict = {}
         for q in query_list:
@@ -108,11 +113,10 @@ def getSuggestedSearches(query):
 
 def text_to_vector(text):
     ps = PorterStemmer()
-    stop_words = set(stopwords.words('english')) 
-    query = word_tokenize(text)
+    query = text.split(" ")
     processedQuery = ''
     for w in query:
-        if not w in stop_words:
+        if not w in stopwords:
             processedQuery += " " + ps.stem(w)
     
     WORD = re.compile(r"\w+")
