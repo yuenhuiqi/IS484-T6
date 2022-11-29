@@ -95,7 +95,7 @@ def get_feedback(docid, query):
     except Exception as e:
         print(e)
 
-        return 400, 
+        return 400, e
 
 
 

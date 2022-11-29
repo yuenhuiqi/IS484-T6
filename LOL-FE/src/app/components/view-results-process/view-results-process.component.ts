@@ -164,7 +164,7 @@ export class ViewResultsProcessComponent implements OnInit {
   }
 
   calculateFeedback(docid: any) {
-    this.managefeedback.getFeedback(this.query, docid)
+    this.managefeedback.getFeedback( docid,this.query)
       .subscribe((res: any) => {
         //get average of documents page scores
         this.score = 0
