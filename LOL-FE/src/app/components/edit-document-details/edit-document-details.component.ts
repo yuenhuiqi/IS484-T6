@@ -34,12 +34,10 @@ export class EditDocumentDetailsComponent {
   
 
   onNoClick(): void {
-    // console.log(this.editDocDetails.valid)
     this.dialogRef.close();
   }
 
   save() {
-    // console.log(this.editDocDetails.valid)
     this.data.isDocValid = this.editDocDetails.valid
     this.dialogRef.close(this.data);
   }

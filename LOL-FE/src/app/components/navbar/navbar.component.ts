@@ -26,7 +26,6 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.getUserName()
-
     var currentTime = parseInt(this.time.toLocaleString('en-US', { hour: 'numeric', hour12: false }))
     this.greetings = currentTime >= 0 && currentTime <= 12 ? "Good Morning" :
                       currentTime >= 12 && currentTime < 18 ? "Good Afternoon" :

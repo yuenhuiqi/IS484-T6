@@ -16,7 +16,6 @@ export class SuggestedSearchesComponent implements OnInit {
       this.suggestedSearches = data.suggestedSearches;
       this.message = data.message;
      }
-
   ngOnInit(): void {
   }
 
@@ -24,10 +23,7 @@ export class SuggestedSearchesComponent implements OnInit {
     // Close the dialog, return false
     this.dialogRef.close(false);
   }
-  
-
 }
-
 export class DialogData {
   constructor(public suggestedSearches: any, public message: string) {
   }

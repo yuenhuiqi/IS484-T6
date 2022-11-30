@@ -74,6 +74,7 @@ export class ViewResultsProcessComponent implements OnInit {
       data => { this.relevantSearches = data.suggestedSearches }
     )
 
+    // specify the deployed URL for the AI endpoint here
     this.http.post<any>(`https://18.142.140.202/search`, { "query": this.query })
       .subscribe(
         data => {

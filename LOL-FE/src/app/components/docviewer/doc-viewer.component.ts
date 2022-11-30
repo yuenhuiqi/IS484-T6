@@ -48,7 +48,7 @@ export class ViewDocumentComponent implements OnInit {
       this.type = params['type']
     });
     
-    this.http.get<any>(`https://54.254.54.186:2222/presignedUrl/` + this.docID)
+    this.http.get<any>(`http://localhost:2222/presignedUrl/` + this.docID)
       .subscribe(
         data => { 
           if (this.type == 'view') {
@@ -59,15 +59,12 @@ export class ViewDocumentComponent implements OnInit {
         }
       )
 
-    this.http.get<any>(`https://54.254.54.186:2222/getDocDetails/` + this.docID)
+    this.http.get<any>(`http://localhost:2222/getDocDetails/` + this.docID)
     .subscribe(
       data => { this.docType = data.docType 
       }
     )
-
     this.getUserName()
-
-
   }
 
   getUserName() {
@@ -92,13 +89,10 @@ export class ViewDocumentComponent implements OnInit {
   submitPositive() {
     this.score = 1
     this.displayStyle = "none";
-    // console.log(this.docID)
-
     this.managefeedback.updateFeedback(this.queryID, this.docID, this.score)
     .subscribe(res => {
       console.log(res)
     });
-
   }
 
   submitNegative() {
@@ -110,7 +104,7 @@ export class ViewDocumentComponent implements OnInit {
       console.log(res)
     });
 
-    this.http.get<any>(`https://54.254.54.186:2222/getSuggestedQueries/` + this.queryID).subscribe(
+    this.http.get<any>(`http://localhost:2222/getSuggestedQueries/` + this.queryID).subscribe(
       data => {this.relevantSearches = data.suggestedSearches
         const message = `Do you want to search for these instead?`;
         const dialogData = new DialogData(this.relevantSearches, message);
@@ -130,13 +124,5 @@ export class ViewDocumentComponent implements OnInit {
         });
       }
     )
-
-
-
-
   }
-
-
 }  
-
-
